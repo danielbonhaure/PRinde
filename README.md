@@ -1,1 +1,1 @@
-# Pronóstico-de-Rinde
+# Pronóstico de Rinde
