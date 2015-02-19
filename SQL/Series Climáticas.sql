@@ -1,6 +1,25 @@
 ﻿DROP FUNCTION IF EXISTS pr_create_campaigns(int, varchar, varchar, varchar, varchar);
 DROP FUNCTION IF EXISTS pr_crear_serie(int, date, date, date, int);
 DROP FUNCTION IF EXISTS is_leap(int);
+--DROP FUNCTION IF EXISTS grid_coords(DOUBLE PRECISION, DOUBLE PRECISION, INT);
+
+/*CREATE OR REPLACE FUNCTION grid_coords(lat_dec DOUBLE PRECISION, lon_dec DOUBLE PRECISION, arcmin_resolution INT DEFAULT 30)
+RETURNS RECORD AS $$
+    DECLARE
+        grid_row INTEGER;
+        grid_column INTEGER;
+        _return RECORD;
+    BEGIN
+        lon_dec := lon_dec + 180;
+        lat_dec := 90 - lat_dec;
+
+        SELECT CEIL(lat_dec * (60 / arcmin_resolution)) AS grid_row,
+               CEIL(lon_dec * (60 / arcmin_resolution)) AS grid_col
+        INTO _return;
+
+        RETURN _return;
+    END
+$$ LANGUAGE plpgsql;*/
 
 /* Función que determina si un año es bisiesto. */
 CREATE OR REPLACE FUNCTION is_leap(year integer)
@@ -40,10 +59,12 @@ AS $$
             FROM estacion_registro_diario erd
             WHERE erd.omm_id = id_estacion AND (erd.fecha BETWEEN fecha_inicio_inflexion AND fecha_fin_inflexion)
         ), datos_ordenados AS (
-            SELECT row_number() OVER (ORDER BY dc.orden, dc.fecha_original ASC), dc.fecha_original, dc.tmax, dc.tmin, dc.prcp
+            SELECT row_number() OVER (ORDER BY dc.orden, dc.fecha_original ASC) AS row_number, dc.fecha_original,
+                   dc.tmax, dc.tmin, dc.prcp
             FROM datos_raw dc
         ), fechas_ordenadas AS (
-            SELECT row_number() OVER (ORDER BY fechas_generadas ASC), fechas_generadas::date FROM generate_series( fecha_inicio, fecha_fin, '1 day'::interval) fechas_generadas
+            SELECT row_number() OVER (ORDER BY fechas_generadas ASC) AS row_number, fechas_generadas::date
+            FROM generate_series( fecha_inicio, fecha_fin, '1 day'::interval) fechas_generadas
         )
         SELECT fo.fechas_generadas, datos.fecha_original, datos.tmax, datos.tmin, datos.prcp
         FROM datos_ordenados datos LEFT JOIN fechas_ordenadas fo ON fo.row_number = datos.row_number;
@@ -55,7 +76,8 @@ $$ LANGUAGE plpgsql;
    meteorológica con el resultado de la ejecución de la función 'function_name' que toma como parámetro el
    'id' de la estación meteorológica.
 */
-CREATE OR REPLACE FUNCTION pr_create_campaigns(omm_id integer, camp_start varchar, curr_date varchar, camp_end varchar, output_path varchar)
+CREATE OR REPLACE FUNCTION pr_create_campaigns(omm_id integer, camp_start varchar, curr_date varchar,
+                                               camp_end varchar, output_path varchar, grid_resolution int DEFAULT 30)
 RETURNS VOID
 AS $$
     DECLARE
@@ -73,6 +95,7 @@ AS $$
         command VARCHAR;
 
         loop_year RECORD;
+        data_estacion RECORD;
 
     BEGIN
         -- Convertimos las fechas de los parámetros a Dates de SQL.
@@ -92,13 +115,20 @@ AS $$
         -- Extraemos el año de la fecha que se pasa como actual y el mes-día.
         current_year := EXTRACT(YEAR FROM curr_date::date);
         curr_monthday := TO_CHAR(curr_date::date, 'MM-DD');
-    
+
+        -- Escribimos un archivo con la información de la estación.
+        path := output_folder || '/' || 'estacion.csv';
+
+        command := 'COPY ( SELECT * FROM estacion WHERE omm_id = ' || id_estacion || ') TO ''' || path || ''' HEADER CSV NULL '''' DELIMITER E''\t''';
+        EXECUTE command;
+
+        -- Escribimos un archivo por cada serie climática combinada.
         FOR loop_year IN (SELECT DISTINCT EXTRACT(YEAR FROM fecha) AS year FROM estacion_registro_diario erd WHERE erd.omm_id = id_estacion)
         LOOP
             -- Salteamos el año actual.
             CONTINUE WHEN loop_year.year = current_year;
 
-            path := output_folder || '/' || loop_year.year || ' - ' || id_estacion || '.csv';
+            path := output_folder || '/' || id_estacion  || ' - ' || loop_year.year|| '.csv';
 
             command := 'COPY ( SELECT * FROM pr_crear_serie( ' || id_estacion || ', ''' || campaign_start || '''::date, ''' || curr_date || '''::date, ''' || campaign_end || '''::date, ' || loop_year.year || ' ) ) ' ||
                                  'TO ''' || path || ''' HEADER CSV NULL '''' DELIMITER E''\t''';
@@ -108,7 +138,7 @@ AS $$
     END
 $$ LANGUAGE plpgsql;
 
-
+--SELECT grid_coords(-23.875, 34.625, 15)
 -- Usage
--- SELECT pr_create_campaigns(87585, '2014-06-01', '2015-02-06', '2015-06-30', '/home/usmfpts/Descargas/series_combinadas')
+SELECT pr_create_campaigns(87585, '2014-06-01', '2015-02-06', '2015-06-30', '/home/usmfpts/Descargas/series_combinadas')
 
