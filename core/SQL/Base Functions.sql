@@ -1,31 +1,13 @@
-﻿DROP FUNCTION IF EXISTS pr_create_campaigns(int, varchar, varchar, varchar, varchar);
+DROP FUNCTION IF EXISTS pr_create_campaigns(int, varchar, varchar, varchar, varchar);
 DROP FUNCTION IF EXISTS pr_crear_serie(int, date, date, date, int);
 DROP FUNCTION IF EXISTS is_leap(int);
---DROP FUNCTION IF EXISTS grid_coords(DOUBLE PRECISION, DOUBLE PRECISION, INT);
-
-/*CREATE OR REPLACE FUNCTION grid_coords(lat_dec DOUBLE PRECISION, lon_dec DOUBLE PRECISION, arcmin_resolution INT DEFAULT 30)
-RETURNS RECORD AS $$
-    DECLARE
-        grid_row INTEGER;
-        grid_column INTEGER;
-        _return RECORD;
-    BEGIN
-        lon_dec := lon_dec + 180;
-        lat_dec := 90 - lat_dec;
-
-        SELECT CEIL(lat_dec * (60 / arcmin_resolution)) AS grid_row,
-               CEIL(lon_dec * (60 / arcmin_resolution)) AS grid_col
-        INTO _return;
-
-        RETURN _return;
-    END
-$$ LANGUAGE plpgsql;*/
 
 /* Función que determina si un año es bisiesto. */
 CREATE OR REPLACE FUNCTION is_leap(year integer)
 RETURNS BOOLEAN AS $$
 	SELECT ($1 % 4 = 0) AND (($1 % 100 <> 0) OR ($1 % 400 = 0))
 $$ LANGUAGE sql;
+
 
 CREATE OR REPLACE FUNCTION pr_crear_serie(omm_id int, fecha_inicio date, fecha_inflexion date, fecha_fin date, year_inflexion int)
 RETURNS TABLE (fecha date, fecha_original date, tmax double precision, tmin double precision, prcp double precision)
@@ -72,10 +54,6 @@ AS $$
 $$ LANGUAGE plpgsql;
 
 
-/* Función que dado un 'path' del sistema de archivos guarda en dicha carpeta un archivo CSV por cada estación
-   meteorológica con el resultado de la ejecución de la función 'function_name' que toma como parámetro el
-   'id' de la estación meteorológica.
-*/
 CREATE OR REPLACE FUNCTION pr_create_campaigns(omm_id integer, camp_start varchar, curr_date varchar,
                                                camp_end varchar, output_path varchar, grid_resolution int DEFAULT 30)
 RETURNS VOID
@@ -137,8 +115,3 @@ AS $$
         END LOOP;
     END
 $$ LANGUAGE plpgsql;
-
---SELECT grid_coords(-23.875, 34.625, 15)
--- Usage
-SELECT pr_create_campaigns(87585, '2014-06-01', '2015-02-06', '2015-06-30', '/home/usmfpts/Descargas/series_combinadas')
-

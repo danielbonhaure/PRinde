@@ -1,0 +1,10 @@
+# Databases configuration.
+
+weather_db :
+    host : 'localhost'
+    db_name : 'crc_ssa'
+    user : 'postgres.pwd'
+    # password : '' # Uncomment to specify here, otherwise, create a text file inside the config/pwd directory with the
+                    # same name as the database user and write it there with ".pwd" extension.
+                    # Files inside config/pwd are kept out git repositories.
+    port : 5432

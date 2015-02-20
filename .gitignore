@@ -1,4 +1,6 @@
 # Byte-compiled / optimized / DLL files
+config/pwd/*.pwd
+
 __pycache__/
 *.py[cod]
 
@@ -55,7 +57,8 @@ target/
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
 *.iml
 ## Directory-based project format:
-.idea/
+.idea/inspectionProfiles/*.xml
+.idea/*
 ## File-based project format:
 *.ipr
 *.iws
@@ -64,5 +67,3 @@ target/
 out/
 # mpeltonen/sbt-idea plugin
 .idea_modules/
-.idea/inspectionProfiles/profiles_settings.xml
-.idea/inspectionProfiles/Project_Default.xml
