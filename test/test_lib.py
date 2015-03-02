@@ -1,6 +1,6 @@
 import unittest
 
-from core.geo.grid import latlon_to_grid
+from core.lib.geo.grid import latlon_to_grid
 
 
 class TestGeoLib(unittest.TestCase):

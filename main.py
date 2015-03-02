@@ -4,28 +4,39 @@ __author__ = 'Federico Schmidt'
 
 import os
 import yaml
-import signal
-import core.events
-from core.boot import boot_system
 
-from core.io.file import absdirname
-
-# Get system root path.
-root_path = absdirname(__file__)
-
-# Create system configuration path relative to root.
-config_path = os.path.join(root_path, 'config', 'system.yaml')
-
-if not os.path.isfile(config_path):
-    raise RuntimeError('System configuration file not found.')
+from core.modules.Configuration import Configuration
+from core.modules.GestorDelPronostico.events import register_signals
+from core.modules.GestorDelPronostico.boot import boot_system
+from core.modules.GestorDelPronostico.main import ForecastManager
+from core.lib.io.file import absdirname
 
 
-system_config = yaml.safe_load(open(config_path))
 
-boot_system(root_path, system_config)
+# Main class definition.
+class Main():
 
-print(system_config.get('temp_folder'))
+    def __init__(self):
+        # Get system root path.
+        self.root_path = absdirname(__file__)
 
-# Register a handler SIGINT/SIGTERM signals.
-core.events.register_signals()
+        self.system_config = Configuration(self.root_path)
+        self.system_config.load()
 
+        self.system_config.root_path = self.root_path
+
+        self.fm = ForecastManager(self.system_config)
+
+    def bootstrap(self):
+        boot_system(self.root_path, self.system_config)
+
+        # Register a handler SIGINT/SIGTERM signals.
+        register_signals()
+
+    def run(self):
+        self.bootstrap()
+        self.fm.start()
+
+
+# Start running the system.
+Main().run()

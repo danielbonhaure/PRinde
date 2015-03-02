@@ -1,9 +1,10 @@
 __author__ = 'Federico Schmidt'
 
-import os, shlex, sys
+import os
 import subprocess
-import core.io.file
-from core.xplatform.cmd import print_same_line
+
+import core.lib.io.file
+from core.lib.xplatform.cmd import print_same_line
 
 
 def run_boot_hook(hook_path):
@@ -28,19 +29,21 @@ def boot_system(root_path, config):
     # Get the configured temp folder or retrieve a default one.
     tmp_folder = config.get('temp_folder', './.tmp')
 
+    print(tmp_folder)
+
     # Check that the path is a string.
-    if not isinstance(tmp_folder, basestring):
+    if not isinstance(tmp_folder, str):
         print('[ERROR] temp_folder in config should be a string.')
         exit(1)
 
     # Make it relative to the root path.
     tmp_folder = os.path.join(root_path, tmp_folder)
 
-    if not core.io.file.create_or_clean_folder(tmp_folder):
-        print("[ERROR] Couldn't create temp folder in: '%s'" % tmp_folder)
-        exit(1)
+    #if not core.lib.io.file.create_or_clean_folder(tmp_folder):
+    #    print("[ERROR] Couldn't create temp folder in: '%s'" % tmp_folder)
+    #    exit(1)
 
-    config['temp_folder'] = tmp_folder
+    config.temp_folder = tmp_folder
 
     boot_hook = os.path.join(root_path, 'hooks', 'boot.sh')
 

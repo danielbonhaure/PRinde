@@ -95,7 +95,7 @@ AS $$
         curr_monthday := TO_CHAR(curr_date::date, 'MM-DD');
 
         -- Escribimos un archivo con la información de la estación.
-        path := output_folder || '/' || 'estacion.csv';
+        path := output_folder || '/_' || omm_id || '.csv';
 
         command := 'COPY ( SELECT * FROM estacion WHERE omm_id = ' || id_estacion || ') TO ''' || path || ''' HEADER CSV NULL '''' DELIMITER E''\t''';
         EXECUTE command;

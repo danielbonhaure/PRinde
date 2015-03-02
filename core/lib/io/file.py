@@ -12,13 +12,21 @@ def absdirname(f):
     return os.path.abspath(os.path.dirname(os.path.realpath(f)))
 
 
-def listdir_fullpath(d, onlyFiles=True):
+def listdir_fullpath(d, onlyFiles=False, recursive=False, filter=None):
     ls = os.listdir(d)
     if len(ls) == 0:
         return []
     full_path = [os.path.join(d, f) for f in ls]
+
+    if recursive:
+        for d in full_path:
+            if os.path.isdir(d):
+                full_path = full_path + listdir_fullpath(d, onlyFiles=onlyFiles, recursive=True)
+
     if onlyFiles:
-        return [f for f in full_path if os.path.isfile(f)]
+        full_path = [f for f in full_path if os.path.isfile(f)]
+    if filter:
+        full_path = [f for f in full_path if filter(f)]
     return full_path
 
 

@@ -1,3 +1,3 @@
 # System general configuration file.
-
-temp_folder : '.tmp' # Should be a relative path, it'll be placed inside the root path.
+temp_folder : ".tmp" # Should be a relative path, it'll be placed inside the root path.
+omm_ids: [87585] # OMM IDs of weather stations where simulations should be ran.
