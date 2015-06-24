@@ -1,3 +1,15 @@
-# System general configuration file.
-temp_folder : ".tmp" # Should be a relative path, it'll be placed inside the root path.
-omm_ids: [87585] # OMM IDs of weather stations where simulations should be ran.
+grid_resolution: 30 # Lat/lon grid resolution in arcminutes.
+
+paths:
+    # System general configuration file.
+    temp_folder : ".tmp" # Should be a relative path, it'll be placed inside the root path.
+
+    wth_grid_path: '.tmp/'
+    rundir: './.tmp/rundir'
+
+    # Directory for the weather DB to write CSV files with climate data.
+    # If the database is running on the same node as the system, wth_csv_export == wth_csv_read.
+    # Allows database to be at a remote server.
+    wth_csv_export: "/home/usmfpts/Descargas/series_combinadas"
+    # Mount point where database weather files can be read.
+    wth_csv_read: "/home/federico/Desarrollo/PycharmProjects/Pronóstico de Rinde/.tmp/wth"

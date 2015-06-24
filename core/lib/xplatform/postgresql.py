@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 import subprocess
-import collections
+import collection_utils
 
 __author__ = 'Federico Schmidt'
 
 import os, glob, getpass
 
 def read_connection_parameters():
-    conn = collections.namedtuple('Connection', ['db_name', 'user'])
+    conn = collection_utils.namedtuple('Connection', ['db_name', 'user'])
 
     conn.db_name = raw_input("Ingrese el nombre de la Base de Datos [crcssa]: ")
     if not conn.db_name:

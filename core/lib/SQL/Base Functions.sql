@@ -10,7 +10,7 @@ $$ LANGUAGE sql;
 
 
 CREATE OR REPLACE FUNCTION pr_crear_serie(omm_id int, fecha_inicio date, fecha_inflexion date, fecha_fin date, year_inflexion int)
-RETURNS TABLE (fecha date, fecha_original date, tmax double precision, tmin double precision, prcp double precision)
+RETURNS TABLE (fecha date, fecha_original date, tmax numeric, tmin numeric, prcp numeric, rad numeric)
 AS $$
     DECLARE
         id_estacion ALIAS FOR $1;
@@ -30,32 +30,32 @@ AS $$
     
         -- Creamos la fecha de fin de los datos climáticos históricos.
         fecha_fin_inflexion := fecha_inicio_inflexion + (fecha_fin - fecha_inflexion) - '1 day'::interval;
-    
+
         RETURN QUERY
         WITH datos_raw AS (
-            SELECT erd.fecha AS fecha_original, erd.tmax, erd.tmin, erd.prcp, 1 AS orden
-            FROM estacion_registro_diario erd
+            SELECT erd.fecha AS fecha_original, erd.tmax, erd.tmin, erd.prcp, erd.rad, 1 AS orden
+            FROM estacion_registro_diario_completo erd
             WHERE erd.omm_id = id_estacion AND (erd.fecha BETWEEN fecha_inicio AND fecha_inflexion)
             UNION
-            SELECT erd.fecha AS fecha_original, erd.tmax, erd.tmin, erd.prcp, 2 AS orden
-            FROM estacion_registro_diario erd
+            SELECT erd.fecha AS fecha_original, erd.tmax, erd.tmin, erd.prcp, erd.rad, 2 AS orden
+            FROM estacion_registro_diario_completo erd
             WHERE erd.omm_id = id_estacion AND (erd.fecha BETWEEN fecha_inicio_inflexion AND fecha_fin_inflexion)
         ), datos_ordenados AS (
             SELECT row_number() OVER (ORDER BY dc.orden, dc.fecha_original ASC) AS row_number, dc.fecha_original,
-                   dc.tmax, dc.tmin, dc.prcp
+                   dc.tmax, dc.tmin, dc.prcp, dc.rad
             FROM datos_raw dc
         ), fechas_ordenadas AS (
             SELECT row_number() OVER (ORDER BY fechas_generadas ASC) AS row_number, fechas_generadas::date
             FROM generate_series( fecha_inicio, fecha_fin, '1 day'::interval) fechas_generadas
         )
-        SELECT fo.fechas_generadas, datos.fecha_original, datos.tmax, datos.tmin, datos.prcp
+        SELECT fo.fechas_generadas, datos.fecha_original, datos.tmax, datos.tmin, datos.prcp, datos.rad
         FROM datos_ordenados datos LEFT JOIN fechas_ordenadas fo ON fo.row_number = datos.row_number;
     END
 $$ LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION pr_create_campaigns(omm_id integer, camp_start varchar, curr_date varchar,
-                                               camp_end varchar, output_path varchar, grid_resolution int DEFAULT 30)
+                                               camp_end varchar, output_path varchar)
 RETURNS VOID
 AS $$
     DECLARE
@@ -104,7 +104,7 @@ AS $$
         FOR loop_year IN (SELECT DISTINCT EXTRACT(YEAR FROM fecha) AS year FROM estacion_registro_diario erd WHERE erd.omm_id = id_estacion)
         LOOP
             -- Salteamos el año actual.
-            CONTINUE WHEN loop_year.year = current_year;
+            CONTINUE WHEN loop_year.year >= current_year;
 
             path := output_folder || '/' || id_estacion  || ' - ' || loop_year.year|| '.csv';
 

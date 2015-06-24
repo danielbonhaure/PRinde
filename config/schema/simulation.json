@@ -1,0 +1,75 @@
+{
+	"title": "Simulation Object Schema",
+    "required": ["soil", "initial_conditions", "management"],
+	"type": "object",
+	"properties": {
+		"soil": {
+			"type": "object",
+			"required": ["id", "n_horizons"],
+            "properties": {
+				"id": { "type": "string" },
+				"n_horizons": {
+					"type": "integer",
+					"minimum": 1
+				},
+				"prop": { "$ref": "#/definitions/percentage" }
+            }
+		},
+		"initial_conditions": {
+			"type": "object",
+			"required": ["icno3", "icnh4"],
+            "properties": {
+				"icno3": { "$ref": "#/definitions/positiveNumberArray" },
+				"icnh4": { "$ref": "#/definitions/positiveNumberArray" },
+				"frac_full": {
+					"anyOf": [
+						{ "$ref": "#/definitions/percentage" },
+                        { "type": "object",
+                            "patternProperties": {
+                                ".*": {
+                                   "$ref": "#/definitions/percentage"
+                                }
+                            }
+                        }
+					]
+				},
+                "ich20_frac": {
+                    "anyOf": [
+                        { "$ref": "#/definitions/percentageArray" },
+                        {
+                            "type": "object",
+                            "patternProperties": {
+                                ".*": {
+                                   "$ref": "#/definitions/percentageArray"
+                                }
+                            }
+                        }
+                    ]
+                }
+			},
+            "additionalProperties": false
+		},
+		"management": {
+			"type": "object",
+			"description": "Agronomic Management"
+		}
+	},
+	"definitions": {
+		"percentage": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+        },
+        "positiveNumberArray": {
+            "type": "array",
+            "items": {
+                "type": "number",
+                "minimum": 0
+            }
+        },
+        "percentageArray": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/percentage" }
+        }
+	}
+}

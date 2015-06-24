@@ -1,0 +1,7 @@
+{
+    "planting_date": "date_1",
+    "frac_soil_water_hrzn": "ich20_frac",
+    "frac_soil_water_all": "frac_full",
+    "nh4_ppm_hrzn": "icnh4",
+    "no3_ppm_hrzn": "icno3"
+}

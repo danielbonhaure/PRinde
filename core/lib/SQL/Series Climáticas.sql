@@ -1,3 +1,22 @@
 ﻿-- Usage
 --SELECT pr_create_campaigns(87585, '2014-06-01', '2015-02-06', '2015-06-30', '/home/usmfpts/Descargas/series_combinadas')
 
+-- Sample Internal Query
+-- WITH datos_raw AS (
+--             SELECT erd.fecha AS fecha_original, erd.tmax, erd.tmin, erd.prcp, erd.rad, 1 AS orden
+--             FROM estacion_registro_diario_completo erd
+--             WHERE erd.omm_id = 87548 AND (erd.fecha BETWEEN '2014-01-01' AND '2014-11-01')
+--             UNION
+--             SELECT erd.fecha AS fecha_original, erd.tmax, erd.tmin, erd.prcp, erd.rad, 2 AS orden
+--             FROM estacion_registro_diario_completo erd
+--             WHERE erd.omm_id = 87548 AND (erd.fecha BETWEEN '1961-11-02' AND '1962-12-30')
+--         ), datos_ordenados AS (
+--             SELECT row_number() OVER (ORDER BY dc.orden, dc.fecha_original ASC) AS row_number, dc.fecha_original,
+--                    dc.tmax, dc.tmin, dc.prcp, dc.rad
+--             FROM datos_raw dc
+--         ), fechas_ordenadas AS (
+--             SELECT row_number() OVER (ORDER BY fechas_generadas ASC) AS row_number, fechas_generadas::date
+--             FROM generate_series( '2014-01-01', '2015-12-30', '1 day'::interval) fechas_generadas
+--         )
+--         SELECT fo.fechas_generadas, datos.fecha_original, datos.tmax, datos.tmin, datos.prcp, datos.rad
+--         FROM datos_ordenados datos LEFT JOIN fechas_ordenadas fo ON fo.row_number = datos.row_number;

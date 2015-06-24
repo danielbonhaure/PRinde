@@ -91,14 +91,18 @@ def fileNameWithoutExtension(file):
     return os.path.splitext(os.path.basename(file))[0]
 
 
-def create_folder_with_permissions(parent, folder_name, permissions=0777):
+def create_folder_with_permissions(parent, folder_name=None, permissions=0777):
+    if not folder_name:
+        folder_name = os.path.basename(parent)
+        parent = os.path.dirname(parent)
+
     if not os.path.isdir(parent):
         return False
 
     folder = os.path.join(parent, folder_name)
 
     if not create_or_clean_folder(folder):
-        return False
+        raise RuntimeError('Failed to create folder "%s".' % folder)
     else:
         # Le cambiamos los permisos a la carpeta.
         os.chmod(folder, permissions)

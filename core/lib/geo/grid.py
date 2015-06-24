@@ -12,6 +12,6 @@ def latlon_to_grid(lat_dec, lon_dec, resolution=30):
     :return: Named tuple. Point(row, column)
     """
     point = namedtuple("Point", ["row", "column"])
-    point.row = math.ceil((90 - lat_dec) * (60 / resolution))
-    point.column = math.ceil((180 + lon_dec) * (60 / resolution))
+    point.row = int(math.ceil((90 - lat_dec) * (60. / resolution)))
+    point.column = int(math.ceil((180 + lon_dec) * (60. / resolution)))
     return point
