@@ -7,7 +7,7 @@ __author__ = 'Federico Schmidt'
 
 import yaml
 import os.path
-import psycopg2
+from core.lib.utils.database import DatabaseUtils
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 import threading
@@ -80,37 +80,19 @@ class Configuration(FileSystemEventHandler):
         self.__dict__['database'] = dict()
 
         for db_conn, properties in db_config.items():
-            if 'db_name' not in properties:
-                raise RuntimeError('Missing database name for database connection "%s".' %
-                                   db_conn)
-            if 'user' not in properties:
-                raise RuntimeError('Missing user name for database connection "%s".' %
-                                   db_conn)
+            if 'type' not in properties:
+                raise RuntimeError('Missing database type for database connection "%s".' % db_conn)
 
-            if 'port' not in properties:
-                properties['port'] = 5432
-            if 'host' not in properties:
-                properties['host'] = 'localhost'
+            properties['name'] = db_conn
 
-            if 'password' not in properties:
-                pwd_file_path = os.path.join(self.config_path, 'pwd', properties['user']+'.pwd')
-                if not os.path.isfile(pwd_file_path):
-                    raise RuntimeError('Missing password or password file for database connection "%s".'
-                                       % db_conn)
+            if properties['type'] == 'postgresql':
+                connection = DatabaseUtils.connect_postgresql(properties, self.config_path)
+            elif properties['type'] == 'mongodb':
+                connection = DatabaseUtils.connect_mongodb(properties, self.config_path)
+            else:
+                raise RuntimeError('Unsupported database type: "%s".' % properties['type'])
 
-                properties['password'] = open(pwd_file_path, mode='r').read()
-
-            try:
-                conn = psycopg2.connect(host=properties['host'],
-                                        user=properties['user'],
-                                        database=properties['db_name'],
-                                        port=properties['port'],
-                                        password=properties['password'])
-
-                self.__dict__['database'][db_conn] = conn
-            except Exception as e:
-                raise RuntimeError('Failed to create database connection "%s". Reason: "%s".' %
-                                   (db_conn, e.message))
+            self.__dict__['database'][db_conn] = connection
 
         # Load forecasts.
         self.__dict__['forecasts'] = []
@@ -123,16 +105,16 @@ class Configuration(FileSystemEventHandler):
                                           onlyFiles=True,
                                           recursive=True,
                                           filter=(lambda x: x.endswith('yaml'))):
-            forecast = DotDict(yaml.safe_load(open(file_name)))
-            forecast['file_name'] = file_name
-
             try:
+                forecast = DotDict(yaml.safe_load(open(file_name)))
+                forecast['file_name'] = file_name
+
                 builder = ForecastBuilder(forecast, self.simulation_schema_path)
                 builder.replace_alias(alias_dict)
                 builder.inherit_config(system_config)
-                forecasts = builder.build()
-
-                self.__dict__['forecasts'].append(forecasts)
+                # Build and append forecasts.
+                for f in builder.build():
+                    self.__dict__['forecasts'].append(f)
             except Exception:
                 logging.getLogger('main').error("Skipping forecast file '%s'. Reason: %s." %
                                                 (file_name, log_format_exception()))

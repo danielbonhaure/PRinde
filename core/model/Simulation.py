@@ -1,3 +1,4 @@
+import copy
 import yaml
 from core.lib.utils.DotDict import DotDict
 
@@ -40,3 +41,14 @@ class Simulation(DotDict):
 
     def to_str(self):
         return yaml.dump(self.__dict__)
+
+    def persistent_view(self):
+        view = copy.deepcopy(self.__dict__)
+        view['location_id'] = view['location']['_id']
+        del view['location']
+
+        if 'mgmt_name' in view['management']:
+            view['management_name'] = view['management']['mgmt_name']
+        else:
+            view['management_name'] = 'undefined'
+        return view

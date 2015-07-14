@@ -79,20 +79,23 @@ class ForecastBuilder:
             # Unwind managements.
             for soil_key, soil in loc.soils.iteritems():
                 for mgmt_key, management in soil.agonomic_management.iteritems():
-                    sim = copy.deepcopy(loc)
-                    sim['soil'] = copy.deepcopy(soil)
-                    sim['management'] = copy.deepcopy(management)
-                    sim['initial_conditions'] = copy.deepcopy(soil['initial_conditions'])
+                    sim = DotDict({
+                        'location': copy.deepcopy(loc),
+                        'soil': copy.deepcopy(soil),
+                        'management': copy.deepcopy(management),
+                        'initial_conditions': copy.deepcopy(soil['initial_conditions'])
+                    })
                     del sim['soil']['agonomic_management']
                     del sim['soil']['initial_conditions']
-                    del sim['soils']
+                    del sim['location']['soils']
 
+                    sim.name = loc.name
                     sim.name += ' - Soil: "%s"' % soil.id
 
-                    if 'mgmt_name' in management:
-                        sim.name += ' - Mgmt: "%s"' % management.mgmt_name
-                    else:
-                        sim.name += ' - Mgmt: "%s"' % mgmt_key
+                    if 'mgmt_name' not in management:
+                        management.mgmt_name = mgmt_key
+
+                    sim.name += ' - Mgmt: "%s"' % management.mgmt_name
 
                     ic_water_var = None
                     ic_water_var_content = None
@@ -107,7 +110,7 @@ class ForecastBuilder:
                         ic_water_var = 'frac_full'
                         ic_water_var_content = sim.initial_conditions['frac_full']
 
-                    # TODO: ¿puede ic_water_var_content ser None en alguna circunstancia?
+                    # TODO: ¿puede ic_water_var_content ser None en alguna circunstancia? NO!
 
                     # Unwind initial conditions.
                     if isinstance(ic_water_var_content, DotDict):
@@ -115,6 +118,7 @@ class ForecastBuilder:
                             new_sim = copy.deepcopy(sim)
                             new_sim.initial_conditions[ic_water_var] = ic_values
                             new_sim.name += ' - IC: "%s=%s"' % (ic_water_var, ic_name)
+                            new_sim.water_content = ic_name
 
                             if self.simulation_schema:
                                 validate(json.loads(new_sim.to_json()), schema=self.simulation_schema)
@@ -122,6 +126,7 @@ class ForecastBuilder:
                     else:
                         if self.simulation_schema:
                             validate(json.loads(sim.to_json()), schema=self.simulation_schema)
+                        sim.water_content = ''
                         simulations[loc_key].append(Simulation(sim))
 
         # Unwind dates and create a forecast for each different date.

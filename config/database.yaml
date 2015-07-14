@@ -1,6 +1,7 @@
 # Databases configuration.
 
 weather_db :
+    type: 'postgresql'
     host : '192.168.1.115'
     db_name : 'crc_ssa'
     user : 'postgres'
@@ -8,3 +9,9 @@ weather_db :
                     # same name as the database user and write it there with ".pwd" extension.
                     # Files inside config/pwd are kept out git repositories.
     port : 5432
+
+rinde_db:
+    type: 'mongodb'
+    host: 'localhost'
+    db_name: 'Rinde'
+    port: 27017

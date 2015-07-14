@@ -14,7 +14,7 @@ from core.lib.io.file import absdirname
 
 
 # Main class definition.
-class Main():
+class Main:
 
     def __init__(self):
         # Get system root path.
@@ -33,7 +33,7 @@ class Main():
 
     def run(self):
         self.bootstrap()
-        #self.fm.start()
+        self.fm.start()
 
 
 # Start running the system.

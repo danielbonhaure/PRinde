@@ -11,5 +11,5 @@ class WeatherSeriesMaker:
         self.system_config = system_config
 
     @abc.abstractmethod
-    def create_series(self, omm_id, forecast):
+    def create_series(self, omm_id, forecast, extract_rainfall):
         pass

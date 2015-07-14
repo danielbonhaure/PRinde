@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import subprocess
-import collection_utils
+import core.lib.utils.collection_utils as collection_utils
 
 __author__ = 'Federico Schmidt'
 
