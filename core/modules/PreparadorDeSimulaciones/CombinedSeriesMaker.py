@@ -10,8 +10,10 @@ import time
 
 class CombinedSeriesMaker(DatabaseWeatherSeries):
 
-    def __init__(self, system_config, max_paralellism):
-        super(CombinedSeriesMaker, self).__init__(system_config, max_paralellism, DSSATWthWriter)
+    def __init__(self, system_config, max_paralellism, weather_writer=None):
+        if not weather_writer:
+            weather_writer = DSSATWthWriter
+        super(CombinedSeriesMaker, self).__init__(system_config, max_paralellism, weather_writer)
 
     def create_from_db(self, omm_id, forecast):
         wth_output = os.path.join(forecast.paths.wth_csv_export, str(omm_id))

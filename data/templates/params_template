@@ -1,0 +1,29 @@
+root             "%s"
+variables        %s
+ref_year         %d
+delta            %d
+scens            %d
+sim_data         $root/campaigns/run/sim_data.json
+postprocess      "OUT2Mongo.py -i Summary.OUT --database Rinde --collection %s --field cycle_results --simulation_data $sim_data"
+num_years        1
+soils            $root/campaigns/run/soils
+weather          $root/campaigns/run/wth
+refdata          $root/data/dssat_files
+var_units        "kg/ha","mm" # Creo que no se necesita
+long_names       "Yield","Precipitation" # Creo que no se necesita
+tappcamp         "camp2json.py -c campaign.nc4 -e exp_template.json -o experiment.json"
+tappinp          "jsons2dssat.py -e experiment.json -s soil.json -x X1234567.EXP -S SOIL.SOL"
+executable       "DSCSM046 A X1234567.EXP"
+tappwth          "cp"
+outtypes         .WTH,.EXP,.SOL,y.OUT,.json
+PATH             $PATH:"$root/tapps/pdssat/":"$root/tapps/common/"
+model            dssat45
+out_file         simulations.sb         # Only for NetCDF output
+num_lats         3                      # Only for NetCDF output
+num_lons         13                      # Only for NetCDF output
+lat_zero         90.5                   # Only for NetCDF output
+lon_zero         -180.5                 # Only for NetCDF output
+irr_flag         false
+num_chunks       1
+plots            false
+agg              false

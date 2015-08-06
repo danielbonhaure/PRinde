@@ -53,7 +53,7 @@ def clean_folder(folder, onlyfiles=False):
     return True
 
 
-def create_or_clean_folder(folder):
+def create_folder(folder):
     """
     Crea o vacía la carpeta folder de ser posible.
     Devuelve True en caso de éxito o False en caso de haber un error.
@@ -71,20 +71,14 @@ def create_or_clean_folder(folder):
             except IOError:
                 print "No se pudo remover el archivo para crear la carpeta:" + folder + "."
                 return False
-
-        else:
-            # Si es una carpeta, borramos su contenido.
-            if not clean_folder(folder):
-                print "No se pudo borrar el contenido de la carpeta: " + folder + "."
-                return False
     else:
         # Si no existe, la intentamos crear.
         try:
-            os.mkdir(folder)
-        except IOError:
+            os.makedirs(folder)
+        except Exception:
             print "No se pudo crear la carpeta: " + folder + "."
             return False
-    return True
+    return os.path.exists(folder) and not os.path.isfile(folder)
 
 
 def fileNameWithoutExtension(file):
@@ -101,7 +95,7 @@ def create_folder_with_permissions(parent, folder_name=None, permissions=0777):
 
     folder = os.path.join(parent, folder_name)
 
-    if not create_or_clean_folder(folder):
+    if not create_folder(folder):
         raise RuntimeError('Failed to create folder "%s".' % folder)
     else:
         # Le cambiamos los permisos a la carpeta.

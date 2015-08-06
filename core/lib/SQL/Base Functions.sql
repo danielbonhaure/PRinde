@@ -17,6 +17,21 @@ RETURNS DOUBLE PRECISION AS $$
            END
 $$ LANGUAGE sql;
 
+CREATE OR REPLACE FUNCTION pr_campañas_completas(omm_id int)
+RETURNS TABLE (pr_year INT) AS $$
+    WITH count_agrario AS (
+        SELECT DISTINCT pr_año_agrario(fecha)::int AS pr_year, COUNT(1) AS count
+            FROM estacion_registro_diario erd
+            WHERE erd.omm_id = $1
+            GROUP BY pr_year
+    )
+    SELECT c2.pr_year FROM count_agrario c2
+    LEFT JOIN count_agrario c1 ON c2.pr_year-1 = c1.pr_year
+    LEFT JOIN count_agrario c3 ON c2.pr_year+1 = c3.pr_year
+    WHERE c2.count >= 365 AND c1.count >= 60 AND c3.count >= 60
+    ORDER BY 1
+$$ LANGUAGE sql;
+
 
 CREATE OR REPLACE FUNCTION pr_crear_serie(omm_id int, fecha_inicio date, fecha_inflexion date, fecha_fin date, year_inflexion int)
 RETURNS TABLE (fecha date, fecha_original date, tmax numeric, tmin numeric, prcp numeric, rad numeric)
@@ -58,7 +73,7 @@ AS $$
             FROM generate_series( fecha_inicio, fecha_fin, '1 day'::interval) fechas_generadas
         )
         SELECT fo.fechas_generadas, datos.fecha_original, datos.tmax, datos.tmin, datos.prcp, datos.rad
-        FROM datos_ordenados datos LEFT JOIN fechas_ordenadas fo ON fo.row_number = datos.row_number;
+        FROM datos_ordenados datos INNER JOIN fechas_ordenadas fo ON fo.row_number = datos.row_number;
     END
 $$ LANGUAGE plpgsql;
 
@@ -110,14 +125,15 @@ AS $$
         EXECUTE command;
 
         -- Escribimos un archivo por cada serie climática combinada.
-        FOR loop_year IN (SELECT DISTINCT EXTRACT(YEAR FROM fecha) AS year FROM estacion_registro_diario erd WHERE erd.omm_id = id_estacion)
+        FOR loop_year IN (SELECT pr_year FROM pr_campañas_completas(id_estacion))
         LOOP
             -- Salteamos el año actual.
-            CONTINUE WHEN loop_year.year >= current_year;
+            CONTINUE WHEN loop_year.pr_year >= current_year;
 
-            path := output_folder || '/' || id_estacion  || ' - ' || loop_year.year|| '.csv';
+            path := output_folder || '/' || id_estacion  || ' - ' || loop_year.pr_year|| '.csv';
 
-            command := 'COPY ( SELECT * FROM pr_crear_serie( ' || id_estacion || ', ''' || campaign_start || '''::date, ''' || curr_date || '''::date, ''' || campaign_end || '''::date, ' || loop_year.year || ' ) ) ' ||
+            command := 'COPY ( SELECT * FROM pr_crear_serie( ' || id_estacion || ', ''' || campaign_start || '''::date, ''' ||
+                                 curr_date || '''::date, ''' || campaign_end || '''::date, ' || loop_year.pr_year || ' ) ) ' ||
                                  'TO ''' || path || ''' HEADER CSV NULL '''' DELIMITER E''\t''';
 
             EXECUTE command;
@@ -149,15 +165,11 @@ AS $$
         EXECUTE command;
 
         -- Escribimos un archivo por cada año agrario completo.
-        FOR loop_year IN (SELECT DISTINCT pr_año_agrario(fecha) AS year, COUNT(1)
-                          FROM estacion_registro_diario erd
-                          WHERE erd.omm_id = id_estacion
-                          GROUP BY year
-                          HAVING COUNT(1) >= 365)
+        FOR loop_year IN (SELECT pr_year FROM pr_campañas_completas(id_estacion))
         LOOP
-            path := output_folder || '/' || id_estacion  || ' - ' || loop_year.year|| '.csv';
+            path := output_folder || '/' || id_estacion  || ' - ' || loop_year.pr_year|| '.csv';
 
-            command := 'COPY ( SELECT * FROM pr_serie_agraria( ' || id_estacion || ', ' || loop_year.year || ' ) ) ' ||
+            command := 'COPY ( SELECT * FROM pr_serie_agraria( ' || id_estacion || ', ' || loop_year.pr_year || ' ) ) ' ||
                                  'TO ''' || path || ''' HEADER CSV NULL '''' DELIMITER E''\t''';
 
             EXECUTE command;
@@ -178,10 +190,10 @@ AS $$
         fecha_fin_serie DATE;
     BEGIN
         fecha_inicio := (año_agrario || '-03-01')::date;
-        fecha_fin := (año_agrario || '-04-30')::date + '365 day'::interval;
+        fecha_fin := (año_agrario || '-04-30')::date + '395 day'::interval;
 
         fecha_inicio_serie := ('1950' || TO_CHAR(fecha_inicio, '-MM-DD'))::date;
-        fecha_fin_serie := fecha_inicio_serie + '600 day'::interval;
+        fecha_fin_serie := fecha_inicio_serie + '630 day'::interval;
 
         RETURN QUERY
         WITH datos_raw AS (

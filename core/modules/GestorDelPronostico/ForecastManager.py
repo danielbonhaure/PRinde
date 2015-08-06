@@ -4,189 +4,209 @@ import logging
 import os
 import shutil
 import threading
-import random
+
 from core.lib.io.file import create_folder_with_permissions
+from core.lib.utils.log import log_format_exception
+from core.modules.PreparadorDeSimulaciones.CampaignWriter import CampaignWriter
 from core.lib.utils.DotDict import DotDict
 from core.modules.PreparadorDeSimulaciones.CombinedSeriesMaker import CombinedSeriesMaker
 from core.modules.PreparadorDeSimulaciones.HistoricalSeriesMaker import HistoricalSeriesMaker
+from core.modules.PreparadorDeSimulaciones.RunpSIMS import RunpSIMS
 
 __author__ = 'Federico Schmidt'
 
-from core.modules.PreparadorDeSimulaciones.WeatherSeriesMaker import WeatherSeriesMaker
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
+
 import time
 import copy
-import yaml
 
 
 class ForecastManager:
 
-    def __init__(self, system_config):
+    def __init__(self, scheduler, system_config):
         self.system_config = system_config
-        self.synth_values = {
-            '2014-11-01': {
-                'min': 1500.,
-                'max': 5300.
-            },
-            '2014-12-01': {
-                'min': 1500.,
-                'max': 5000.
-            },
-            '2015-01-01': {
-                'min': 2300.,
-                'max': 5000.
-            },
-            '2015-02-01': {
-                'min': 4000.,
-                'max': 5300.
-            }
-        }
+        self.psims_runner = RunpSIMS(system_config.own_cpu_lock)
+        self.scheduler = scheduler
 
     def start(self):
+        for forecast in self.system_config.forecasts:
+            job_name = "%s (%s)" % (forecast.name, forecast.forecast_date)
+            if forecast.forecast_date < datetime.now():
+                # Run immediately.
+                job_handle = self.scheduler.add_job(self.run_forecast, name=job_name, args=[forecast])
+                forecast['job_handle'] = job_handle
+            else:
+                run_date = datetime.strptime(forecast.forecast_date, '%Y-%m-%d')
+                # Schedule for running at the specified date at 19:00.
+                run_date = run_date.replace(hour=19)
+
+                # scheduler.add_job(Worker.create_and_run, 'interval', seconds=5, args=[job_0, scheduler])
+                job_handle = self.scheduler.add_job(self.run_forecast, trigger='date', name=job_name, args=[forecast],
+                                                    run_date=run_date)
+                forecast['job_handle'] = job_handle
+
+    def __run__(self):
         # Create scheduler, etc.
         for forecast in self.system_config.forecasts:
-            # TODO: Envolver nuevamente run_forecast en try-catch.
-            # try:
             self.run_forecast(forecast)
-            # except:
-            #     logging.getLogger("main").error("Failed to run forecast '%s'. Reason: %s" %
-            #                                     (forecast.name, log_format_exception()))
 
-    def run_campaigns(self):
-        pass
-        # for wth_station in self.system_config.omm_ids:
-        #     print("Creating experiment data for station with OMM ID = %s." % wth_station)
-        #     # Get soil data.
-        #     # Crear series climáticas
-        #     self.seriesMaker.create_series(wth_station)
-        #     # Escribir archivos de campaña.
-        #     # Llamar pSIMS.
+    def reschedule_forecast(self, forecast):
+        job_name = "Rescheduled: %s (%s)" % (forecast.name, forecast.forecast_date)
+        new_run_date = datetime.now() + datetime.timedelta(days=1)
+        job_handle = self.scheduler.add_job(self.run_forecast, trigger='date', name=job_name, args=[forecast],
+                                            run_date=new_run_date)
+        forecast['job_handle'] = job_handle
 
     def run_forecast(self, forecast):
-        forecast = copy.deepcopy(forecast)
-        logging.getLogger('main').info('\nRunning forecast "%s" (%s).' % (forecast.name, forecast.forecast_date))
-        run_start_time = time.time()
+        psims_exit_code = None
+        db = None
+        forecast_id = None
+        simulations_ids = None
 
-        # Get MongoDB connection.
-        db = self.system_config.database['rinde_db']
+        try:
+            forecast = copy.deepcopy(forecast)
+            logging.getLogger('main').info('\nRunning forecast "%s" (%s).' % (forecast.name, forecast.forecast_date))
+            run_start_time = time.time()
 
-        wth_series_maker = None
+            # Get MongoDB connection.
+            db = self.system_config.database['rinde_db']
 
-        if forecast.configuration.weather_series == 'combined':
-            wth_series_maker = CombinedSeriesMaker(self.system_config, forecast.configuration.max_paralellism)
-        elif forecast.configuration.weather_series == 'historic':
-            wth_series_maker = HistoricalSeriesMaker(self.system_config, forecast.configuration.max_paralellism)
-        else:
-            raise RuntimeError('Weather series type "%s" unsupported.' % forecast.configuration.weather_series)
+            wth_series_maker = None
+            forecast.configuration['simulation_collection'] = 'simulations'
 
-        folder_name = "%s - %s" % (datetime.now().isoformat(), forecast['name'])
-        forecast.folder_name = folder_name
-
-        # Add folder name to rundir and create it.
-        forecast.paths.rundir = os.path.join(forecast.paths.rundir, folder_name)
-        create_folder_with_permissions(forecast.paths.rundir)
-
-        # Create a folder for the weather grid inside that rundir.
-        forecast.paths.weather_grid_path = os.path.join(forecast.paths.rundir, 'wth')
-        create_folder_with_permissions(forecast.paths.weather_grid_path)
-
-        # Create the folder where we'll read the CSV files created by the database.
-        forecast.paths.wth_csv_read = os.path.join(forecast.paths.wth_csv_read, folder_name)
-        forecast.paths.wth_csv_export = os.path.join(forecast.paths.wth_csv_export, folder_name)
-        create_folder_with_permissions(forecast.paths.wth_csv_read)
-
-        active_threads = []
-
-        forecast.weather_stations = {}
-        forecast.rainfall = {}
-
-        for loc_key, location in forecast['locations'].iteritems():
-            if 'weather_station' in location:
-                omm_id = location['weather_station']
+            if forecast.configuration.weather_series == 'combined':
+                wth_series_maker = CombinedSeriesMaker(self.system_config, forecast.configuration.max_paralellism)
+            elif forecast.configuration.weather_series == 'historic':
+                wth_series_maker = HistoricalSeriesMaker(self.system_config, forecast.configuration.max_paralellism)
+                forecast.configuration['simulation_collection'] = 'reference_simulations'
             else:
-                # TODO: Buscar estación más cercana.
-                raise RuntimeError('Weather station lookup not implemented yet.')
+                raise RuntimeError('Weather series type "%s" unsupported.' % forecast.configuration.weather_series)
 
-            # Query DB to get location ID.
-            loc = db.locations.find_one({
-                "name": location.name,
-                "coord_x": location.coord_x,
-                "coord_y": location.coord_y,
-                "weather_station": location.weather_station
-            })
+            folder_name = "%s - %s" % (datetime.now().isoformat(), forecast['name'])
+            forecast.folder_name = folder_name
 
-            # If found, update location ID, otherwise insert it.
-            if loc:
-                location._id = loc['_id']
+            # Add folder name to rundir and create it.
+            forecast.paths.rundir = os.path.abspath(os.path.join(forecast.paths.rundir, folder_name))
+            create_folder_with_permissions(forecast.paths.rundir)
+
+            # Create a folder for the weather grid inside that rundir.
+            forecast.paths.weather_grid_path = os.path.join(forecast.paths.rundir, 'wth')
+            create_folder_with_permissions(forecast.paths.weather_grid_path)
+
+            # Create a folder for the soil grid inside that rundir.
+            forecast.paths.soil_grid_path = os.path.join(forecast.paths.rundir, 'soils')
+            create_folder_with_permissions(forecast.paths.soil_grid_path)
+
+            # Create the folder where we'll read the CSV files created by the database.
+            forecast.paths.wth_csv_read = os.path.join(forecast.paths.wth_csv_read, folder_name)
+            forecast.paths.wth_csv_export = os.path.join(forecast.paths.wth_csv_export, folder_name)
+            create_folder_with_permissions(forecast.paths.wth_csv_read)
+
+            active_threads = []
+
+            forecast.weather_stations = {}
+            forecast.rainfall = {}
+
+            for loc_key, location in forecast['locations'].iteritems():
+                if 'weather_station' in location:
+                    omm_id = location['weather_station']
+                else:
+                    # TODO: Buscar estación más cercana.
+                    raise RuntimeError('Weather station lookup not implemented yet.')
+
+                # Query DB to get location ID.
+                loc = db.locations.find_one({
+                    "name": location.name,
+                    "coord_x": location.coord_x,
+                    "coord_y": location.coord_y,
+                    "weather_station": location.weather_station
+                })
+
+                # If found, update location ID, otherwise insert it.
+                if loc:
+                    location._id = loc['_id']
+                else:
+                    location._id = db.locations.insert_one(location).inserted_id
+
+                # If the NetCDF file was already created, skip this location.
+                if omm_id in forecast.weather_stations:
+                    continue
+
+                t = threading.Thread(target=wth_series_maker.create_series, name='create_series for omm_id = %s' %
+                                                                                 omm_id, args=(omm_id, forecast))
+                active_threads.append(t)
+                t.start()
+
+            # Wait for the weather grid to be populated.
+            for t in active_threads:
+                t.join()
+
+            # If the folder is empty, delete it.
+            if len(os.listdir(forecast.paths.wth_csv_read)) == 0:
+                shutil.rmtree(forecast.paths.wth_csv_read)
+
+            forecast_persistent_view = forecast.persistent_view()
+            forecast_id = None
+            if forecast_persistent_view:
+                forecast_id = db.forecasts.insert_one(forecast_persistent_view).inserted_id
+                forecast['_id'] = forecast_id
+
+            simulations_ids = []
+
+            # Flatten simulations and update location info (with id's and computed weather stations).
+            for loc_key, loc_simulations in forecast.simulations.iteritems():
+                for sim in loc_simulations:
+                    sim.location = forecast.locations[loc_key]
+                    sim.weather_station = forecast.weather_stations[sim.location.weather_station]
+                    if forecast_id:
+                        sim.forecast_id = forecast_id
+                        sim.forecast_date = forecast.forecast_date
+                    sim.crop_type = forecast.crop_type
+                    sim.execution_details = DotDict()
+
+                    # If a simulation has an associated forecast, it should go inside the 'simulations' collection.
+                    if forecast_id:
+                        sim_id = db.simulations.insert_one(sim.persistent_view()).inserted_id
+                    else:
+                        # Otherwise, it means it's a reference (historic) simulation.
+                        sim_id = db.reference_simulations.insert_one(sim.persistent_view()).inserted_id
+                    sim['_id'] = sim_id
+                    simulations_ids.append(sim_id)
+
+            forecast.paths.run_script_path = CampaignWriter.write_campaign(forecast, output_dir=forecast.paths.rundir)
+            forecast.simulation_count = len(simulations_ids)
+
+            # Insertar ID's de simulaciones en el pronóstico.
+            if forecast_id:
+                db.forecasts.update_one(
+                    {"_id": forecast_id},
+                    {"$pushAll": {
+                        "simulations": simulations_ids
+                    }}
+                )
+
+            # Ejecutar simulaciones.
+            psims_exit_code = self.psims_runner.run(forecast, verbose=True)
+
+            logging.getLogger('main').info('Finished running forecast "%s" (time=%s).\n' %
+                                           (forecast.name, repr(time.time() - run_start_time)))
+        except:
+            logging.getLogger("main").error("Failed to run forecast '%s'. Reason: %s" %
+                                            (forecast.name, log_format_exception()))
+        finally:
+            if psims_exit_code != 0:
+                if db:
+                    if simulations_ids and len(simulations_ids) > 0:
+                        db[forecast.configuration['simulation_collection']].delete_many(
+                            {"_id": {"$in": simulations_ids}}
+                        )
+                    if forecast_id:
+                        db.forecasts.delete_one({"_id": forecast_id})
+
+                # Reschedule (and notify?)
+                pass
             else:
-                location._id = db.locations.insert_one(location).inserted_id
-
-            # If the NetCDF file was already created, skip this location.
-            if omm_id in forecast.weather_stations:
-                continue
-
-            t = threading.Thread(target=wth_series_maker.create_series, args=(omm_id, forecast))
-            active_threads.append(t)
-            t.start()
-
-        # Wait for the weather grid to be populated.
-        for t in active_threads:
-            t.join()
-
-        # If the folder is empty, delete it.
-        if len(os.listdir(forecast.paths.wth_csv_read)) == 0:
-            shutil.rmtree(forecast.paths.wth_csv_read)
-
-        # forecast_id = db.forecasts.insert_one(forecast.persistent_view()).inserted_id
-        # forecast['_id'] = forecast_id
-        #
-        # simulations = []
-        #
-        # # Flatten simulations and update location info (with id's and computed weather stations).
-        # for loc_key, loc_simulations in forecast.simulations.iteritems():
-        #     for sim in loc_simulations:
-        #         sim.location = forecast.locations[loc_key]
-        #         sim.forecast_id = forecast_id
-        #         sim.forecast_date = forecast.forecast_date
-        #         sim.crop_type = forecast.crop_type
-        #         sim.execution_details = DotDict()
-        #         simulations.append(sim)
-        #
-        #         # if forecast.forecast_date in self.synth_values:
-        #         #     synth = self.synth_values[forecast.forecast_date]
-        #         #     sim.cyclic_results = {
-        #         #         'HWAM': []
-        #         #     }
-        #         #
-        #         #     for year in forecast.rainfall[str(sim.location.weather_station)]:
-        #         #         if year == '0':
-        #         #             continue
-        #         #
-        #         #         result = {
-        #         #             'value': random.uniform(synth['min'], synth['max']),
-        #         #             'weather_serie': year
-        #         #         }
-        #         #         sim.cyclic_results['HWAM'].append(result)
-        #
-        #         # TODO: habilitar persistencia.
-        #         sim_id = db.simulations.insert_one(sim.persistent_view()).inserted_id
-        #         sim['_id'] = sim_id
-        #
-        # forecast.simulations = simulations
-        #
-        # # Escribir campaña...
-        #
-        # # Ejecutar simulaciones.
-        #
-        # # Insertar ID's de simulaciones en el pronóstico.
-        # # TODO: habilitar persistencia.
-        # db.forecasts.update_one(
-        #     {"_id": forecast_id},
-        #     {"$pushAll": {
-        #         "simulations": [s['_id'] for s in forecast.simulations]
-        #     }}
-        # )
-
-        logging.getLogger('main').info('Finished running forecast "%s" (time=%s).\n' %
-                                       (forecast.name, repr(time.time() - run_start_time)))
+                # Clean the rundir.
+                shutil.rmtree(forecast.paths.rundir)
+                # Check simulation results.
+                pass

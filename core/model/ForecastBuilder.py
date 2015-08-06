@@ -28,6 +28,10 @@ class ForecastBuilder:
             new_config.update(forecast_file['configuration'])
             forecast_file['configuration'] = new_config
 
+        # Ensure the paralellism degree of a forecast respects the global system limit.
+        if forecast_file['configuration']['max_paralellism'] > system_config['max_paralellism']:
+            forecast_file['configuration']['max_paralellism'] = system_config['max_paralellism']
+
     def replace_alias(self, alias_dict):
         if alias_dict:
             self.__replace_keys__(self.forecast_file, alias_dict)
@@ -35,6 +39,9 @@ class ForecastBuilder:
     def build(self):
         # type(self.forecast_file) = DotDict
         forecast = self.forecast_file
+
+        if not isinstance(forecast.forecast_date, str):
+            raise RuntimeError('Forecast date must be a string.')
 
         forecast_list = []
 

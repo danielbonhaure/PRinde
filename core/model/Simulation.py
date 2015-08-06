@@ -13,14 +13,18 @@ class Simulation(DotDict):
         self.init_from_yaml(simulation_yaml)
 
     def init_from_yaml(self, simulation_yaml):
+        if 'name' in simulation_yaml:
+            self.name = simulation_yaml['name']
+
         # Check initial condition variables (soil ic data).
         for soil_ic_var, var_content in simulation_yaml.initial_conditions.iteritems():
             if isinstance(var_content, list):
                 # Check that the amount of values matches the amount of soil horizons.
                 if len(var_content) != simulation_yaml.soil.n_horizons:
                     raise RuntimeError("The amount of soil horizons found for variable \"%s\" (%d) doesn't match the "
-                                       "declared amount of horizons in the soil.n_horizons property (%d)." %
-                                       (soil_ic_var, len(var_content), simulation_yaml.soil.n_horizons))
+                                       "declared amount of horizons in the soil.n_horizons property (%d) at Simulation "
+                                       "\"%s\"." %
+                                       (soil_ic_var, len(var_content), simulation_yaml.soil.n_horizons, self.name))
 
                 # Check that every value inside the array is a valid type.
                 valid_types = map(lambda x: isinstance(x, (int, long, float)), var_content)
@@ -45,7 +49,12 @@ class Simulation(DotDict):
     def persistent_view(self):
         view = copy.deepcopy(self.__dict__)
         view['location_id'] = view['location']['_id']
+        view['location_name'] = view['location']['name']
+        view['soil_id'] = view['soil']['id']
         del view['location']
+
+        if 'weather_station' in view:
+            del view['weather_station']
 
         if 'mgmt_name' in view['management']:
             view['management_name'] = view['management']['mgmt_name']

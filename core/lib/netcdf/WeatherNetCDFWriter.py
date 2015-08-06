@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 import os
+from core.modules.PreparadorDeSimulaciones.DatabaseWeatherSeries import DatabaseWeatherSeries
 
 __author__ = 'Federico Schmidt'
 
@@ -10,12 +11,10 @@ import time
 from datetime import datetime
 import numpy as np
 import copy
-import re
 
 
 class WeatherNetCDFWriter:
     reference_date = "1950-01-01"
-    name_re = re.compile('^[0-9]+ - ([0-9]+)\.csv')
 
     def __init__(self):
         pass
@@ -32,17 +31,20 @@ class WeatherNetCDFWriter:
         :return: A dictionary if extract_rainfall is True, None otherwise.
         """
         proc_start_time = time.time()
-        output_file = NetCDF(output_file_path, 'w')
 
-        # Sort the list of files by name.
-        csv_files = sorted(dir_list)
+        necdf_file_name = "%s_%s.psims.nc" % (station_data['grid_row'], station_data['grid_column'])
+        nectdf_file_path = os.path.join(output_file_path, necdf_file_name)
+
+        output_file = NetCDF(nectdf_file_path, 'w')
+
+        csv_files = dir_list
 
         # If there's only one scenario, we call it '0' internally. Though the NetCDF output file won't have the
         # 'scen' dimension defined. This is needed when we extract rainfall data.
         scen_names = [0]
         if len(csv_files) > 1:
             # If there's more than one file, we extract the scenario name (the year of the climate series).
-            scen_names = [WeatherNetCDFWriter.__scen_name__(i) for i in csv_files]
+            scen_names = [DatabaseWeatherSeries.__scen_name__(i) for i in csv_files]
 
         expected_variables = {'fecha', 'rad', 'tmax', 'tmin', 'prcp'}
         var_units = {
@@ -220,10 +222,7 @@ class WeatherNetCDFWriter:
         logging.getLogger("main").debug("NetCDF file created: '%s'. Time: %s." %
                                         (output_file_path, (time.time() - proc_start_time)))
 
-        result = os.path.exists(output_file_path)
+        result = os.path.exists(nectdf_file_path)
         return result, rainfall_data
 
-    @staticmethod
-    def __scen_name__(csv_filename):
-        str_year = WeatherNetCDFWriter.name_re.match(os.path.basename(csv_filename)).groups()[0]
-        return int(str_year)
+

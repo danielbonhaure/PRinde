@@ -1,6 +1,8 @@
-grid_resolution: 30 # Lat/lon grid resolution in arcminutes.
+grid_resolution: 30 # Lat/lon grid resolution in arcminutes...
+max_paralellism: 4
 
 paths:
+    psims: '/media/ramdisk/psims-schmidtfederico'
     # System general configuration file.
     temp_folder : ".tmp" # Should be a relative path, it'll be placed inside the root path.
 

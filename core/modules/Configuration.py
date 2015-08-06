@@ -57,6 +57,8 @@ class Configuration(FileSystemEventHandler):
         fh.setFormatter(logging.Formatter(self.log_format))
         self.logger.addHandler(fh)
 
+        self.own_cpu_lock = threading.Lock()
+
         self.watch_thread = None
         self.observer = None
 
@@ -67,7 +69,7 @@ class Configuration(FileSystemEventHandler):
         system_config = DotDict(yaml.safe_load(open(self.system_config_path)))
 
         if 'max_paralellism' not in system_config:
-            system_config.max_paralellism = 4
+            system_config.max_paralellism = 1
         else:
             if (not isinstance(system_config.max_paralellism, int)) or (system_config.max_paralellism < 1):
                 raise RuntimeError('Invalid max_paralellism value (%s).' % system_config.max_paralellism)
@@ -96,6 +98,7 @@ class Configuration(FileSystemEventHandler):
 
         # Load forecasts.
         self.__dict__['forecasts'] = []
+        station_ids = set()
 
         alias_dict = None
         if self.alias_keys_path:
@@ -115,15 +118,21 @@ class Configuration(FileSystemEventHandler):
                 # Build and append forecasts.
                 for f in builder.build():
                     self.__dict__['forecasts'].append(f)
+                    station_ids.update(set([loc['weather_station'] for loc in f.locations.values()]))
             except Exception:
                 logging.getLogger('main').error("Skipping forecast file '%s'. Reason: %s." %
                                                 (file_name, log_format_exception()))
+
+        self.__dict__['weather_stations_ids'] = station_ids
 
         # If the watch thread isn't already loaded, create and start it.
         if not self.watch_thread:
             # Create a Thread with "watch" function and start it.
             self.watch_thread = threading.Thread(target=self.watch)
-            # self.watch_thread.start()
+            #self.watch_thread.start()
+
+        #return self.watch_thread
+        return None
 
     def get(self, key, default=None):
         """

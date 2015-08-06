@@ -1,8 +1,8 @@
 import numpy as np
 from datetime import datetime
 import os
-import stat
 import csv
+from core.modules.PreparadorDeSimulaciones.DatabaseWeatherSeries import DatabaseWeatherSeries
 
 __author__ = 'Federico Schmidt'
 
@@ -17,15 +17,21 @@ class DSSATWthWriter:
 
     @staticmethod
     def join_csv_files(dir_list, output_file_path, extract_rainfall=True, forecast_date=None, station_data=None):
-        # Sort the list of files by name.
-        csv_files = sorted(dir_list)
+        csv_files = dir_list
 
-        ns = len(csv_files)
         lat = float(station_data['lat_dec'])
         lon = float(station_data['lon_dec'])
 
         filler, filler2 = -99, 10  # used for ELEV, REFHT, WNDHT, respectively
         var_names = ['SRAD', 'TMAX', 'TMIN', 'RAIN']
+
+        rainfall_data = None
+        if extract_rainfall:
+            rainfall_data = dict()
+            # Calculate forecast date as time difference (in days).
+            if forecast_date:
+                forecast_date = datetime.strptime(forecast_date, '%Y-%m-%d')
+                forecast_date = int(forecast_date.strftime("%y%j"))
 
         for i, csv_file in enumerate(csv_files):
             csv_reader = csv.reader(open(csv_file), delimiter='\t')
@@ -69,7 +75,7 @@ class DSSATWthWriter:
             nt = len(csv_content['fecha'])
             tmin, tmax = np.array(csv_content['tmin']), np.array(csv_content['tmax'])
             months = np.array(months)
-            tav = 0.5 * (tmin.sum() + tmax.sum()) / nt  # function of scen
+            tav = float(0.5 * (tmin.sum() + tmax.sum()) / nt)  # function of scen
 
             # compute amp
             month_averages = []
@@ -103,9 +109,37 @@ class DSSATWthWriter:
                 f.write(head)
                 np.savetxt(f, data, fmt=['%.5d'] + ['%6.1f'] * len(var_names) + ['     !%2.d'], delimiter='')
 
-            # change permissions
-            f = os.open(filename, os.O_RDONLY)
-            os.fchmod(f, stat.S_IREAD | stat.S_IWRITE | stat.S_IRGRP | stat.S_IWGRP | stat.S_IROTH | stat.S_IWOTH)
-            os.close(f)
+            # # change permissions
+            # f = os.open(filename, os.O_RDONLY)
+            # os.fchmod(f, stat.S_IREAD | stat.S_IWRITE | stat.S_IRGRP | stat.S_IWGRP | stat.S_IROTH | stat.S_IWOTH)
+            # os.close(f)
 
-        return True, None
+            # Check if we need to extract rainfall data.
+            if extract_rainfall:
+                scen_name = str(DatabaseWeatherSeries.__scen_name__(csv_file))
+                rain_variable = np.array(csv_content['prcp'])
+                # Convert time variable to Numpy array, otherwise we can't use array indexes.
+                time_var_content = np.array(csv_content['fecha'])
+
+                if '0' not in rainfall_data:
+                    # Extract rainfall data until the date of forecast.
+                    pre_forecast_time = time_var_content[time_var_content <= forecast_date]
+                    rain = rain_variable[0:len(pre_forecast_time)]
+                    rainy_days = np.where(rain > 0)[0]
+
+                    rainfall_data['0'] = {
+                        'dates': pre_forecast_time[rainy_days].tolist(),
+                        'values': rain[rainy_days].tolist()
+                    }
+
+                post_forecast_time = time_var_content[time_var_content > forecast_date]
+                post_forecast_start = len(time_var_content) - len(post_forecast_time)
+                rain = rain_variable[post_forecast_start:]
+
+                rainy_days = np.where(rain > 0)[0]
+                rainfall_data[scen_name] = {
+                    'dates': post_forecast_time[rainy_days].tolist(),
+                    'values': rain[rainy_days].tolist()
+                }
+
+        return True, rainfall_data

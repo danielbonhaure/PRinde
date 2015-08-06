@@ -65,6 +65,11 @@ class Forecast(DotDict):
             return f_date.replace(day=31, month=12)
         return f_date.replace(day=31, month=12, year=f_date.year + 1)
 
+    @property
+    def campaign_name(self):
+        start_year = self.start_date.year
+        return "%d/%d" % (start_year, start_year+1)
+
     def __getitem__(self, key):
         val = self.__dict__[key]
         # If we're accessing the forecast date and it should be the actual date, we replace it.
@@ -84,6 +89,10 @@ class Forecast(DotDict):
         Subsets the object to keep only fields that are relevant for persistency.
         :return:
         """
+        # Forecasts that run historic simulations should not be persistent.
+        if self.configuration.weather_series == 'historic':
+            return None
+
         view = copy.deepcopy(self.__dict__)
         del view['paths']
         del view['configuration']['paths']
@@ -91,6 +100,11 @@ class Forecast(DotDict):
         del view['weather_stations']
         view['result_variables'] = view['results']
         del view['results']
+
+        if 'job_handle' in view:
+            del view['job_handle']
+
+        view['campaign_name'] = self.campaign_name
         view['locations'] = []
         view['simulations'] = []
         view['forecast_date'] = self.forecast_date
@@ -101,6 +115,9 @@ class Forecast(DotDict):
             'data': self.rainfall
         }
         view['run_date'] = datetime.now().strftime("%Y-%m-%d %H-%M-%S.%f")[:-3]
+
+        if 'simulation_count' in view:
+            del view['simulation_count']
 
         for loc_key, loc in self.locations.iteritems():
             view['locations'].append(loc['_id'])
