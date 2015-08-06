@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-import json
 import logging
 import os
 import shutil
 import threading
+from datetime import datetime
 
 from core.lib.io.file import create_folder_with_permissions
 from core.lib.utils.log import log_format_exception
@@ -15,7 +15,6 @@ from core.modules.PreparadorDeSimulaciones.RunpSIMS import RunpSIMS
 
 __author__ = 'Federico Schmidt'
 
-from datetime import datetime, timedelta
 
 import time
 import copy

@@ -1,0 +1,103 @@
+{
+    "soils": [
+        {
+            "soil_id": "SU87374002",
+            "sl_loc_3": "PARANA",
+            "soil_long": "-60.300",
+            "smke": "IB001",
+            "sldp": "-99",
+            "classification": "PELUDERT ARGILICO CROMICO",
+            "sscol": "BN",
+            "salb": "0.13",
+            "sldr": "0.01",
+            "slro": "85",
+            "slpf": "1.00",
+            "soil_name": "TRIANGULO",
+            "slnf": "2.50",
+            "sl_loc_1": "ARGENTINA",
+            "slu1": "33.2",
+            "smpx": "IB001",
+            "soilLayer": [
+                {
+                    "slrgf": "1.00",
+                    "sldul": "0.373",
+                    "slbdm": "1.13",
+                    "slsil": "54.9",
+                    "slll": "0.224",
+                    "slcly": "42.3",
+                    "slni": "-99",
+                    "slcf": "00.0",
+                    "sloc": "2.40",
+                    "slmh": "Ap",
+                    "slphw": "6.7",
+                    "slsat": "0.498",
+                    "sllb": "012"
+                },
+                {
+                    "slrgf": "0.17",
+                    "sldul": "0.387",
+                    "slbdm": "1.18",
+                    "slsil": "50.8",
+                    "slll": "0.244",
+                    "slcly": "46.7",
+                    "slni": "-99",
+                    "slcf": "00.0",
+                    "sloc": "1.80",
+                    "slmh": "21",
+                    "slphw": "6.7",
+                    "slsat": "0.479",
+                    "sllb": "040"
+                },
+                {
+                    "slrgf": "0.06",
+                    "sldul": "0.402",
+                    "slbdm": "1.23",
+                    "slsil": "46.2",
+                    "slll": "0.264",
+                    "slcly": "51.3",
+                    "slni": "-99",
+                    "slcf": "00.0",
+                    "sloc": "1.30",
+                    "slmh": "22",
+                    "slphw": "7.3",
+                    "slsat": "0.462",
+                    "sllb": "080"
+                },
+                {
+                    "slrgf": "0.09",
+                    "sldul": "0.385",
+                    "slbdm": "1.32",
+                    "slsil": "48.9",
+                    "slll": "0.251",
+                    "slcly": "48.3",
+                    "slni": "-99",
+                    "slcf": "00.0",
+                    "sloc": "0.40",
+                    "slmh": "B3",
+                    "slphw": "8.3",
+                    "slsat": "0.428",
+                    "sllb": "117"
+                },
+                {
+                    "slrgf": "0.06",
+                    "sldul": "0.384",
+                    "slbdm": "1.34",
+                    "slsil": "49.7",
+                    "slll": "0.250",
+                    "slcly": "48.2",
+                    "slni": "-99",
+                    "slcf": "00.0",
+                    "sloc": "0.25",
+                    "slmh": "C",
+                    "slphw": "8.3",
+                    "slsat": "0.420",
+                    "sllb": "160"
+                }
+            ],
+            "smhb": "IB001",
+            "soil_lat": "-31.400",
+            "sltx": "SERIE",
+            "sl_source": "SCS"
+        }
+    ]
+}

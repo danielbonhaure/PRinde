@@ -21,3 +21,4 @@ sudo pip install functools32
 sudo pip install jsonschema
 sudo pip install pymongo
 sudo pip install apscheduler
+sudo pip install Flask

@@ -14,4 +14,4 @@ paths:
     # Allows database to be at a remote server.
     wth_csv_export: "/home/usmfpts/Descargas/series_combinadas"
     # Mount point where database weather files can be read.
-    wth_csv_read: "/home/federico/Desarrollo/PycharmProjects/Pronóstico de Rinde/.tmp/wth"
+    wth_csv_read: "/home/federico/Desarrollo/PycharmProjects/PRinde/.tmp/wth"

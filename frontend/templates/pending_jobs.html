@@ -1,0 +1,6 @@
+{% extends "layout.html" %}
+{% block body %}
+    {% for job in jobs %}
+        <li>{{ job.name }}</li>
+    {% endfor %}
+{% endblock %}

@@ -28,8 +28,13 @@ def boot_system(config):
 
     root_path = config.root_path
 
+    paths = config.get('paths')
+
+    if not paths:
+        raise RuntimeError('Missing paths dictionary in system configuration file.')
+
     # Get the configured temp folder or retrieve a default one.
-    tmp_folder = config.get('temp_folder', './.tmp')
+    tmp_folder = paths.get('temp_folder', './.tmp')
 
     # Check that the path is a string.
     if not isinstance(tmp_folder, str):
@@ -39,18 +44,16 @@ def boot_system(config):
     # Make it relative to the root path.
     tmp_folder = os.path.join(root_path, tmp_folder)
 
-    rundir = config.get('rundir', 'rundir')
+    rundir = paths.get('rundir', 'rundir')
 
     if not os.path.isabs(rundir):
         rundir = os.path.join(root_path, rundir)
 
     create_folder_with_permissions(rundir)
+    print(rundir)
     config.rundir = rundir
 
-    #if not core.lib.io.file.create_or_clean_folder(tmp_folder):
-    #    print("[ERROR] Couldn't create temp folder in: '%s'" % tmp_folder)
-    #    exit(1)
-
+    create_folder_with_permissions(tmp_folder)
     config.temp_folder = tmp_folder
 
     boot_hook = os.path.join(root_path, 'hooks', 'boot.sh')

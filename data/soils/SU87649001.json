@@ -1,0 +1,73 @@
+{
+    "soils": [
+        {
+            "soil_id": "SU87649001",
+            "sl_loc_3": "MFIERRO",
+            "soil_long": "-59.8",
+            "smke": "IB001",
+            "sldp": "-99",
+            "classification": "Argiudol tipico",
+            "sscol": "-99",
+            "salb": "0.13",
+            "sldr": "0.40",
+            "slro": "82",
+            "slpf": "1.00",
+            "soil_name": "",
+            "slnf": "2.00",
+            "sl_loc_1": "ARGENTINA",
+            "slu1": "10.4",
+            "smpx": "IB001",
+            "soilLayer": [
+                {
+                    "slrgf": "1.00",
+                    "sldul": "0.316",
+                    "slbdm": "1.07",
+                    "slsil": "34.7",
+                    "slll": "0.171",
+                    "slcly": "30.3",
+                    "slni": "-99",
+                    "slcf": "00.0",
+                    "sloc": "3.50",
+                    "slmh": "AP",
+                    "slphw": "6.3",
+                    "slsat": "0.519",
+                    "sllb": "021"
+                },
+                {
+                    "slrgf": "1.00",
+                    "sldul": "0.322",
+                    "slbdm": "1.21",
+                    "slsil": "28.6",
+                    "slll": "0.189",
+                    "slcly": "34.4",
+                    "slni": "-99",
+                    "slcf": "00.0",
+                    "sloc": "2.00",
+                    "slmh": "B1",
+                    "slphw": "6.6",
+                    "slsat": "0.469",
+                    "sllb": "030"
+                },
+                {
+                    "slrgf": "0.14",
+                    "sldul": "0.372",
+                    "slbdm": "1.38",
+                    "slsil": "26.5",
+                    "slll": "0.250",
+                    "slcly": "48.1",
+                    "slni": "-99",
+                    "slcf": "00.0",
+                    "sloc": "0.30",
+                    "slmh": "B2T",
+                    "slphw": "7.3",
+                    "slsat": "0.407",
+                    "sllb": "060"
+                }
+            ],
+            "smhb": "IB001",
+            "soil_lat": "-37.2",
+            "sltx": "-99",
+            "sl_source": "Azul"
+        }
+    ]
+}
