@@ -11,9 +11,8 @@ def handle_exception(exc_type, exc_value, exc_traceback):
     if issubclass(exc_type, KeyboardInterrupt):
         sys.__excepthook__(exc_type, exc_value, exc_traceback)
         return
-    logging.getLogger("main").error("Uncaught exception. %s" %
-                                    log_format_exception(traceback.format_exception(exc_type, exc_value, exc_traceback))
-                                    )
+    logging.getLogger().error("Uncaught exception. %s" %
+                              log_format_exception(traceback.format_exception(exc_type, exc_value, exc_traceback)))
 
 
 sys.excepthook = handle_exception

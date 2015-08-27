@@ -1,0 +1,30 @@
+<div id="content" class="container-fluid" role="main">
+    <!--<div class="page-header">-->
+    <!--<h2>Jobs</h2>-->
+    <!--</div>-->
+    <!--<div class="row" ng-controller="jobQueueController">-->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <!--<span class="glyphicon glyphicon-tasks"></span>-->
+                    <i class="fa fa-cogs"></i>
+                    <strong>System Configuration</strong>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-striped">
+                        <tr>
+                            <th class="text-center">Key</th>
+                            <th>Value</th>
+                        </tr>
+
+                        <tr ng-repeat="item in config | toArray | orderBy: '$key'">
+                            <td class="col-sm-3 text-center">{{ item.$key }}</td>
+                            <td class="col-sm-9">{{ item }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

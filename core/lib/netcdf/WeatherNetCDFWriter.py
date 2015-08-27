@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-import logging
 import os
+import logging
 from core.modules.PreparadorDeSimulaciones.DatabaseWeatherSeries import DatabaseWeatherSeries
 
 __author__ = 'Federico Schmidt'
@@ -218,11 +218,9 @@ class WeatherNetCDFWriter:
         time_var[:] = time_var_content
 
         output_file.close()
-        logging.getLogger("main").debug('Write NetCDF file: %f.' % (time.time() - start_time))
-        logging.getLogger("main").debug("NetCDF file created: '%s'. Time: %s." %
-                                        (output_file_path, (time.time() - proc_start_time)))
+        logging.getLogger().debug('Write NetCDF file: %f.' % (time.time() - start_time))
+        logging.getLogger().debug("NetCDF file created: '%s'. Time: %s." %
+                                  (output_file_path, (time.time() - proc_start_time)))
 
         result = os.path.exists(nectdf_file_path)
         return result, rainfall_data
-
-

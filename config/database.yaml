@@ -10,6 +10,16 @@ weather_db :
                     # Files inside config/pwd are kept out git repositories.
     port : 5432
 
+#weather_db :
+#    type: 'postgresql'
+#    host : 'localhost'
+#    db_name : 'crc_ssa'
+#    user : 'postgres'
+#    # password : '' # Uncomment to specify here, otherwise, create a text file inside the config/pwd directory with the
+#                    # same name as the database user and write it there with ".pwd" extension.
+#                    # Files inside config/pwd are kept out git repositories.
+#    port : 10521
+
 rinde_db:
     type: 'mongodb'
     host: 'localhost'

@@ -9,7 +9,6 @@ import time
 
 
 class CombinedSeriesMaker(DatabaseWeatherSeries):
-
     def __init__(self, system_config, max_paralellism, weather_writer=None):
         if not weather_writer:
             weather_writer = DSSATWthWriter
@@ -29,5 +28,5 @@ class CombinedSeriesMaker(DatabaseWeatherSeries):
         cursor.execute("SELECT pr_create_campaigns(%s, %s, %s, %s, %s)",
                        (omm_id, start_date, forecast_date, end_date,
                         wth_output))
-        logging.getLogger("main").debug("Station: %s. Date: %s. Time: %s." %
-                                        (omm_id, forecast_date, (time.time() - start_time)))
+        logging.getLogger().debug("Station: %s. Date: %s. Time: %s." %
+                                  (omm_id, forecast_date, (time.time() - start_time)))

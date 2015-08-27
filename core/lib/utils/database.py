@@ -4,6 +4,7 @@ import pymongo
 
 __author__ = 'Federico Schmidt'
 
+
 class DatabaseUtils:
 
     def __init__(self):

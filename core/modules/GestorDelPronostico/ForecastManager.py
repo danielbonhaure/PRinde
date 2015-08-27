@@ -1,23 +1,20 @@
 # -*- coding: utf-8 -*-
-import logging
 import os
 import shutil
 import threading
-from datetime import datetime
-
+from datetime import datetime, timedelta
+import logging
 from core.lib.io.file import create_folder_with_permissions
 from core.lib.utils.log import log_format_exception
 from core.modules.PreparadorDeSimulaciones.CampaignWriter import CampaignWriter
-from core.lib.utils.DotDict import DotDict
+from core.lib.utils.extended_collections import DotDict
 from core.modules.PreparadorDeSimulaciones.CombinedSeriesMaker import CombinedSeriesMaker
 from core.modules.PreparadorDeSimulaciones.HistoricalSeriesMaker import HistoricalSeriesMaker
 from core.modules.PreparadorDeSimulaciones.RunpSIMS import RunpSIMS
-
-__author__ = 'Federico Schmidt'
-
-
 import time
 import copy
+
+__author__ = 'Federico Schmidt'
 
 
 class ForecastManager:
@@ -30,19 +27,23 @@ class ForecastManager:
     def start(self):
         for forecast in self.system_config.forecasts:
             job_name = "%s (%s)" % (forecast.name, forecast.forecast_date)
-            if forecast.forecast_date < datetime.now():
+            run_date = datetime.strptime(forecast.forecast_date, '%Y-%m-%d')
+
+            # TODO: remove this.
+            run_date = datetime.now() + timedelta(days=1)
+
+            if run_date < datetime.now():
                 # Run immediately.
                 job_handle = self.scheduler.add_job(self.run_forecast, name=job_name, args=[forecast])
-                forecast['job_handle'] = job_handle
+                forecast['job_id'] = job_handle.id
             else:
-                run_date = datetime.strptime(forecast.forecast_date, '%Y-%m-%d')
                 # Schedule for running at the specified date at 19:00.
                 run_date = run_date.replace(hour=19)
 
                 # scheduler.add_job(Worker.create_and_run, 'interval', seconds=5, args=[job_0, scheduler])
                 job_handle = self.scheduler.add_job(self.run_forecast, trigger='date', name=job_name, args=[forecast],
                                                     run_date=run_date)
-                forecast['job_handle'] = job_handle
+                forecast['job_id'] = job_handle.id
 
     def __run__(self):
         # Create scheduler, etc.
@@ -54,7 +55,7 @@ class ForecastManager:
         new_run_date = datetime.now() + datetime.timedelta(days=1)
         job_handle = self.scheduler.add_job(self.run_forecast, trigger='date', name=job_name, args=[forecast],
                                             run_date=new_run_date)
-        forecast['job_handle'] = job_handle
+        forecast['job_id'] = job_handle.id
 
     def run_forecast(self, forecast):
         psims_exit_code = None
@@ -64,7 +65,7 @@ class ForecastManager:
 
         try:
             forecast = copy.deepcopy(forecast)
-            logging.getLogger('main').info('\nRunning forecast "%s" (%s).' % (forecast.name, forecast.forecast_date))
+            logging.getLogger().info('\nRunning forecast "%s" (%s).' % (forecast.name, forecast.forecast_date))
             run_start_time = time.time()
 
             # Get MongoDB connection.
@@ -116,8 +117,8 @@ class ForecastManager:
                 # Query DB to get location ID.
                 loc = db.locations.find_one({
                     "name": location.name,
-                    "coord_x": location.coord_x,
-                    "coord_y": location.coord_y,
+                    # "coord_x": location.coord_x,
+                    # "coord_y": location.coord_y,
                     "weather_station": location.weather_station
                 })
 
@@ -187,11 +188,11 @@ class ForecastManager:
             # Ejecutar simulaciones.
             psims_exit_code = self.psims_runner.run(forecast, verbose=True)
 
-            logging.getLogger('main').info('Finished running forecast "%s" (time=%s).\n' %
-                                           (forecast.name, repr(time.time() - run_start_time)))
+            logging.getLogger().info('Finished running forecast "%s" (time=%s).\n' %
+                                     (forecast.name, repr(time.time() - run_start_time)))
         except:
-            logging.getLogger("main").error("Failed to run forecast '%s'. Reason: %s" %
-                                            (forecast.name, log_format_exception()))
+            logging.getLogger().error("Failed to run forecast '%s'. Reason: %s" %
+                                      (forecast.name, log_format_exception()))
         finally:
             if psims_exit_code != 0:
                 if db:

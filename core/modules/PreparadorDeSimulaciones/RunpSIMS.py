@@ -1,6 +1,4 @@
-import logging
 import re
-import threading
 from datetime import datetime
 import shlex
 import subprocess
@@ -8,6 +6,7 @@ import select
 import sys
 import os
 import signal
+import logging
 
 __author__ = 'Federico Schmidt'
 
@@ -28,13 +27,13 @@ class RunpSIMS:
 
     def run(self, forecast, verbose=True):
         with self.concurrency_lock:
-            logging.getLogger('main').info('Running pSIMS for forecast "%s" (%s).' %
+            logging.getLogger().info('Running pSIMS for forecast "%s" (%s).' %
                                            (forecast.name, forecast.forecast_date))
             start_time = datetime.now()
             ret_val = self.__run__(forecast.paths.run_script_path, forecast.name, forecast.simulation_count, verbose)
             end_time = datetime.now()
 
-            logging.getLogger('main').info('Finished running pSIMS for forecast "%s" (%s). Retval = %d. Time: %s.' %
+            logging.getLogger().info('Finished running pSIMS for forecast "%s" (%s). Retval = %d. Time: %s.' %
                                            (forecast.name, forecast.forecast_date, ret_val, end_time - start_time))
 
             return ret_val
@@ -97,7 +96,7 @@ class RunpSIMS:
                                     continue
 
                                 if total != sim_count or failed:
-                                    logging.getLogger('main').error("pSIMS total tasks (%s) doesn't match total "
+                                    logging.getLogger().error("pSIMS total tasks (%s) doesn't match total "
                                                                     "simulation count (%s). A task has failed." %
                                                                     (total, sim_count))
                                     err_file_name = "ERR [%s] - %s.txt" % (datetime.now().isoformat(), forecast_name)

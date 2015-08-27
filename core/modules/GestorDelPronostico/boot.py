@@ -2,7 +2,6 @@ __author__ = 'Federico Schmidt'
 
 import os
 import subprocess
-
 from core.lib.io.file import create_folder_with_permissions
 from core.lib.xplatform.cmd import print_same_line
 
@@ -50,7 +49,6 @@ def boot_system(config):
         rundir = os.path.join(root_path, rundir)
 
     create_folder_with_permissions(rundir)
-    print(rundir)
     config.rundir = rundir
 
     create_folder_with_permissions(tmp_folder)

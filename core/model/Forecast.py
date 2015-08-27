@@ -1,8 +1,7 @@
 import copy
-import _strptime
 from datetime import datetime
 from core.lib.io.file import fileNameWithoutExtension
-from core.lib.utils.DotDict import DotDict
+from core.lib.utils.extended_collections import DotDict
 from core.lib.netcdf.WeatherNetCDFWriter import WeatherNetCDFWriter
 
 __author__ = 'Federico Schmidt'
@@ -101,8 +100,8 @@ class Forecast(DotDict):
         view['result_variables'] = view['results']
         del view['results']
 
-        if 'job_handle' in view:
-            del view['job_handle']
+        if 'job_id' in view:
+            del view['job_id']
 
         view['campaign_name'] = self.campaign_name
         view['locations'] = []
@@ -123,3 +122,26 @@ class Forecast(DotDict):
             view['locations'].append(loc['_id'])
 
         return view
+
+    def public_view(self):
+        view = DotDict(copy.deepcopy(self.__dict__))
+        # del view['paths']
+        # del view['configuration']['paths']
+        # del view['folder_name']
+        # del view['weather_stations']
+        del view['results']
+        del view['simulations']
+
+        view['campaign_name'] = self.campaign_name
+        # view['locations'] = []
+        # view['simulations'] = []
+        view['forecast_date'] = self.forecast_date
+
+        if 'rainfall' in view:
+            del view['rainfall']
+
+        view['locations'] = []
+        for loc_key, loc in self.locations.iteritems():
+            view['locations'].append(loc['name'])
+
+        return view.to_json()

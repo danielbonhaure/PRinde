@@ -1,0 +1,93 @@
+<div id="content" class="container-fluid" role="main">
+    <!--<div class="page-header">-->
+    <!--<h2>Jobs</h2>-->
+    <!--</div>-->
+    <!--<div class="row" ng-controller="jobQueueController">-->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default jobs-panel">
+                <div class="panel-heading">
+                    <!--<span class="glyphicon glyphicon-tasks"></span>-->
+                    <i class="fa fa-tasks"></i>
+                    <strong>Active Jobs</strong>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-striped">
+                        <tr>
+                            <th>Job Name</th>
+                            <th class="text-center">Start Time</th>
+                            <th class="text-center">Progress</th>
+                        </tr>
+
+                        <tr ng-repeat="item in active_jobs | toArray | orderBy: 'start_time'">
+                            <td class="col-sm-7"><a href="/job/{{ item.job.id }}">{{ item.job.name }}</a></td>
+                            <td class="col-sm-2 text-center">{{ item.start_time | date }}</td>
+                            <td class="col-sm-3 text-center">
+                                <!--{{ item.start_value }}-->
+                                <div class="progress">
+                                    <div class="progress-bar active" role="progressbar"
+                                         aria-valuenow="{{ item.current_value }}"
+                                         aria-valuemin="{{ item.start_value }}" aria-valuemax="{{ item.end_value }}"
+                                         style="width: {{ item.perc_completed }}%">
+                                        {{ item.current_value - item.start_value }}/{{ item.end_value }}
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--<div class="row" ng-controller="jobQueueController">-->
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="panel panel-default jobs-panel">
+                <div class="panel-heading">
+                    <i class="fa fa-list-ul"></i>
+                    <strong>Job Queue</strong>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-striped">
+                        <tr>
+                            <th>Job Name</th>
+                            <th class="text-center">Next Run</th>
+                            <th class="text-center">Trigger</th>
+                        </tr>
+
+                        <tr ng-repeat="item in job_queue | toArray | orderBy: 'next_run'">
+                            <td class="col-sm-6"><a href="/job/{{ item.job.id }}">{{ item.job.name }}</a></td>
+                            <td class="col-sm-3 text-center">{{ item.next_run }}</td>
+                            <td class="col-sm-3 text-center">{{ item.job.trigger }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col-lg-6">
+            <div class="panel panel-default jobs-panel">
+                <div class="panel-heading">
+                    <i class="fa fa-calendar-check-o"></i>
+                    <strong>Finished Jobs</strong>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-striped">
+                        <tr>
+                            <th>Job Name</th>
+                            <th class="text-center">End Time</th>
+                            <th class="text-center">Retval</th>
+                        </tr>
+
+                        <tr ng-repeat="item in finished_tasks | toArray | orderBy:'-event.end_time'">
+                            <td class="col-sm-7"><a href="/job/{{ item.job.id }}">{{ item.job.name }}</a></td>
+                            <td class="col-sm-4 text-center">{{ item.event.end_time }}</td>
+                            <td class="col-sm-1 text-center">{{ item.event.retval }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -32,6 +32,22 @@ RETURNS TABLE (pr_year INT) AS $$
     ORDER BY 1
 $$ LANGUAGE sql;
 
+CREATE OR REPLACE FUNCTION pr_campaigns_acum_rainfall(omm_id INT)
+RETURNS TABLE(fecha DATE, campaign INT, sum NUMERIC)
+AS $$
+    SELECT erd.fecha, pr_año_agrario(erd.fecha)::int, SUM(erd.prcp) OVER (PARTITION BY pr_año_agrario(erd.fecha) ORDER BY erd.fecha)
+    FROM estacion_registro_diario_completo erd
+    WHERE erd.omm_id IN ($1) AND pr_año_agrario(erd.fecha) IN (SELECT pr_campañas_completas($1))
+$$ LANGUAGE SQL;
+
+CREATE OR REPLACE FUNCTION pr_campaigns_rainfall(omm_id INT)
+RETURNS TABLE(fecha DATE, campaign INT, sum NUMERIC)
+AS $$
+    SELECT erd.fecha, pr_año_agrario(erd.fecha)::int, erd.prcp
+    FROM estacion_registro_diario_completo erd
+    WHERE erd.omm_id IN ($1) AND pr_año_agrario(erd.fecha) IN (SELECT pr_campañas_completas($1))
+$$ LANGUAGE SQL;
+
 
 CREATE OR REPLACE FUNCTION pr_crear_serie(omm_id int, fecha_inicio date, fecha_inflexion date, fecha_fin date, year_inflexion int)
 RETURNS TABLE (fecha date, fecha_original date, tmax numeric, tmin numeric, prcp numeric, rad numeric)
@@ -128,7 +144,7 @@ AS $$
         FOR loop_year IN (SELECT pr_year FROM pr_campañas_completas(id_estacion))
         LOOP
             -- Salteamos el año actual.
-            CONTINUE WHEN loop_year.pr_year >= current_year;
+            -- CONTINUE WHEN loop_year.pr_year >= current_year;
 
             path := output_folder || '/' || id_estacion  || ' - ' || loop_year.pr_year|| '.csv';
 

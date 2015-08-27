@@ -1,10 +1,8 @@
+import copy
 from core.lib.io.file import listdir_fullpath
-from core.lib.utils.DotDict import DotDict
+from core.lib.utils.extended_collections import DotDict
 from core.lib.utils.log import log_format_exception
 from core.model.ForecastBuilder import ForecastBuilder
-
-__author__ = 'Federico Schmidt'
-
 import yaml
 import os.path
 from core.lib.utils.database import DatabaseUtils
@@ -14,10 +12,13 @@ import threading
 import logging
 import logging.config
 
+__author__ = 'Federico Schmidt'
+
 
 class Configuration(FileSystemEventHandler):
 
     def __init__(self, root_path):
+        self.weather_stations_ids = None
         self.root_path = root_path
         self.config_path = os.path.join(root_path, 'config')
 
@@ -34,7 +35,7 @@ class Configuration(FileSystemEventHandler):
             raise RuntimeError('Database configuration file not found ("%s").' % self.databases_config_path)
 
         if not os.path.isfile(self.alias_keys_path):
-            logging.getLogger('main').warning("Alias keys file not found, forecasts keys must match pSIMS keys.")
+            logging.getLogger().warning("Alias keys file not found, forecasts keys must match pSIMS keys.")
             self.alias_keys_path = None
 
         # Find and validate JSON schema for Simulation objects.
@@ -42,23 +43,32 @@ class Configuration(FileSystemEventHandler):
         if not os.path.isfile(self.simulation_schema_path) or not os.path.exists(self.simulation_schema_path):
             raise RuntimeError('Simulation schema JSON file not found ("%s").' % self.simulation_schema_path)
 
-        self.log_format = '%(asctime)s - %(module)s:%(lineno)s - %(levelname)s - %(message)s'
+        self.log_format = '%(asctime)s - %(name)s - %(module)s:%(lineno)s - %(levelname)s - %(message)s'
 
-        self.logger = logging.getLogger('main')
+        self.logger = logging.getLogger()
         self.logger.setLevel(logging.DEBUG)
+
+        # werk = logging.getLogger('werkzeug')
+        # werk.setLevel(logging.DEBUG)
+
+        logging.getLogger('apscheduler.executors.default').setLevel(logging.WARN)
+        logging.getLogger('apscheduler.executors').setLevel(logging.WARN)
+        logging.getLogger('apscheduler.scheduler').setLevel(logging.WARN)
 
         ch = logging.StreamHandler()
         ch.setLevel(logging.DEBUG)
         ch.setFormatter(logging.Formatter(self.log_format))
         self.logger.addHandler(ch)
+        # werk.addHandler(ch)
 
         fh = logging.FileHandler('run.log', mode='w')
         fh.setLevel(logging.INFO)
         fh.setFormatter(logging.Formatter(self.log_format))
         self.logger.addHandler(fh)
+        # werk.addHandler(fh)
 
         self.own_cpu_lock = threading.Lock()
-
+        self.max_paralellism = 1
         self.watch_thread = None
         self.observer = None
 
@@ -68,9 +78,7 @@ class Configuration(FileSystemEventHandler):
         # "config.get('temp_folder')", though this is also supported.
         system_config = DotDict(yaml.safe_load(open(self.system_config_path)))
 
-        if 'max_paralellism' not in system_config:
-            system_config.max_paralellism = 1
-        else:
+        if 'max_paralellism' in system_config:
             if (not isinstance(system_config.max_paralellism, int)) or (system_config.max_paralellism < 1):
                 raise RuntimeError('Invalid max_paralellism value (%s).' % system_config.max_paralellism)
 
@@ -120,7 +128,7 @@ class Configuration(FileSystemEventHandler):
                     self.__dict__['forecasts'].append(f)
                     station_ids.update(set([loc['weather_station'] for loc in f.locations.values()]))
             except Exception:
-                logging.getLogger('main').error("Skipping forecast file '%s'. Reason: %s." %
+                logging.getLogger().error("Skipping forecast file '%s'. Reason: %s." %
                                                 (file_name, log_format_exception()))
 
         self.__dict__['weather_stations_ids'] = station_ids
@@ -171,3 +179,13 @@ class Configuration(FileSystemEventHandler):
             # Reload config.
             self.load()
         pass
+
+    def public_view(self):
+        view = DotDict(copy.copy(self.__dict__))
+        del view['database']
+        del view['forecasts']
+        del view['logger']
+        del view['own_cpu_lock']
+        del view['watch_thread']
+        del view['observer']
+        return view.to_json()

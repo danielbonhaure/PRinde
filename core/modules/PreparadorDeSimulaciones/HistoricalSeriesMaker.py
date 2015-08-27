@@ -1,15 +1,13 @@
-import logging
 import os
 import time
+import logging
 from core.lib.dssat.DSSATWthWriter import DSSATWthWriter
+from core.modules.PreparadorDeSimulaciones.DatabaseWeatherSeries import DatabaseWeatherSeries
 
 __author__ = 'Federico Schmidt'
 
-from core.modules.PreparadorDeSimulaciones.DatabaseWeatherSeries import DatabaseWeatherSeries
-
 
 class HistoricalSeriesMaker(DatabaseWeatherSeries):
-
     def __init__(self, system_config, max_paralellism, weather_writer=None):
         if not weather_writer:
             weather_writer = DSSATWthWriter
@@ -28,6 +26,6 @@ class HistoricalSeriesMaker(DatabaseWeatherSeries):
 
         start_time = time.time()
         cursor.execute("SELECT pr_historic_series(%s, %s)", (omm_id, wth_output))
-        logging.getLogger("main").debug("Export historic series for station: %s. Forecast Date: %s. Time: %s." %
-                                        (omm_id, forecast_date, (time.time() - start_time)))
+        logging.getLogger().debug("Export historic series for station: %s. Forecast Date: %s. Time: %s." %
+                                  (omm_id, forecast_date, (time.time() - start_time)))
         pass

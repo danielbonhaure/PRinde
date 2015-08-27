@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="prinde">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap-superhero.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/theme/bootswatch.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/callouts.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/font-awesome.min.css">
+    <title>PRinde</title>
+    <base href="/">
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/"><strong>PRinde</strong></a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/">Home</a></li>
+                <li><a href="/forecasts">Forecasts</a></li>
+                <li><a href="/config">Configuration</a></li>
+            </ul>
+            <div class="pull-right" title="Socket connection status">
+                <span id="link-status" class="glyphicon glyphicon-certificate"
+                      ng-class="($root.backendConnected) ? 'connected' : 'text-warning'"></span>
+            </div>
+        </div>
+        <!--/.nav-collapse -->
+    </div>
+</nav>
+
+<div class="main-view" ng-controller="logsController" ng-class="{ 'full-screen': $root.log_hidden }">
+    <div ng-view></div>
+</div>
+<footer class="footer" ng-controller="logsController" ng-class="{ 'fullscreen': log_fullscreen, 'minimized': $root.log_hidden  }">
+    <!--<div class="container-fluid">-->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span class="glyphicon glyphicon-console"></span>
+            <strong>System Logs</strong>
+
+            <div class="btn-group pull-right" data-toggle="buttons">
+                <label class="btn active btn-debug" ng-click="min_log_level=0">
+                    <input type="radio" name="options" id="option0" autocomplete="off" checked> All
+                </label>
+                <label class="btn btn-info" ng-click="min_log_level=1">
+                    <input type="radio" name="options" id="option1" autocomplete="off"> Info
+                </label>
+                <label class="btn btn-warning" ng-click="min_log_level=2">
+                    <input type="radio" name="options" id="option2" autocomplete="off"> Warn
+                </label>
+                <label class="btn btn-danger" ng-click="min_log_level=3">
+                    <input type="radio" name="options" id="option3" autocomplete="off"> Error
+                </label>
+            </div>
+            <label id="resize-log" class="btn pull-right" ng-click="log_fullscreen = !log_fullscreen">
+                <span class="glyphicon"
+                      ng-class="(log_fullscreen)? 'glyphicon-resize-small' : 'glyphicon-resize-full'"></span>
+            </label>
+            <label id="hide-log" class="btn pull-right" ng-click="$root.log_hidden = !$root.log_hidden">
+                <i class="fa fa-eye-slash" ng-class="($root.log_hidden)? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
+            </label>
+        </div>
+        <div id="log" class="panel-body" ng-class="{ 'minimized': $root.log_hidden }" scroll-glue>
+            <div class="bs-callout bs-callout-default" ng-repeat="log in filtered_logs = (logs | filter:logFilter)"
+                 ng-class="{info: 'text-info bs-callout-info', debug: 'bs-callout bs-callout-default',
+                            warn: 'text-warning bs-callout-warning', error: 'text-danger bs-callout-danger'}[log.level]">
+                <pre>{{log.message}}</pre>
+            </div>
+            <span class="no-events"
+                  ng-show="logs.length && !filtered_logs.length">No logs match the selected filter</span>
+        </div>
+    </div>
+    <!--</div>-->
+</footer>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/static/js/lib/bootstrap.min.js"></script>
+
+<script src="/static/js/lib/angular.min.js"></script>
+<script src="/static/js/lib/angular-route.min.js"></script>
+<script src="/static/js/lib/ng-sockets.min.js"></script>
+<script src="/static/js/lib/ng-scrollglue.js"></script>
+<script src="/static/js/app.js"></script>
+<script src="/static/js/controllers/logsController.js"></script>
+<script src="/static/js/controllers/systemConfigController.js"></script>
+<script src="/static/js/controllers/jobController.js"></script>
+<script src="/static/js/controllers/jobQueueController.js"></script>
+<script src="/static/js/controllers/forecastsController.js"></script>
+
+</body>
+</html>

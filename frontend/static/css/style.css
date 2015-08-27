@@ -1,0 +1,154 @@
+body {
+  padding: 40px;
+}
+body .progress-bar {
+  background-color: #346F29;
+}
+body #link-status {
+  font-size: 16px;
+  padding: 12px 0;
+}
+body #link-status.connected {
+  color: #6fd96f;
+}
+body .panel table {
+  background-color: #414D5A;
+  margin-bottom: 0;
+}
+body .panel table .progress {
+  margin-bottom: 0;
+}
+body .panel .panel {
+  /* Nested panels should have a border and shouldn't have padding. */
+  margin-bottom: 0;
+}
+body .panel .panel .panel-body {
+  border: 2px solid #485563;
+  border-top: none;
+  margin: 0;
+}
+body .panel-heading > i,
+body .panel-heading span {
+  margin-right: 10px;
+}
+div.main-view {
+  position: absolute;
+  left: 0;
+  right: 0;
+  max-height: 67%;
+  overflow: auto;
+  transition: max-height 0.3s ease-in-out;
+}
+div.main-view.full-screen {
+  max-height: 92%;
+}
+div.main-view #content {
+  padding: 0 30px 15px;
+}
+div.main-view div.row:first-child {
+  margin-top: 21px;
+}
+.jobs-panel .panel-body {
+  height: 300px;
+  overflow: auto;
+}
+::-webkit-scrollbar {
+  width: 20px;
+  height: 20px;
+  background-color: rgba(255, 255, 255, 0);
+  border: 2px solid transparent;
+}
+::-webkit-scrollbar-track {
+  border-radius: 2px;
+  border: 2px solid transparent;
+  background-color: #485563;
+}
+::-webkit-scrollbar-thumb {
+  border-left: 6px solid #485563;
+  border-right: 6px solid #485563;
+  width: 20px;
+  height: 20px;
+  background-color: #606f7d;
+}
+::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:active {
+  background-color: #647482;
+  border-left: 3px solid #485563;
+  border-right: 3px solid #485563;
+}
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0;
+  height: 30%;
+  transition: height 0.3s ease-in-out;
+}
+footer .btn-debug {
+  background-color: #777777;
+}
+footer div.panel {
+  position: relative;
+  height: 100%;
+}
+footer #hide-log {
+  width: 36px;
+  font-size: 18px;
+  margin-top: -4px;
+}
+footer #log {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  top: 42px;
+  overflow: auto;
+  padding: 5px 10px;
+  text-align: center;
+}
+footer #log > div {
+  text-align: left;
+}
+footer #log > div pre {
+  font-size: inherit;
+  padding: 0;
+  margin: 0;
+  color: inherit;
+  border: none;
+  background-color: transparent;
+  font-family: inherit;
+}
+footer #log > div.text-danger {
+  font-weight: 400;
+}
+footer #log.minimized {
+  height: 0;
+}
+footer.fullscreen {
+  height: 94%;
+}
+footer.minimized {
+  height: 41px;
+}
+footer .panel-heading .btn-group {
+  margin-top: -1px;
+}
+footer .panel-heading .btn-group > .btn:last-child {
+  border-bottom-right-radius: 2px;
+  border-top-right-radius: 2px;
+}
+footer .panel-heading .btn-group > .btn:first-child {
+  border-bottom-left-radius: 2px;
+  border-top-left-radius: 2px;
+}
+footer .panel-heading .btn {
+  font-size: 13px;
+  padding: 1px 0;
+  width: 50px;
+  opacity: 1;
+}
+footer .panel-heading .btn.active {
+  font-weight: 700;
+  opacity: 0.9;
+}

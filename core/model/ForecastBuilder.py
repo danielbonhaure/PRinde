@@ -2,7 +2,7 @@
 import copy
 import json
 import os
-from core.lib.utils.DotDict import DotDict
+from core.lib.utils.extended_collections import DotDict
 from core.model.Forecast import Forecast
 from core.model.Simulation import Simulation
 from jsonschema import validate
@@ -39,9 +39,6 @@ class ForecastBuilder:
     def build(self):
         # type(self.forecast_file) = DotDict
         forecast = self.forecast_file
-
-        if not isinstance(forecast.forecast_date, str):
-            raise RuntimeError('Forecast date must be a string.')
 
         forecast_list = []
 
@@ -140,6 +137,9 @@ class ForecastBuilder:
         if ('forecast_date' in forecast) and isinstance(forecast['forecast_date'], list):
             for date in forecast['forecast_date']:
                 sims = copy.deepcopy(simulations)
+
+                if not isinstance(date, str):
+                    raise RuntimeError('Forecast date must be a string, found: %s.' % date)
 
                 f = Forecast(forecast)
                 f.forecast_date = date

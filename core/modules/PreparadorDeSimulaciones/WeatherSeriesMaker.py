@@ -3,7 +3,6 @@ import abc
 __author__ = 'Federico Schmidt'
 
 
-
 class WeatherSeriesMaker:
     __metaclass__ = abc.ABCMeta
 

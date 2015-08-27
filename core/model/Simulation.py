@@ -1,6 +1,6 @@
 import copy
 import yaml
-from core.lib.utils.DotDict import DotDict
+from core.lib.utils.extended_collections import DotDict
 
 __author__ = 'Federico Schmidt'
 

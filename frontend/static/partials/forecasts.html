@@ -1,0 +1,41 @@
+<div id="content" class="container-fluid" role="main">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <!--<span class="glyphicon glyphicon-tasks"></span>-->
+                    <i class="fa fa-line-chart"></i>
+                    <strong>Forecasts</strong>
+                </div>
+                <div class="panel-body">
+                    <div class="panel panel-default" ng-repeat="file_forecasts in forecasts | toArray">
+                        <div class="panel-heading">
+                            <i class="fa fa-file-code-o"></i>
+                            <strong>File:</strong> {{ file_forecasts.$key }}
+                        </div>
+                        <div class="panel-body">
+                            <table class="table table-striped">
+                                <tr>
+                                    <th class="text-center">Forecast Name</th>
+                                    <th class="text-center">Campaign</th>
+                                    <th class="text-center">Forecast Date</th>
+                                    <th class="text-center">Crop</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+
+                                <tr ng-repeat="forecast in file_forecasts | orderBy: 'forecast_date'">
+                                    <td class="col-sm-5"><a href="/job/{{ forecast.job_id }}">{{ forecast.name }}</a></td>
+                                    <td class="col-sm-2 text-center">{{ forecast.campaign_name }}</td>
+                                    <td class="col-sm-3 text-center">{{ forecast.forecast_date }}</td>
+                                    <td class="col-sm-1 text-center">{{ forecast.crop_type }}</td>
+                                    <td class="col-sm-1"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

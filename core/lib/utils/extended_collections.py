@@ -1,10 +1,29 @@
+# -*- coding: utf-8 -*-
 from collections import MutableMapping
 import json
 
 __author__ = 'Federico Schmidt'
 
 
+def group_by(collection, function):
+    """
+    Agrupa una lista en un mapa donde la clave es la función pasada como parámetro.
+    """
+    d = dict()
+    for f in collection:
+        key = function(f)
+
+        if key in d:
+            d[key] += [f]
+        else:
+            d[key] = [f]
+    return d
+
+
 class DotDict(MutableMapping):
+    """
+    A dictionary that allows accessing every key with dot notation, like a class property.
+    """
 
     def __init__(self, original_dict=None):
         if not original_dict:
@@ -36,4 +55,4 @@ class DotDict(MutableMapping):
         return self.__dict__.__repr__()
 
     def to_json(self):
-        return json.dumps(self, default=lambda o: o.__dict__)
+        return json.dumps(self, default=lambda o: o.__dict__ if hasattr(o, '__dict__') else str(o))
