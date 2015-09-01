@@ -141,7 +141,7 @@ class JobsLock(PrioritizedRWLock):
 
     # Create aliases for the reader and writer context managers.
     def parallel_job(self):
-        return self.reader
+        return self.reader()
 
-    def blocking_job(self):
-        return self.writer
+    def blocking_job(self, priority=0):
+        return self.writer(priority)

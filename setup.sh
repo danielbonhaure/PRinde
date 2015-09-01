@@ -17,6 +17,7 @@ sudo apt-get install -y build-essential python-dev python-pip
 sudo apt-get install -y python-psycopg2
 
 sudo pip install watchdog
+sudo pip install requests
 sudo pip install functools32
 sudo pip install jsonschema
 sudo pip install pymongo

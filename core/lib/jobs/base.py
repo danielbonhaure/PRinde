@@ -19,12 +19,13 @@ class BaseJob(object):
             progress_monitor = NullMonitor()
         self.id = (id if id else uuid4().hex)
         self.name = name
+        self.parent_job = None
         self.progress_monitor = progress_monitor
         self.progress_monitor.job = self
 
     def start(self, *args, **kwargs):
         try:
-            self.progress_monitor.task_started()
+            self.progress_monitor.job_started()
             ret_val = self.run(*args, **kwargs)
             if not ret_val:
                 return 0
@@ -34,7 +35,7 @@ class BaseJob(object):
                                       (self.name, log_format_exception()))
             return 1
         finally:
-            self.progress_monitor.task_ended()
+            self.progress_monitor.job_ended()
 
     @abstractmethod
     def run(self, *args, **kwargs):

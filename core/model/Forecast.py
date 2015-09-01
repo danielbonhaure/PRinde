@@ -123,7 +123,7 @@ class Forecast(DotDict):
 
         return view
 
-    def public_view(self):
+    def public_view(self, forecasts_paths):
         view = DotDict(copy.deepcopy(self.__dict__))
         # del view['paths']
         # del view['configuration']['paths']
@@ -143,5 +143,7 @@ class Forecast(DotDict):
         view['locations'] = []
         for loc_key, loc in self.locations.iteritems():
             view['locations'].append(loc['name'])
+
+        view['file_name'] = view['file_name'].replace(forecasts_paths, '.')
 
         return view.to_json()

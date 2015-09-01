@@ -5,7 +5,7 @@ __author__ = 'Federico Schmidt'
 import unittest
 
 
-class TestGeoLib(unittest.TestCase):
+class TestDotDict(unittest.TestCase):
 
     def test_initFromDict(self):
         d = { "prop1": 1, "prop2": 2}

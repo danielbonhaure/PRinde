@@ -16,12 +16,23 @@
                         <tr>
                             <th>Job Name</th>
                             <th class="text-center">Start Time</th>
+                            <th class="text-center">Status</th>
                             <th class="text-center">Progress</th>
                         </tr>
 
                         <tr ng-repeat="item in active_jobs | toArray | orderBy: 'start_time'">
-                            <td class="col-sm-7"><a href="/job/{{ item.job.id }}">{{ item.job.name }}</a></td>
+                            <td class="col-sm-7">
+                                <a href="/job/{{ item.job.id }}">{{ item.job.name }}</a>
+                                <span class="badge" ng-show="Utils.keys(item.sub_jobs).length > 0">
+                                    <ng-pluralize count="Utils.keys(item.sub_jobs).length"
+                                                  when="{'1': '1 sub-job', 'other': '{{ Utils.keys(item.sub_jobs).length }} sub-jobs'}">
+                                    </ng-pluralize>
+                                </span>
+                            </td>
                             <td class="col-sm-2 text-center">{{ item.start_time | date }}</td>
+                            <td class="col-sm-1 text-center">
+                                <span class="label {{ item.status.css }}"><strong>{{ item.status.text }}</strong></span>
+                            </td>
                             <td class="col-sm-3 text-center">
                                 <!--{{ item.start_value }}-->
                                 <div class="progress">

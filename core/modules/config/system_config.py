@@ -1,21 +1,23 @@
 import copy
-from core.lib.io.file import listdir_fullpath
-from core.lib.utils.extended_collections import DotDict
-from core.lib.utils.log import log_format_exception
-from core.model.ForecastBuilder import ForecastBuilder
 import yaml
 import os.path
-from core.lib.utils.database import DatabaseUtils
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
 import threading
 import logging
 import logging.config
 
+from watchdog.observers import Observer
+from watchdog.events import FileSystemEventHandler
+
+from core.lib.io.file import listdir_fullpath
+from core.lib.utils.extended_collections import DotDict
+from core.lib.utils.database import DatabaseUtils
+from lib.utils.sync import JobsLock
+from modules.config.loaders import ForecastLoader
+
 __author__ = 'Federico Schmidt'
 
 
-class Configuration(FileSystemEventHandler):
+class SystemConfiguration(FileSystemEventHandler):
 
     def __init__(self, root_path):
         self.weather_stations_ids = None
@@ -67,8 +69,13 @@ class Configuration(FileSystemEventHandler):
         self.logger.addHandler(fh)
         # werk.addHandler(fh)
 
-        self.own_cpu_lock = threading.Lock()
+        self.system_config_yaml = {}
+        self.forecasts = {}
+        self.forecasts_files = []
+        self.weather_stations_ids = set()
+        self.alias_dict = None
         self.max_paralellism = 1
+        self.jobs_lock = None
         self.watch_thread = None
         self.observer = None
 
@@ -76,13 +83,17 @@ class Configuration(FileSystemEventHandler):
         # Load system configuration from the YAML file and update this object's dictionary to add the keys found
         # in the config file, allowing us to access them using the dot notation (eg. "config.temp_folder" instead of
         # "config.get('temp_folder')", though this is also supported.
-        system_config = DotDict(yaml.safe_load(open(self.system_config_path)))
+        system_config_yaml = DotDict(yaml.safe_load(open(self.system_config_path)))
 
-        if 'max_paralellism' in system_config:
-            if (not isinstance(system_config.max_paralellism, int)) or (system_config.max_paralellism < 1):
-                raise RuntimeError('Invalid max_paralellism value (%s).' % system_config.max_paralellism)
+        if 'max_paralellism' in system_config_yaml:
+            if (not isinstance(system_config_yaml.max_paralellism, int)) or (system_config_yaml.max_paralellism < 1):
+                raise RuntimeError('Invalid max_paralellism value (%s).' % system_config_yaml.max_paralellism)
 
-        self.__dict__.update(system_config)
+        # Create the system's job syncing lock.
+        self.jobs_lock = JobsLock(max_parallel_tasks=self.max_paralellism)
+
+        self.system_config_yaml = system_config_yaml
+        self.__dict__.update(system_config_yaml)
 
         # Load databases configurations and open connections.
         db_config = yaml.safe_load(open(self.databases_config_path))
@@ -105,33 +116,42 @@ class Configuration(FileSystemEventHandler):
             self.__dict__['database'][db_conn] = connection
 
         # Load forecasts.
-        self.__dict__['forecasts'] = []
-        station_ids = set()
+        self.forecasts = {}
 
-        alias_dict = None
+        self.alias_dict = None
         if self.alias_keys_path:
-            alias_dict = yaml.load(open(self.alias_keys_path, 'r'))
+            self.alias_dict = yaml.load(open(self.alias_keys_path, 'r'))
 
-        for file_name in listdir_fullpath(self.forecasts_path,
-                                          onlyFiles=True,
-                                          recursive=True,
-                                          filter=(lambda x: x.endswith('yaml'))):
-            try:
-                forecast = DotDict(yaml.safe_load(open(file_name)))
-                forecast['file_name'] = file_name
+        self.forecasts_files = listdir_fullpath(self.forecasts_path, onlyFiles=True, recursive=True,
+                                                filter=(lambda x: x.endswith('yaml')))
 
-                builder = ForecastBuilder(forecast, self.simulation_schema_path)
-                builder.replace_alias(alias_dict)
-                builder.inherit_config(system_config)
-                # Build and append forecasts.
-                for f in builder.build():
-                    self.__dict__['forecasts'].append(f)
-                    station_ids.update(set([loc['weather_station'] for loc in f.locations.values()]))
-            except Exception:
-                logging.getLogger().error("Skipping forecast file '%s'. Reason: %s." %
-                                                (file_name, log_format_exception()))
+        loader = ForecastLoader(jobs_lock=self.jobs_lock, system_config=self, run_blocking=False)
+        _threads = []
 
-        self.__dict__['weather_stations_ids'] = station_ids
+        for file_name in self.forecasts_files:
+            t = threading.Thread(target=loader.start, args=(file_name,))
+            _threads.append(t)
+            t.start()
+
+        for t in _threads:
+            # Wait till all forecasts were loaded.
+            t.join()
+        #     try:
+        #         forecast = DotDict(yaml.safe_load(open(file_name)))
+        #         forecast['file_name'] = file_name
+        #
+        #         builder = ForecastBuilder(forecast, self.simulation_schema_path)
+        #         builder.replace_alias(alias_dict)
+        #         builder.inherit_config(system_config)
+        #         # Build and append forecasts.
+        #         for f in builder.build():
+        #             self.__dict__['forecasts'].append(f)
+        #             station_ids.update(set([loc['weather_station'] for loc in f.locations.values()]))
+        #     except Exception:
+        #         logging.getLogger().error("Skipping forecast file '%s'. Reason: %s." %
+        #                                         (file_name, log_format_exception()))
+        #
+        # self.__dict__['weather_stations_ids'] = station_ids
 
         # If the watch thread isn't already loaded, create and start it.
         if not self.watch_thread:
@@ -185,7 +205,10 @@ class Configuration(FileSystemEventHandler):
         del view['database']
         del view['forecasts']
         del view['logger']
-        del view['own_cpu_lock']
         del view['watch_thread']
         del view['observer']
+        del view['alias_dict']
+        del view['jobs_lock']
+        del view['system_config_yaml']
+        del view['forecasts_files']
         return view.to_json()

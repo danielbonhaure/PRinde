@@ -1,8 +1,20 @@
 body {
   padding: 40px;
 
-  .progress-bar {
-    background-color: #346F29;
+  .small-left-margin {
+    margin-left: 5px;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .progress {
+    margin-bottom: 0;
+    .progress-bar {
+      background-color: #346F29;
+    }
   }
 
   #link-status {
@@ -14,14 +26,48 @@ body {
     }
   }
 
+  .page-header {
+    margin-top: 15px;
+    font-size: 20px;
+    font-weight: 400;
+  }
+
   .panel {
+    a:not(.btn) {
+      color: #FFF;
+      text-decoration: underline;
+    }
+
     table {
       background-color: #414D5A;
       margin-bottom: 0;
 
-      & .progress {
-        margin-bottom: 0;
+    }
+
+    & ul {
+      margin-bottom: 0;
+
+      table {
+        margin: 10px auto -10px;
+        width: 98%;
       }
+
+      .list-group-item {
+        padding: 6px 0;
+
+        .run-times {
+          max-height: 150px;
+          overflow: auto;
+        }
+      }
+    }
+
+    .label-default, .badge {
+      background-color: #777;
+    }
+
+    .badge {
+      margin-left: 15px;
     }
 
     .panel {
@@ -35,11 +81,11 @@ body {
       }
     }
   }
+}
 
-  .panel-heading {
-    & > i, span {
-      margin-right: 10px;
-    }
+.panel-heading {
+  & > i, span {
+    margin-right: 10px;
   }
 }
 

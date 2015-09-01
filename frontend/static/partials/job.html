@@ -1,1 +1,101 @@
-TBD: detail view for <span>{{jobId}}</span>
+<div id="content" class="container-fluid" role="main">
+    <!--<div class="page-header">-->
+    <!--<h2>Jobs</h2>-->
+    <!--</div>-->
+    <!--<div class="row" ng-controller="jobQueueController">-->
+    <div class="row">
+        <div class="page-header">
+            {{ task_details.job.name }}
+        </div>
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <!--<span class="glyphicon glyphicon-tasks"></span>-->
+                    <i class="fa fa-info"></i>
+                    <strong>Job Details</strong>
+                </div>
+                <div class="panel-body">
+                    <ul ng-show="Utils.keys(task_details).length > 0" class="list-group">
+                        <li class="list-group-item"><strong>ID:</strong> {{ task_details.job.id }}</li>
+                        <li class="list-group-item" ng-show="task_details.start_time">
+                            <strong>Start Time:</strong> {{ task_details.start_time | date }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Status:</strong>
+                            <span class="label small-left-margin {{ task_details.status.css }}">
+                                <strong>{{ task_details.status.text }}</strong>
+                            </span>
+                        </li>
+                        <li class="list-group-item clearfix" ng-hide="task_details.event.end_time || !task_details.start_time">
+                            <strong class="pull-left">Progress:</strong>
+
+                            <div class="col-sm-3">
+                                <div class="progress">
+                                    <div class="progress-bar active" role="progressbar"
+                                         aria-valuenow="{{ task_details.current_value }}"
+                                         aria-valuemin="{{ task_details.start_value }}"
+                                         aria-valuemax="{{ task_details.end_value }}"
+                                         style="width: {{ task_details.perc_completed }}%">
+                                        {{ task_details.current_value - task_details.start_value }}/{{ task_details.end_value }}
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item clearfix" ng-show="task_details.event.end_time">
+                            <strong>End Time:</strong> {{ task_details.event.end_time | date }}
+                        </li>
+                        <li class="list-group-item" ng-show="task_details.event.retval !== undefined">
+                            <strong>Returned value:</strong> {{ task_details.event.retval }}
+                        </li>
+                        <li class="list-group-item" ng-show="task_details.next_run">
+                            <strong>Next Run Time:</strong> {{ task_details.next_run | date }}
+                        </li>
+                        <li class="list-group-item clearfix" ng-show="task_details.run_times">
+                            <strong class="pull-left">Run Times:</strong>
+                            <div class="pull-left small-left-margin run-times">
+                                <ul ng-repeat="run_time in task_details.run_times">
+                                    <li>{{ run_time }}</li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="list-group-item" ng-show="Utils.keys(sub_jobs).length > 0">
+                            <strong>Sub jobs:</strong>
+                            <table class="table table-striped" ng-show="Utils.keys(sub_jobs).length > 0">
+                                <tr>
+                                    <th>Job Name</th>
+                                    <th class="text-center">Start Time</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Progress</th>
+                                </tr>
+                                <tr ng-repeat="sub_item in sub_jobs | toArray | orderBy: '-start_time'">
+                                    <td class="col-sm-6">{{ sub_item.job.name }}</td>
+                                    <td class="col-sm-2 text-center">{{ sub_item.start_time | date }}</td>
+                                    <td class="col-sm-1 text-center">
+                                        <span class="label {{ sub_item.status.css }}">
+                                            <strong>{{ sub_item.status.text }}</strong>
+                                        </span>
+                                    </td>
+                                    <td class="col-sm-3 text-center">
+                                        <div class="progress" ng-hide="sub_item.end_time">
+                                            <div class="progress-bar active" role="progressbar"
+                                                 aria-valuenow="{{ sub_item.current_value }}"
+                                                 aria-valuemin="{{ sub_item.start_value }}"
+                                                 aria-valuemax="{{ sub_item.end_value }}"
+                                                 style="width: {{ sub_item.perc_completed }}%">
+                                                {{ sub_item.current_value - sub_item.start_value }}/{{ sub_item.end_value }}
+                                            </div>
+                                        </div>
+                                        <span ng-show="sub_item.end_time">Finished @ {{ sub_item.end_time }}</span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </li>
+                    </ul>
+                    <div class="row text-center" ng-show="Utils.keys(task_details).length == 0">
+                        <span class="text-center">Job not found.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

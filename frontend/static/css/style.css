@@ -1,7 +1,17 @@
 body {
   padding: 40px;
 }
-body .progress-bar {
+body .small-left-margin {
+  margin-left: 5px;
+}
+body ul {
+  list-style: none;
+  padding: 0;
+}
+body .progress {
+  margin-bottom: 0;
+}
+body .progress .progress-bar {
   background-color: #346F29;
 }
 body #link-status {
@@ -11,12 +21,39 @@ body #link-status {
 body #link-status.connected {
   color: #6fd96f;
 }
+body .page-header {
+  margin-top: 15px;
+  font-size: 20px;
+  font-weight: 400;
+}
+body .panel a:not(.btn) {
+  color: #FFF;
+  text-decoration: underline;
+}
 body .panel table {
   background-color: #414D5A;
   margin-bottom: 0;
 }
-body .panel table .progress {
+body .panel ul {
   margin-bottom: 0;
+}
+body .panel ul table {
+  margin: 10px auto -10px;
+  width: 98%;
+}
+body .panel ul .list-group-item {
+  padding: 6px 0;
+}
+body .panel ul .list-group-item .run-times {
+  max-height: 150px;
+  overflow: auto;
+}
+body .panel .label-default,
+body .panel .badge {
+  background-color: #777;
+}
+body .panel .badge {
+  margin-left: 15px;
 }
 body .panel .panel {
   /* Nested panels should have a border and shouldn't have padding. */
@@ -27,8 +64,8 @@ body .panel .panel .panel-body {
   border-top: none;
   margin: 0;
 }
-body .panel-heading > i,
-body .panel-heading span {
+.panel-heading > i,
+.panel-heading span {
   margin-right: 10px;
 }
 div.main-view {

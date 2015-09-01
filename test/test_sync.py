@@ -47,8 +47,9 @@ class TestPrioritizedRWLock(unittest.TestCase):
 
         for t in _threads:
             t.start()
+            # Small sleep to ensure threads are executed in this order.
+            time.sleep(0.05)
 
-        time.sleep(0.2)
         self.assertGreaterEqual(lock.active_readers, 2)
 
         for t in _threads:
@@ -68,8 +69,9 @@ class TestPrioritizedRWLock(unittest.TestCase):
 
         for t in _threads:
             t.start()
+            # Small sleep to ensure threads are executed in this order.
+            time.sleep(0.05)
 
-        time.sleep(0.2)
         self.assertEqual(lock.waiting_readers, 5)
         self.assertEqual(lock.active_writers, 1)
 
@@ -95,8 +97,9 @@ class TestPrioritizedRWLock(unittest.TestCase):
 
         for t in _threads:
             t.start()
+            # Small sleep to ensure threads are executed in this order.
+            time.sleep(0.05)
 
-        time.sleep(0.2)
         self.assertEqual(lock.active_readers, 1)
         self.assertEqual(len(lock.queued_writers), 1)
         self.assertEqual(lock.waiting_readers, 1)
@@ -127,8 +130,9 @@ class TestPrioritizedRWLock(unittest.TestCase):
 
         for t in _threads:
             t.start()
+            # Small sleep to ensure threads are executed in this order.
+            time.sleep(0.05)
 
-        time.sleep(0.2)
         self.assertEqual(lock.active_readers, 1)
         self.assertEqual(len(lock.queued_writers), 2)
         self.assertEqual(lock.waiting_readers, 1)
@@ -155,8 +159,9 @@ class TestPrioritizedRWLock(unittest.TestCase):
 
         for t in _threads:
             t.start()
+            # Small sleep to ensure threads are executed in this order.
+            time.sleep(0.05)
 
-        time.sleep(0.2)
         self.assertEqual(lock.active_readers, 1)
         self.assertEqual(len(lock.queued_writers), 2)
         self.assertEqual(lock.waiting_readers, 1)
@@ -178,8 +183,9 @@ class TestPrioritizedRWLock(unittest.TestCase):
 
         for t in _threads:
             t.start()
+            # Small sleep to ensure threads are executed in this order.
+            time.sleep(0.05)
 
-        time.sleep(0.2)
         self.assertEqual(lock.active_readers, 1)
         self.assertEqual(len(lock.queued_writers), 1)
         self.assertEqual(lock.waiting_readers, 2)

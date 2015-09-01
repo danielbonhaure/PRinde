@@ -4,19 +4,19 @@ import logging
 
 from apscheduler.executors.pool import ThreadPoolExecutor
 
-from core.modules.DataUpdater.WeatherUpdater import WeatherUpdater
+from core.modules.data_updater.WeatherUpdater import WeatherUpdater
 
 # from apscheduler.schedulers.blocking import BlockingScheduler
-from core.modules.Configuration import Configuration
-from core.modules.GestorDelPronostico.events import register_signals
-from core.modules.GestorDelPronostico.boot import boot_system
-from core.modules.GestorDelPronostico.ForecastManager import ForecastManager
+from modules.config.system_config import SystemConfiguration
+from core.modules.forecasts_manager.events import register_signals
+from core.modules.forecasts_manager.boot import boot_system
+from core.modules.forecasts_manager.ForecastManager import ForecastManager
 from core.lib.io.file import absdirname
 from frontend.web import WebServer
 import threading
 from lib.jobs.scheduler import MonitoringScheduler
 from lib.logging.stream import WebStream
-from stats.StatsCenter import StatsCenter
+from modules.statistics import StatsCenter
 from datetime import datetime
 
 __author__ = 'Federico Schmidt'
@@ -32,7 +32,7 @@ class Main:
         # Get system root path.
         root_path = absdirname(__file__)
 
-        self.system_config = Configuration(root_path)
+        self.system_config = SystemConfiguration(root_path)
         watch_thread = self.system_config.load()
 
         if watch_thread:

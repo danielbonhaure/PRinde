@@ -26,9 +26,10 @@ class RunpSIMS:
         self.failed = re.compile('Failed:(\d+)')
 
     def run(self, forecast, verbose=True):
-        with self.concurrency_lock:
-            logging.getLogger().info('Running pSIMS for forecast "%s" (%s).' %
-                                           (forecast.name, forecast.forecast_date))
+        # Request a blocking lock, pSIMS should run owning the CPU and every resource in the system.
+        with self.concurrency_lock.blocking_job():
+            logging.getLogger().info('Running pSIMS for forecast "%s" (%s).' % (forecast.name, forecast.forecast_date))
+
             start_time = datetime.now()
             ret_val = self.__run__(forecast.paths.run_script_path, forecast.name, forecast.simulation_count, verbose)
             end_time = datetime.now()
@@ -97,8 +98,8 @@ class RunpSIMS:
 
                                 if total != sim_count or failed:
                                     logging.getLogger().error("pSIMS total tasks (%s) doesn't match total "
-                                                                    "simulation count (%s). A task has failed." %
-                                                                    (total, sim_count))
+                                                              "simulation count (%s). A task has failed." %
+                                                              (total, sim_count))
                                     err_file_name = "ERR [%s] - %s.txt" % (datetime.now().isoformat(), forecast_name)
                                     with open(err_file_name, mode='w') as err_file:
                                         err_file.write(''.join(stdout_lines))

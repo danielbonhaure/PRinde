@@ -6,13 +6,14 @@ from datetime import datetime, timedelta
 import logging
 from core.lib.io.file import create_folder_with_permissions
 from core.lib.utils.log import log_format_exception
-from core.modules.PreparadorDeSimulaciones.CampaignWriter import CampaignWriter
+from core.modules.simulations_manager.CampaignWriter import CampaignWriter
 from core.lib.utils.extended_collections import DotDict
-from core.modules.PreparadorDeSimulaciones.CombinedSeriesMaker import CombinedSeriesMaker
-from core.modules.PreparadorDeSimulaciones.HistoricalSeriesMaker import HistoricalSeriesMaker
-from core.modules.PreparadorDeSimulaciones.RunpSIMS import RunpSIMS
+from core.modules.simulations_manager.CombinedSeriesMaker import CombinedSeriesMaker
+from core.modules.simulations_manager.HistoricalSeriesMaker import HistoricalSeriesMaker
+from core.modules.simulations_manager.RunpSIMS import RunpSIMS
 import time
 import copy
+from lib.jobs.monitor import NullMonitor, JOB_STATUS_WAITING, ProgressMonitor
 
 __author__ = 'Federico Schmidt'
 
@@ -21,29 +22,30 @@ class ForecastManager:
 
     def __init__(self, scheduler, system_config):
         self.system_config = system_config
-        self.psims_runner = RunpSIMS(system_config.own_cpu_lock)
+        self.psims_runner = RunpSIMS(self.system_config.jobs_lock)
         self.scheduler = scheduler
 
     def start(self):
-        for forecast in self.system_config.forecasts:
-            job_name = "%s (%s)" % (forecast.name, forecast.forecast_date)
-            run_date = datetime.strptime(forecast.forecast_date, '%Y-%m-%d')
+        for file_name, forecast_list in self.system_config.forecasts.iteritems():
+            for forecast in forecast_list:
+                job_name = "%s (%s)" % (forecast.name, forecast.forecast_date)
+                run_date = datetime.strptime(forecast.forecast_date, '%Y-%m-%d')
 
-            # TODO: remove this.
-            run_date = datetime.now() + timedelta(days=1)
+                # TODO: remove this.
+                # run_date = datetime.now() + timedelta(days=1)
 
-            if run_date < datetime.now():
-                # Run immediately.
-                job_handle = self.scheduler.add_job(self.run_forecast, name=job_name, args=[forecast])
-                forecast['job_id'] = job_handle.id
-            else:
-                # Schedule for running at the specified date at 19:00.
-                run_date = run_date.replace(hour=19)
+                if run_date < datetime.now():
+                    # Run immediately.
+                    job_handle = self.scheduler.add_job(self.run_forecast, name=job_name, args=[forecast])
+                    forecast['job_id'] = job_handle.id
+                else:
+                    # Schedule for running at the specified date at 19:00.
+                    run_date = run_date.replace(hour=19)
 
-                # scheduler.add_job(Worker.create_and_run, 'interval', seconds=5, args=[job_0, scheduler])
-                job_handle = self.scheduler.add_job(self.run_forecast, trigger='date', name=job_name, args=[forecast],
-                                                    run_date=run_date)
-                forecast['job_id'] = job_handle.id
+                    # scheduler.add_job(Worker.create_and_run, 'interval', seconds=5, args=[job_0, scheduler])
+                    job_handle = self.scheduler.add_job(self.run_forecast, trigger='date', name=job_name, args=[forecast],
+                                                        run_date=run_date)
+                    forecast['job_id'] = job_handle.id
 
     def __run__(self):
         # Create scheduler, etc.
@@ -57,15 +59,52 @@ class ForecastManager:
                                             run_date=new_run_date)
         forecast['job_id'] = job_handle.id
 
-    def run_forecast(self, forecast):
+    def run_forecast(self, forecast, progress_monitor=None):
+        logging.getLogger().info('\nRunning forecast "%s" (%s).' % (forecast.name, forecast.forecast_date))
+
         psims_exit_code = None
         db = None
         forecast_id = None
         simulations_ids = None
 
+        if not progress_monitor:
+            progress_monitor = NullMonitor
+
+        progress_monitor.job_started()
+
+        time.sleep(5)
+        progress_monitor.update_progress(new_value=5, job_status=JOB_STATUS_WAITING)
+        time.sleep(15)
+        spm1 = ProgressMonitor()
+        spm2 = ProgressMonitor()
+        progress_monitor.add_subjob(subjob_progress_monitor=spm1, job_name='Sub Job 1')
+        progress_monitor.add_subjob(subjob_progress_monitor=spm2, job_name='Sub Job 2')
+        spm1.job_started()
+        time.sleep(5)
+        spm2.job_started()
+        time.sleep(5)
+        spm1.update_progress(job_status=JOB_STATUS_WAITING)
+        spm2.update_progress(new_value=10)
+        time.sleep(6)
+        spm2.update_progress(new_value=45)
+        spm1.update_progress(15)
+        time.sleep(7)
+        spm1.job_ended()
+        time.sleep(3)
+        spm2.job_ended()
+        time.sleep(8)
+        progress_monitor.update_progress(45)
+        time.sleep(6)
+        progress_monitor.update_progress(57)
+        time.sleep(5)
+        progress_monitor.update_progress(82)
+        time.sleep(7)
+        progress_monitor.job_ended()
+
+        return
+
         try:
             forecast = copy.deepcopy(forecast)
-            logging.getLogger().info('\nRunning forecast "%s" (%s).' % (forecast.name, forecast.forecast_date))
             run_start_time = time.time()
 
             # Get MongoDB connection.

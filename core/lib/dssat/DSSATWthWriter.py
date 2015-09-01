@@ -2,7 +2,7 @@ import numpy as np
 from datetime import datetime
 import os
 import csv
-from core.modules.PreparadorDeSimulaciones.DatabaseWeatherSeries import DatabaseWeatherSeries
+from core.modules.simulations_manager.DatabaseWeatherSeries import DatabaseWeatherSeries
 
 __author__ = 'Federico Schmidt'
 
