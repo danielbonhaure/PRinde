@@ -4,7 +4,7 @@
 
 var conf = angular.module('sysConfigModule', []);
 
-conf.controller('sysConfigController', function ($scope, $routeParams, $http, socket) {
+conf.controller('sysConfigController', function ($scope, $routeParams, $http, $modal, $location) {
 
     $scope.config = {};
 
@@ -23,7 +23,23 @@ conf.controller('sysConfigController', function ($scope, $routeParams, $http, so
         $scope.config = conf;
     });
 
-    $scope.$on('$destroy', function () {
-        // clean up stuff
-    })
+    $scope.showConfirmModal = function () {
+
+        var modalInstance = $modal.open({
+            templateUrl: 'static/partials/modals/confirm.html',
+            controller: 'ConfirmModalController',
+            resolve: {
+                action: function() {
+                    return 'reload system configuration'
+                }
+            }
+        });
+
+        modalInstance.result.then(function () {
+            $http.get('/api/config/reload').success(function (job_id) {
+                $location.path('/job/' + job_id);
+            });
+        });
+    };
 });
+

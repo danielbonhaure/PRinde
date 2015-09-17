@@ -14,9 +14,9 @@ __author__ = 'Federico Schmidt'
 class DatabaseWeatherSeries(WeatherSeriesMaker):
     name_re = re.compile('^[0-9]+ - ([0-9]+)\.csv')
 
-    def __init__(self, system_config, max_paralellism, weather_writer):
-        super(DatabaseWeatherSeries, self).__init__(system_config, max_paralellism)
-        self.max_paralellism = max_paralellism
+    def __init__(self, system_config, max_parallelism, weather_writer):
+        super(DatabaseWeatherSeries, self).__init__(system_config, max_parallelism)
+        self.max_paralellism = max_parallelism
         self.weather_writer = weather_writer
         self.concurrency_lock = threading.BoundedSemaphore(self.max_paralellism)
 

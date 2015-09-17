@@ -2,9 +2,9 @@ import logging
 
 from flask import Flask, request, Response
 from flask.ext.socketio import SocketIO
-
+from datetime import datetime
 from lib.jobs.monitor import ProgressObserver, SUBJOB_UPDATED, JOB_ENDED
-from modules.statistics import StatEventListener
+from modules.statistics.StatsCenter import StatEventListener
 
 __author__ = 'Federico Schmidt'
 
@@ -21,6 +21,7 @@ class WebServer(StatEventListener, ProgressObserver):
         self.app.config.update(DEBUG=False)
         self.app.add_url_rule('/', 'index', self.index)
         self.app.add_url_rule('/api/config', 'config', self.get_config, methods=['GET'])
+        self.app.add_url_rule('/api/config/reload', 'reload_config', self.reload_config, methods=['GET'])
         self.app.add_url_rule('/api/forecasts', 'forecasts', self.get_forecasts, methods=['GET'])
         self.app.add_url_rule('/<path:path>', 'index', self.index)
         self.socketio._on_message('connected', self.connected, namespace='/observers')
@@ -62,6 +63,12 @@ class WebServer(StatEventListener, ProgressObserver):
         return Response(response=self.system_config.public_view(),
                         status=200,
                         mimetype="application/json")
+
+    def reload_config(self):
+        job = self.scheduler.add_job(self.system_config.reload, name='Reload configuration')
+        return Response(response=job.id,
+                        status=200,
+                        mimetype="text/plain")
 
     def get_forecasts(self):
         forecasts = []

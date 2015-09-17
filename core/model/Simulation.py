@@ -1,5 +1,6 @@
 import copy
 import yaml
+from xxhash import xxh64
 from core.lib.utils.extended_collections import DotDict
 
 __author__ = 'Federico Schmidt'
@@ -7,10 +8,22 @@ __author__ = 'Federico Schmidt'
 
 class Simulation(DotDict):
 
-    def __init__(self, simulation_yaml):
+    def __init__(self, simulation_yaml, crop_type):
         super(Simulation, self).__init__()
         self.name = None
         self.init_from_yaml(simulation_yaml)
+        self.crop_type = crop_type
+        self.reference_id = xxh64('%s,%s,%s,%s,%s' % (self.soil.id, self.location.id,
+                                                      self.management['mgmt_name'].encode('utf-8'),
+                                                      self.crop_type, self.water_content.encode('utf-8'))).hexdigest()
+
+    @property
+    def id(self):
+        f_date = self.get('forecast_date')
+
+        if not f_date:
+            return self.reference_id
+        return xxh64('%s,%s' % (f_date, self.reference_id)).hexdigest()
 
     def init_from_yaml(self, simulation_yaml):
         if 'name' in simulation_yaml:
@@ -48,9 +61,18 @@ class Simulation(DotDict):
 
     def persistent_view(self):
         view = copy.deepcopy(self.__dict__)
-        view['location_id'] = view['location']['_id']
+
+        if 'forecast_id' in view:
+            view['_id'] = self.id
+            view['reference_id'] = self.reference_id
+        else:
+            # This simulation is a reference simulation, the reference_id must be it's id.
+            view['_id'] = self.reference_id
+
+        view['location_id'] = view['location'].id
         view['location_name'] = view['location']['name']
         view['soil_id'] = view['soil']['id']
+
         del view['location']
 
         if 'weather_station' in view:

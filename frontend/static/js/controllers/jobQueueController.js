@@ -60,6 +60,8 @@ jobQueue.controller('jobQueueController', function ($scope, $rootScope, socket, 
             active_jobs[job_id].status = jobsConstants.status_description[jobsConstants.status.JOB_STATUS_INACTIVE];
         }
 
+        $scope.$apply();
+
         if(completed >= 100) {
             // Clear completed tasks after 10 seconds.
             setTimeout(function(){

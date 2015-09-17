@@ -10,6 +10,8 @@ def group_by(collection, function):
     Agrupa una lista en un mapa donde la clave es la función pasada como parámetro.
     """
     d = dict()
+    if isinstance(collection, dict):
+        collection = collection.iteritems()
     for f in collection:
         key = function(f)
 

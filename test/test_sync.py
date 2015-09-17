@@ -1,7 +1,8 @@
 import threading
 import time
 import unittest
-from core.lib.utils.sync import PrioritizedRWLock, JobsLock
+
+from lib.sync import PrioritizedRWLock, JobsLock
 
 __author__ = 'Federico Schmidt'
 

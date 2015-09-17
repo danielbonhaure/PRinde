@@ -68,6 +68,18 @@ body .panel .panel .panel-body {
 .panel-heading span {
   margin-right: 10px;
 }
+.panel-heading .reload-button {
+  margin-top: 2px;
+  font-weight: 400;
+  margin-right: 0;
+}
+.panel-heading .reload-button i {
+  margin-right: 5px;
+}
+.panel-heading .reload-button:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
 div.main-view {
   position: absolute;
   left: 0;

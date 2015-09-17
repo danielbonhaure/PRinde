@@ -1,12 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import logging
-
 from apscheduler.executors.pool import ThreadPoolExecutor
-
+import sys
 from core.modules.data_updater.WeatherUpdater import WeatherUpdater
-
-# from apscheduler.schedulers.blocking import BlockingScheduler
+from lib.utils.log import log_format_exception
 from modules.config.system_config import SystemConfiguration
 from core.modules.forecasts_manager.events import register_signals
 from core.modules.forecasts_manager.boot import boot_system
@@ -16,7 +14,7 @@ from frontend.web import WebServer
 import threading
 from lib.jobs.scheduler import MonitoringScheduler
 from lib.logging.stream import WebStream
-from modules.statistics import StatsCenter
+from modules.statistics.StatsCenter import StatsCenter
 from datetime import datetime
 
 __author__ = 'Federico Schmidt'
@@ -32,11 +30,15 @@ class Main:
         # Get system root path.
         root_path = absdirname(__file__)
 
-        self.system_config = SystemConfiguration(root_path)
-        watch_thread = self.system_config.load()
+        self.system_config = None
 
-        if watch_thread:
-            self.system_threads.append(watch_thread)
+        try:
+            self.system_config = SystemConfiguration(root_path)
+            forecasts_files = SystemConfiguration.load(self.system_config)
+            SystemConfiguration.load_forecasts(self.system_config, forecasts_files)
+        except Exception, ex:
+            logging.getLogger().error('Failed to load system configuration. Reason: %s.' % log_format_exception(ex))
+            sys.exit(1)
 
         self.forecast_manager = None
         self.weather_updater = WeatherUpdater(self.system_config)
@@ -59,7 +61,7 @@ class Main:
         #  7. instantiate the Forecast Manager.
         self.bootstrap()
         self.scheduler = MonitoringScheduler(excecutors={
-            'default': ThreadPoolExecutor(max_workers=self.system_config.max_paralellism)
+            'default': ThreadPoolExecutor(max_workers=self.system_config.max_parallelism)
         })
         self.stats = StatsCenter(self.scheduler)
         self.web_server = WebServer(self.stats, self.scheduler, self.system_config)
@@ -84,13 +86,14 @@ class Main:
         self.scheduler.start()
 
         # Instantiate the forecast manager.
-        self.forecast_manager = ForecastManager(self.scheduler, self.system_config)
+        self.forecast_manager = ForecastManager(self.scheduler, self.system_config, self.weather_updater)
 
         for omm_id in self.system_config.weather_stations_ids:
             self.weather_updater.add_weather_station_id(omm_id)
 
-        # Schedule the update of weather data max dates to be ran once a day and force it to be run now,
-        # on system startup.
+        # self.scheduler.add_job(self.weather_updater.update_weather_db, name='Update weather database',
+        #                        trigger='interval', days=1, next_run_time=datetime.now())
+        # Schedule the update of weather data max dates to be ran once a day.
         self.scheduler.add_job(self.weather_updater.update_max_dates, name='Update weather data max dates',
                                trigger='interval', days=1, next_run_time=datetime.now())
         # Schedule the update of rainfall quantiles every 120 days.

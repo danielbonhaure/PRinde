@@ -3,7 +3,7 @@ name: 'Rinde de Soja en Argentina'
 #forecast_date: 'now'
 #forecast_date: ['2014-11-01', '2014-11-15', '2014-12-01', '2014-12-15', '2015-01-01', '2015-01-15', '2015-02-01', '2015-02-15', '2015-03-01', '2015-03-15', '2015-04-01', '2015-04-15']
 #forecast_date: ['2015-12-01', '2015-11-01']
-forecast_date: ['2015-01-01', '2015-11-01']
+forecast_date: ['2015-01-01', '2015-02-01', '2015-03-01']
 
 crop_type: 'SB'
 crop_template: 'SB.json'
@@ -18,99 +18,99 @@ configuration:
 locations:
     loc_1: {
         name: "Benito Juárez",
-        coord_x: '', # A completar únicamente el día que tengamos una base de datos de suelos.
-        coord_y: '', # A completar únicamente el día que tengamos una base de datos de suelos.
+        #coord_x: '-59.78',
+        #coord_y: '-37.72',
         weather_station: 87649
     }
 
     loc_2: {
         name: "Coronel Suárez",
-        coord_x: '', # A completar únicamente el día que tengamos una base de datos de suelos.
-        coord_y: '', # A completar únicamente el día que tengamos una base de datos de suelos.
+        coord_x: '-61.88',
+        coord_y: '-37.43',
         weather_station: 87637
     }
 
     loc_3: {
         name: "Gualeguaychú",
-        coord_x: '', # A completar únicamente el día que tengamos una base de datos de suelos.
-        coord_y: '', # A completar únicamente el día que tengamos una base de datos de suelos.
+        coord_x: '-60.88',
+        coord_y: '-35.45',
         weather_station: 87497
     }
 
     loc_4: {
         name: "Junín",
-        coord_x: '', # A completar únicamente el día que tengamos una base de datos de suelos.
-        coord_y: '', # A completar únicamente el día que tengamos una base de datos de suelos.
+        coord_x: '-60.92',
+        coord_y: '-34.55',
         weather_station: 87548
     }
 
     loc_5: {
         name: "Laboulaye",
-        coord_x: '', # A completar únicamente el día que tengamos una base de datos de suelos.
-        coord_y: '', # A completar únicamente el día que tengamos una base de datos de suelos.
+        coord_x: '-63.37',
+        coord_y: '-34.13',
         weather_station: 87534
     }
 
     loc_6: {
         name: "Marcos Juárez",
-        coord_x: '', # A completar únicamente el día que tengamos una base de datos de suelos.
-        coord_y: '', # A completar únicamente el día que tengamos una base de datos de suelos.
+        coord_x: '-62.15',
+        coord_y: '-32.7',
         weather_station: 87467
     }
 
     loc_7: {
         name: "Nueve de Julio",
-        coord_x: '', # A completar únicamente el día que tengamos una base de datos de suelos.
-        coord_y: '', # A completar únicamente el día que tengamos una base de datos de suelos.
+        coord_x: '-62.15',
+        coord_y: '-32.7',
         weather_station: 87550
     }
 
     loc_8: {
         name: "Paraná",
-        coord_x: '', # A completar únicamente el día que tengamos una base de datos de suelos.
-        coord_y: '', # A completar únicamente el día que tengamos una base de datos de suelos.
+        coord_x: '-60.48',
+        coord_y: '-31.78',
         weather_station: 87374
     }
 
     loc_9: {
         name: "Pehuajó",
-        coord_x: '', # A completar únicamente el día que tengamos una base de datos de suelos.
-        coord_y: '', # A completar únicamente el día que tengamos una base de datos de suelos.
+        coord_x: '-61.9',
+        coord_y: '-35.87',
         weather_station: 87544
     }
 
     loc_10: {
         name: "Pilar",
-        coord_x: '', # A completar únicamente el día que tengamos una base de datos de suelos.
-        coord_y: '', # A completar únicamente el día que tengamos una base de datos de suelos.
+        coord_x: '-63.88',
+        coord_y: '-31.67',
         weather_station: 87349
     }
 
     loc_11: {
         name: "Reconquista",
-        coord_x: '', # A completar únicamente el día que tengamos una base de datos de suelos.
-        coord_y: '', # A completar únicamente el día que tengamos una base de datos de suelos.
+        coord_x: '-59.7',
+        coord_y: '-29.18',
         weather_station: 87270
     }
 
     loc_12: {
          name: "Río Cuarto",
-         coord_x: '', # A completar únicamente el día que tengamos una base de datos de suelos.
-         coord_y: '', # A completar únicamente el día que tengamos una base de datos de suelos.
+         coord_x: '-64.23',
+         coord_y: '-33.12',
          weather_station: 87453
     }
 
     loc_13: {
          name: "Tandil",
-         coord_x: '', # A completar únicamente el día que tengamos una base de datos de suelos.
-         coord_y: '', # A completar únicamente el día que tengamos una base de datos de suelos.
+         coord_x: '-59.25',
+         coord_y: '-37.23',
          weather_station: 87645
     }
 
     loc_14: {
          name: "Tres Arroyos",
-         coord_x: '', # A completar únicamente el día que tengamos una base de datos de suelos.
-         coord_y: '', # A completar únicamente el día que tengamos una base de datos de suelos.
+         coord_x: '-60.25',
+         coord_y: '-38.33',
          weather_station: 87688
     }
 

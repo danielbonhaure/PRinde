@@ -1,5 +1,5 @@
 grid_resolution: 30 # Lat/lon grid resolution in arcminutes...
-max_paralellism: 4
+max_parallelism: 4
 
 paths:
     psims: '/media/ramdisk/psims-schmidtfederico'
@@ -15,3 +15,9 @@ paths:
     wth_csv_export: "/home/usmfpts/Descargas/series_combinadas"
     # Mount point where database weather files can be read.
     wth_csv_read: "/home/federico/Desarrollo/PycharmProjects/PRinde/.tmp/wth"
+
+weather_update_api:
+#    url: 'http://crcssa.srsoft.com.ar/dbdump.php'
+    url: 'http://qc.crc-sas.org/dbdump.php'
+    user: 'crcssa_db_admin'
+    # password: ''  # Uncomment to specify here, otherwise, it'll be looked up in the config/pwd directory.

@@ -7,14 +7,14 @@ import sys
 import os
 import signal
 import logging
+from lib.jobs.monitor import NullMonitor, JOB_STATUS_ERROR
 
 __author__ = 'Federico Schmidt'
 
 
 class RunpSIMS:
 
-    def __init__(self, run_lock, max_events=10000):
-        self.concurrency_lock = run_lock
+    def __init__(self, max_events=10000):
         self.max_events = max_events
         self.selecting = re.compile('Selecting site:(\d+)')
         self.active = re.compile('Active:(\d+)')
@@ -25,21 +25,31 @@ class RunpSIMS:
         self.stage_in = re.compile('Stage in:(\d+)')
         self.failed = re.compile('Failed:(\d+)')
 
-    def run(self, forecast, verbose=True):
-        # Request a blocking lock, pSIMS should run owning the CPU and every resource in the system.
-        with self.concurrency_lock.blocking_job():
-            logging.getLogger().info('Running pSIMS for forecast "%s" (%s).' % (forecast.name, forecast.forecast_date))
+    def run(self, forecast, progress_monitor=None, verbose=True):
+        if not progress_monitor:
+            progress_monitor = NullMonitor()
 
-            start_time = datetime.now()
-            ret_val = self.__run__(forecast.paths.run_script_path, forecast.name, forecast.simulation_count, verbose)
-            end_time = datetime.now()
+        logging.getLogger().info('Running pSIMS for forecast "%s" (%s).' % (forecast.name, forecast.forecast_date))
 
-            logging.getLogger().info('Finished running pSIMS for forecast "%s" (%s). Retval = %d. Time: %s.' %
-                                           (forecast.name, forecast.forecast_date, ret_val, end_time - start_time))
+        progress_monitor.end_value = forecast.simulation_count
+        progress_monitor.job_started()
 
-            return ret_val
+        start_time = datetime.now()
+        ret_val = self.__run__(forecast.paths.run_script_path, forecast.name, forecast.simulation_count,
+                               progress_monitor, verbose)
+        end_time = datetime.now()
 
-    def __run__(self, sh_script, forecast_name, sim_count, verbose):
+        logging.getLogger().info('Finished running pSIMS for forecast "%s" (%s). Retval = %d. Time: %s.' %
+                                       (forecast.name, forecast.forecast_date, ret_val, end_time - start_time))
+
+        if ret_val != 0:
+            progress_monitor.job_ended(end_status=JOB_STATUS_ERROR)
+        else:
+            progress_monitor.job_ended()
+
+        return ret_val
+
+    def __run__(self, sh_script, forecast_name, sim_count, progress_monitor, verbose):
         command = shlex.split('sh "%s"' % sh_script)
 
         p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, preexec_fn=os.setsid)
@@ -105,6 +115,8 @@ class RunpSIMS:
                                         err_file.write(''.join(stdout_lines))
                                     # Kill processes.
                                     os.killpg(os.getpgid(p.pid), signal.SIGKILL)
+                                else:
+                                    progress_monitor.update_progress(new_value=completed)
 
                                 if verbose:
                                     sys.stdout.write("\rRunning: %d. Completed: %02d/%02d. "

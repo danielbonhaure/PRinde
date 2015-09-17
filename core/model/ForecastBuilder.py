@@ -12,9 +12,11 @@ __author__ = 'Federico Schmidt'
 
 class ForecastBuilder:
 
-    def __init__(self, forecast_file, schema_path=None):
+    def __init__(self, forecast_file, system_config):
         self.forecast_file = forecast_file
         self.simulation_schema = None
+        self.system_config = system_config
+        schema_path = system_config.simulation_schema_path
         if schema_path and os.path.exists(schema_path):
             self.simulation_schema = json.load(open(schema_path, mode='r'))
 
@@ -29,8 +31,8 @@ class ForecastBuilder:
             forecast_file['configuration'] = new_config
 
         # Ensure the paralellism degree of a forecast respects the global system limit.
-        if forecast_file['configuration']['max_paralellism'] > system_config['max_paralellism']:
-            forecast_file['configuration']['max_paralellism'] = system_config['max_paralellism']
+        if forecast_file['configuration']['max_parallelism'] > system_config['max_parallelism']:
+            forecast_file['configuration']['max_parallellism'] = system_config['max_parallelism']
 
     def replace_alias(self, alias_dict):
         if alias_dict:
@@ -126,12 +128,12 @@ class ForecastBuilder:
 
                             if self.simulation_schema:
                                 validate(json.loads(new_sim.to_json()), schema=self.simulation_schema)
-                            simulations[loc_key].append(Simulation(new_sim))
+                            simulations[loc_key].append(Simulation(new_sim, forecast.crop_type))
                     else:
                         if self.simulation_schema:
                             validate(json.loads(sim.to_json()), schema=self.simulation_schema)
                         sim.water_content = ''
-                        simulations[loc_key].append(Simulation(sim))
+                        simulations[loc_key].append(Simulation(sim, forecast.crop_type))
 
         # Unwind dates and create a forecast for each different date.
         if ('forecast_date' in forecast) and isinstance(forecast['forecast_date'], list):
@@ -141,13 +143,11 @@ class ForecastBuilder:
                 if not isinstance(date, str):
                     raise RuntimeError('Forecast date must be a string, found: %s.' % date)
 
-                f = Forecast(forecast)
+                f = Forecast(forecast, sims)
                 f.forecast_date = date
-                f.simulations = sims
                 forecast_list.append(f)
         else:
-            f = Forecast(forecast)
-            f.simulations = simulations
+            f = Forecast(forecast, simulations)
             forecast_list.append(f)
 
         return forecast_list

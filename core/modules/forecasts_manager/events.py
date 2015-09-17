@@ -15,7 +15,7 @@ def handle_exception(exc_type, exc_value, exc_traceback):
                               log_format_exception(traceback.format_exception(exc_type, exc_value, exc_traceback)))
 
 
-sys.excepthook = handle_exception
+# sys.excepthook = handle_exception
 
 
 def register_signals():

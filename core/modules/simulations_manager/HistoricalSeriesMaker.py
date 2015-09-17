@@ -8,10 +8,10 @@ __author__ = 'Federico Schmidt'
 
 
 class HistoricalSeriesMaker(DatabaseWeatherSeries):
-    def __init__(self, system_config, max_paralellism, weather_writer=None):
+    def __init__(self, system_config, max_parallelism, weather_writer=None):
         if not weather_writer:
             weather_writer = DSSATWthWriter
-        super(HistoricalSeriesMaker, self).__init__(system_config, max_paralellism, weather_writer)
+        super(HistoricalSeriesMaker, self).__init__(system_config, max_parallelism, weather_writer)
 
     def create_series(self, omm_id, forecast, extract_rainfall=True):
         return DatabaseWeatherSeries.create_series(self, omm_id, forecast, False)

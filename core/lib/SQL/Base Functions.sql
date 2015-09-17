@@ -1,7 +1,13 @@
+CREATE EXTENSION IF NOT EXISTS cube;
+CREATE EXTENSION IF NOT EXISTS earthdistance;
 DROP FUNCTION IF EXISTS pr_create_campaigns(int, varchar, varchar, varchar, varchar);
 DROP FUNCTION IF EXISTS pr_crear_serie(int, date, date, date, int);
 DROP FUNCTION IF EXISTS pr_año_agrario(date);
 DROP FUNCTION IF EXISTS is_leap(int);
+DROP FUNCTION IF EXISTS pr_campaigns_acum_rainfall(int);
+DROP FUNCTION IF EXISTS pr_campaigns_rainfall(int);
+DROP FUNCTION IF EXISTS pr_historic_series(int, varchar);
+DROP FUNCTION IF EXISTS pr_serie_agraria(int, int);
 
 /* Función que determina si un año es bisiesto. */
 CREATE OR REPLACE FUNCTION is_leap(year integer)
@@ -33,7 +39,7 @@ RETURNS TABLE (pr_year INT) AS $$
 $$ LANGUAGE sql;
 
 CREATE OR REPLACE FUNCTION pr_campaigns_acum_rainfall(omm_id INT)
-RETURNS TABLE(fecha DATE, campaign INT, sum NUMERIC)
+RETURNS TABLE(fecha DATE, campaign INT, sum DOUBLE PRECISION)
 AS $$
     SELECT erd.fecha, pr_año_agrario(erd.fecha)::int, SUM(erd.prcp) OVER (PARTITION BY pr_año_agrario(erd.fecha) ORDER BY erd.fecha)
     FROM estacion_registro_diario_completo erd
@@ -41,7 +47,7 @@ AS $$
 $$ LANGUAGE SQL;
 
 CREATE OR REPLACE FUNCTION pr_campaigns_rainfall(omm_id INT)
-RETURNS TABLE(fecha DATE, campaign INT, sum NUMERIC)
+RETURNS TABLE(fecha DATE, campaign INT, sum DOUBLE PRECISION)
 AS $$
     SELECT erd.fecha, pr_año_agrario(erd.fecha)::int, erd.prcp
     FROM estacion_registro_diario_completo erd
@@ -50,7 +56,7 @@ $$ LANGUAGE SQL;
 
 
 CREATE OR REPLACE FUNCTION pr_crear_serie(omm_id int, fecha_inicio date, fecha_inflexion date, fecha_fin date, year_inflexion int)
-RETURNS TABLE (fecha date, fecha_original date, tmax numeric, tmin numeric, prcp numeric, rad numeric)
+RETURNS TABLE (fecha date, fecha_original date, tmax double precision, tmin double precision, prcp double precision, rad double precision)
 AS $$
     DECLARE
         id_estacion ALIAS FOR $1;
@@ -194,7 +200,7 @@ AS $$
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION pr_serie_agraria(omm_id int, year_agrario int)
-RETURNS TABLE (fecha date, fecha_original date, tmax numeric, tmin numeric, prcp numeric, rad numeric)
+RETURNS TABLE (fecha date, fecha_original date, tmax double precision, tmin double precision, prcp double precision, rad double precision)
 AS $$
     DECLARE
         id_estacion ALIAS FOR $1;

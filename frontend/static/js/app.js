@@ -6,12 +6,14 @@ var prindeApp = angular.module('prinde', [
     'ngRoute',
     'btford.socket-io',
     'luegg.directives',
+    'ui.bootstrap',
     // controllers modules
     'logsModule',
     'jobQueueModule',
     'jobsModule',
     'sysConfigModule',
-    'forecastsModule'
+    'forecastsModule',
+    'modalsControllers'
 ]);
 
 prindeApp.factory('socket', function (socketFactory) {

@@ -33,7 +33,7 @@ class CampaignWriter:
             res_variables.add('PDAT')
         variables = ','.join(res_variables)
 
-        ref_year = forecast.start_date.year
+        ref_year = forecast.campaign_start_date.year
         if forecast.configuration.weather_series == 'historic':
             ref_year = 1950
 
@@ -161,14 +161,13 @@ class CampaignWriter:
 
             simulations_data.append(loc_simulations_data)
 
-
         # Write the gridlist text file.
         with open(gridlist_file_path, mode='w') as f:
             f.write(gridlist_file_content)
 
         sim_data = {
             "simulations": simulations_data,
-            "oids": True
+            "oids": False
         }
         json.dump(sim_data, open(os.path.join(forecast.paths.rundir, 'sim_data.json'), 'w'), ensure_ascii=False, indent=4)
 

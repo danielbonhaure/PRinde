@@ -87,7 +87,7 @@ class DatabaseUtils:
         return conn_dictionary
 
     @staticmethod
-    def __password_lookup__(username, config_path):
+    def __password_lookup__(username, config_path='.'):
         pwd_file_path = os.path.join(config_path, 'pwd', username+'.pwd')
 
         if not os.path.isfile(pwd_file_path) or not os.path.exists(pwd_file_path):

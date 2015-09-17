@@ -4,7 +4,7 @@ from datetime import datetime
 from uuid import uuid4
 import logging
 
-from lib.jobs.monitor import NullMonitor
+from lib.jobs.monitor import NullMonitor, JOB_STATUS_ERROR
 from lib.utils.log import log_format_exception
 
 __author__ = 'Federico Schmidt'
@@ -24,18 +24,20 @@ class BaseJob(object):
         self.progress_monitor.job = self
 
     def start(self, *args, **kwargs):
+        ret_val = 0
         try:
             self.progress_monitor.job_started()
             ret_val = self.run(*args, **kwargs)
-            if not ret_val:
-                return 0
-            return ret_val
-        except Exception:
+        except Exception, ex:
             logging.getLogger().error('An exception was raised while running Job "%s". Details: %s' %
                                       (self.name, log_format_exception()))
-            return 1
+            ret_val = 1
         finally:
-            self.progress_monitor.job_ended()
+            if ret_val and ret_val != 0:
+                self.progress_monitor.job_ended(JOB_STATUS_ERROR)
+            else:
+                self.progress_monitor.job_ended()
+            return ret_val
 
     @abstractmethod
     def run(self, *args, **kwargs):

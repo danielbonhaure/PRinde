@@ -69,9 +69,11 @@ class ProgressMonitor(ProgressObserver):
         self.job_status = JOB_STATUS_INACTIVE
         self.sub_jobs = {}
 
-    def job_started(self):
+    def job_started(self, initial_status=None):
+        if not initial_status:
+            initial_status = JOB_STATUS_RUNNING
         self.start_time = time.time()
-        self.job_status = JOB_STATUS_RUNNING
+        self.job_status = initial_status
         self._set_progress(self.start_value, JOB_STARTED)
 
     def update_progress(self, new_value=None, job_status=JOB_STATUS_RUNNING):
@@ -86,18 +88,17 @@ class ProgressMonitor(ProgressObserver):
         if new_value < self.start_value:
             raise RuntimeError('Invalid progress value (%s < %s).' % (new_value, self.start_value))
         if new_value > self.end_value:
-            raise RuntimeError('Invalid progress value (%s > %s).' % (new_value, self.start_value))
+            raise RuntimeError('Invalid progress value (%s > %s).' % (new_value, self.end_value))
 
-        # If the new value matches the end value, call job_ended instead.
-        if new_value == self.end_value:
-            self.job_ended()
-        else:
-            # Update progress and notify.
-            self.job_status = job_status
-            self._set_progress(new_value, JOB_UPDATED)
+        # Update progress and notify.
+        self.job_status = job_status
+        self._set_progress(new_value, JOB_UPDATED)
 
-    def job_ended(self):
-        self.job_status = JOB_STATUS_FINISHED
+    def job_ended(self, end_status=None):
+        # It should either end in error or in success.
+        if end_status != JOB_STATUS_ERROR:
+            end_status = JOB_STATUS_FINISHED
+        self.job_status = end_status
         self._set_progress(self.end_value, JOB_ENDED)
 
     def add_subjob(self, subjob_progress_monitor, job_name=None):
@@ -166,13 +167,13 @@ class NullMonitor(ProgressMonitor):
     def __init__(self):
         ProgressMonitor.__init__(self)
 
-    def job_started(self):
+    def job_started(self, initial_status=None):
         pass
 
     def update_progress(self, new_value=None, job_status=None):
         pass
 
-    def job_ended(self):
+    def job_ended(self, end_status=None):
         pass
 
     def add_subjob(self, subjob_progress_monitor,  job_name=None):

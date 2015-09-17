@@ -3,7 +3,9 @@ import yaml
 from core.lib.jobs.base import BaseJob
 from core.lib.utils.extended_collections import DotDict
 from core.model.ForecastBuilder import ForecastBuilder
+from core.modules.config import priority
 from lib.utils.log import log_format_exception
+from model.Location import Location
 
 __author__ = 'Federico Schmidt'
 
@@ -18,7 +20,7 @@ class ForecastLoader(BaseJob):
 
     def run(self, forecast_file):
         if self.run_blocking:
-            with self.jobs_lock.blocking_job(priority=1):
+            with self.jobs_lock.blocking_job(priority=priority.LOAD_FORECAST):
                 self.load_file(forecast_file)
         else:
             with self.jobs_lock.parallel_job():
@@ -30,7 +32,11 @@ class ForecastLoader(BaseJob):
             forecast = DotDict(yaml.safe_load(open(forecast_file)))
             forecast['file_name'] = forecast_file
 
-            builder = ForecastBuilder(forecast, self.system_config.simulation_schema_path)
+            for loc_key in forecast['locations'].keys():
+                forecast['locations'][loc_key] = Location(forecast['locations'][loc_key],
+                                                          self.system_config.database['weather_db'])
+
+            builder = ForecastBuilder(forecast, self.system_config)
             builder.replace_alias(self.system_config.alias_dict)
             builder.inherit_config(self.system_config.system_config_yaml)
             # Build and append forecasts.

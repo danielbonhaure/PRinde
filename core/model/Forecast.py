@@ -3,13 +3,14 @@ from datetime import datetime
 from core.lib.io.file import fileNameWithoutExtension
 from core.lib.utils.extended_collections import DotDict
 from core.lib.netcdf.WeatherNetCDFWriter import WeatherNetCDFWriter
+from xxhash import xxh64
 
 __author__ = 'Federico Schmidt'
 
 
 class Forecast(DotDict):
 
-    def __init__(self, yaml_file):
+    def __init__(self, yaml_file, simulations):
         super(Forecast, self).__init__()
 
         self.init_from_yaml(yaml_file)
@@ -19,7 +20,21 @@ class Forecast(DotDict):
 
         # Alias
         self.paths = self.configuration.paths
-        self.simulations = []
+        self.simulations = simulations
+
+        hasher = xxh64()
+
+        _sim_ids = []
+        for loc_key, simulations in simulations.iteritems():
+            for sim in simulations:
+                _sim_ids.append(sim.reference_id)
+
+        # Sort simulations id's to ensure that changing the order of creation doesn't change the id.
+        for sim_id in sorted(_sim_ids):
+            hasher.update(sim_id)
+
+        del _sim_ids
+        self.simulations_id = hasher.hexdigest()
 
     def init_from_yaml(self, yaml):
         if 'name' not in yaml:
@@ -41,7 +56,20 @@ class Forecast(DotDict):
         self.__dict__.update(DotDict(yaml))
 
     @property
-    def start_date(self):
+    def id(self):
+        if self.configuration.weather_series == 'historic':
+            self.simulations_id = 'ref_%s' % self.simulations_id
+        return xxh64('%s,%s' % (self.forecast_date, self.simulations_id)).hexdigest()
+    #
+    # @property
+    # def binary_id(self):
+    #     # Forecasts that run historic simulations should have a different ID.
+    #     if self.configuration.weather_series == 'historic':
+    #         self.simulations_id = 'ref_%s' % self.simulations_id
+    #     return Binary(xxh64('%s,%s' % (self.forecast_date, self.simulations_id)).digest())
+
+    @property
+    def campaign_start_date(self):
         """
         Calculates the start date of this forecast campaign.
         :rtype : datetime
@@ -53,7 +81,7 @@ class Forecast(DotDict):
         return f_date.replace(day=1, month=1)
 
     @property
-    def end_date(self):
+    def campaign_end_date(self):
         """
         Calculates the end date of this forecast campaign.
         :rtype : datetime
@@ -66,7 +94,7 @@ class Forecast(DotDict):
 
     @property
     def campaign_name(self):
-        start_year = self.start_date.year
+        start_year = self.campaign_start_date.year
         return "%d/%d" % (start_year, start_year+1)
 
     def __getitem__(self, key):
@@ -103,13 +131,14 @@ class Forecast(DotDict):
         if 'job_id' in view:
             del view['job_id']
 
+        view['_id'] = self.id
         view['campaign_name'] = self.campaign_name
         view['locations'] = []
         view['simulations'] = []
         view['forecast_date'] = self.forecast_date
         view['rainfall'] = {
-            'start_date': self.start_date,
-            'end_date': self.end_date,
+            'start_date': self.campaign_start_date,
+            'end_date': self.campaign_end_date,
             'ref_date': WeatherNetCDFWriter.reference_date,
             'data': self.rainfall
         }
@@ -119,7 +148,7 @@ class Forecast(DotDict):
             del view['simulation_count']
 
         for loc_key, loc in self.locations.iteritems():
-            view['locations'].append(loc['_id'])
+            view['locations'].append(loc.id)
 
         return view
 
