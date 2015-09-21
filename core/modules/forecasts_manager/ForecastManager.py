@@ -4,15 +4,16 @@ import shutil
 import threading
 from datetime import datetime, timedelta
 import logging
+import time
+import copy
+
 from core.lib.io.file import create_folder_with_permissions
 from core.lib.utils.log import log_format_exception
 from core.modules.simulations_manager.CampaignWriter import CampaignWriter
 from core.lib.utils.extended_collections import DotDict
-from core.modules.simulations_manager.CombinedSeriesMaker import CombinedSeriesMaker
-from core.modules.simulations_manager.HistoricalSeriesMaker import HistoricalSeriesMaker
+from modules.simulations_manager.weather_makers.CombinedSeriesMaker import CombinedSeriesMaker
+from core.modules.simulations_manager.weather_makers.HistoricalSeriesMaker import HistoricalSeriesMaker
 from core.modules.simulations_manager.RunpSIMS import RunpSIMS
-import time
-import copy
 from lib.jobs.monitor import NullMonitor, JOB_STATUS_WAITING, JOB_STATUS_RUNNING, ProgressMonitor
 from modules.config.priority import RUN_FORECAST
 
@@ -226,7 +227,7 @@ class ForecastManager:
                         }
                     })
 
-                    diff = set(reference_ids) ^ set(found_reference_simulations)
+                    diff = set(reference_ids) - set(found_reference_simulations)
                     if len(diff) > 0:
                         # There are simulations that don't have a reference simulation calculated.
                         ref_forecast = copy.copy(yield_forecast)

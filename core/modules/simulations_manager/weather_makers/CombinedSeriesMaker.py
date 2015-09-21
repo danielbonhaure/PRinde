@@ -3,7 +3,7 @@ from core.lib.dssat.DSSATWthWriter import DSSATWthWriter
 __author__ = 'Federico Schmidt'
 
 import logging
-from core.modules.simulations_manager.DatabaseWeatherSeries import DatabaseWeatherSeries
+from modules.simulations_manager.weather_makers.DatabaseWeatherSeries import DatabaseWeatherSeries
 import os.path
 import time
 

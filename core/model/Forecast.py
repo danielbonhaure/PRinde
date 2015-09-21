@@ -173,6 +173,9 @@ class Forecast(DotDict):
         for loc_key, loc in self.locations.iteritems():
             view['locations'].append(loc['name'])
 
-        view['file_name'] = view['file_name'].replace(forecasts_paths, '.')
+        view['file_name'] = self.public_file_name(forecasts_paths)
 
         return view.to_json()
+
+    def public_file_name(self, forecasts_paths):
+        return self.file_name.replace(forecasts_paths, '')[1:]

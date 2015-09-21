@@ -1,4 +1,5 @@
 import logging
+import os
 
 from flask import Flask, request, Response
 from flask.ext.socketio import SocketIO
@@ -23,6 +24,7 @@ class WebServer(StatEventListener, ProgressObserver):
         self.app.add_url_rule('/api/config', 'config', self.get_config, methods=['GET'])
         self.app.add_url_rule('/api/config/reload', 'reload_config', self.reload_config, methods=['GET'])
         self.app.add_url_rule('/api/forecasts', 'forecasts', self.get_forecasts, methods=['GET'])
+        self.app.add_url_rule('/api/forecasts/reload/<file_name>', 'forecasts_reload', self.reload_forecast, methods=['GET'])
         self.app.add_url_rule('/<path:path>', 'index', self.index)
         self.socketio._on_message('connected', self.connected, namespace='/observers')
         self.socketio._on_message('get_tasks', self.get_tasks, namespace='/observers')
@@ -77,6 +79,21 @@ class WebServer(StatEventListener, ProgressObserver):
         return Response(response='[%s]' % ','.join(forecasts),
                         status=200,
                         mimetype="application/json")
+
+    def reload_forecast(self, file_name=None):
+        if not file_name:
+            return Response(status=404)
+
+        forecast_file = os.path.join(self.system_config.forecasts_path, file_name)
+
+        if forecast_file not in self.system_config.forecasts:
+            return Response(status=404)
+
+        job = self.scheduler.add_job()
+
+        return Response(response=job.id,
+                        status=200,
+                        mimetype="text/plain")
 
     def flush_logs(self, content):
         self.system_log.extend(content)

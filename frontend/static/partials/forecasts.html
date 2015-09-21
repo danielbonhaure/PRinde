@@ -12,6 +12,9 @@
                         <div class="panel-heading">
                             <i class="fa fa-file-code-o"></i>
                             <strong>File:</strong> {{ file_forecasts.$key }}
+                            <span class="pull-right reload-button" ng-click="showConfirmModal(file_forecasts.$key)">
+                                <i class="fa fa-refresh"></i>Reload File
+                            </span>
                         </div>
                         <div class="panel-body">
                             <table class="table table-striped">

@@ -1,8 +1,10 @@
-import numpy as np
 from datetime import datetime
 import os
 import csv
-from core.modules.simulations_manager.DatabaseWeatherSeries import DatabaseWeatherSeries
+
+import numpy as np
+
+from modules.simulations_manager.weather_makers.DatabaseWeatherSeries import DatabaseWeatherSeries
 
 __author__ = 'Federico Schmidt'
 

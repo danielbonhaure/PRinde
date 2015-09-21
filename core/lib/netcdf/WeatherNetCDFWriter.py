@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 import logging
-from core.modules.simulations_manager.DatabaseWeatherSeries import DatabaseWeatherSeries
+
+from modules.simulations_manager.weather_makers.DatabaseWeatherSeries import DatabaseWeatherSeries
 
 __author__ = 'Federico Schmidt'
 
