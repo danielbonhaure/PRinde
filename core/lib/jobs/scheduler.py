@@ -1,7 +1,7 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from lib.jobs.base import MonitoredFunctionJob, BaseJob
-from lib.jobs.monitor import ProgressMonitor, EVENT_ALL
+from core.lib.jobs.base import MonitoredFunctionJob, BaseJob
+from core.lib.jobs.monitor import ProgressMonitor, EVENT_ALL
 
 __author__ = 'Federico Schmidt'
 

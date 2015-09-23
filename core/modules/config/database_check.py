@@ -1,8 +1,5 @@
-import json
 import logging
-from lib.jobs.base import BaseJob
-from pymongo import IndexModel, ASCENDING
-import sys
+from core.lib.jobs.base import BaseJob
 __author__ = 'Federico Schmidt'
 
 

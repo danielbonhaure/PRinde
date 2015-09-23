@@ -3,19 +3,22 @@
 import logging
 from apscheduler.executors.pool import ThreadPoolExecutor
 import sys
+import signal
+from apscheduler.schedulers import SchedulerNotRunningError
 from core.modules.data_updater.WeatherUpdater import WeatherUpdater
-from lib.utils.log import log_format_exception
-from modules.config.system_config import SystemConfiguration
+from core.lib.utils.log import log_format_exception
+from core.modules.config.system_config import SystemConfiguration
 from core.modules.forecasts_manager.events import register_signals
 from core.modules.forecasts_manager.boot import boot_system
 from core.modules.forecasts_manager.ForecastManager import ForecastManager
 from core.lib.io.file import absdirname
+from core.lib.jobs.scheduler import MonitoringScheduler
+from core.lib.logging.stream import WebStream
+from core.modules.statistics.StatsCenter import StatsCenter
 from frontend.web import WebServer
 import threading
-from lib.jobs.scheduler import MonitoringScheduler
-from lib.logging.stream import WebStream
-from modules.statistics.StatsCenter import StatsCenter
 from datetime import datetime
+import time
 
 __author__ = 'Federico Schmidt'
 
@@ -47,7 +50,12 @@ class Main:
         boot_system(self.system_config)
 
         # Register a handler SIGINT/SIGTERM signals.
-        register_signals()
+        # register_signals()
+
+        def shutdown_handler(*args):
+            self.stop(*args)
+        signal.signal(signal.SIGINT, shutdown_handler)
+        signal.signal(signal.SIGTERM, shutdown_handler)
 
     def run(self):
         # Order of init should be:
@@ -78,6 +86,7 @@ class Main:
 
         # Start the web server so we can start monitoring system tasks.
         web_server_thread = threading.Thread(target=self.web_server.start, name='Webserver')
+        web_server_thread.daemon = True
         web_server_thread.start()
         self.system_threads.append(web_server_thread)
         self.system_config.logger.info("Web server started.")
@@ -106,9 +115,18 @@ class Main:
         self.system_config.logger.info("Done initializing services.")
 
         # Join threads with main thread. Main thread blocks here.
-        for th in self.system_threads:
-            th.join()
+        # for th in self.system_threads:
+        #     th.join()
 
-# Start running the system.
+        # Block main thread.
+        while True:
+            # Sleep 1000 seconds.
+            time.sleep(1000)
+
+    def stop(self, *args):
+        self.scheduler.shutdown(wait=False)
+        raise KeyboardInterrupt
+
 main = Main()
+# Start running the system.
 main.run()

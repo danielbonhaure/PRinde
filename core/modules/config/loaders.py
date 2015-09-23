@@ -1,12 +1,11 @@
 import logging
 import yaml
 from apscheduler.jobstores.base import JobLookupError
-from core.lib.jobs.base import BaseJob
 from core.lib.utils.extended_collections import DotDict
 from core.model.ForecastBuilder import ForecastBuilder
 from core.modules.config import priority
-from lib.utils.log import log_format_exception
-from model.Location import Location
+from core.lib.utils.log import log_format_exception
+from core.model.Location import Location
 
 __author__ = 'Federico Schmidt'
 

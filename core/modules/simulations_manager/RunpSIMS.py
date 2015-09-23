@@ -7,7 +7,7 @@ import sys
 import os
 import signal
 import logging
-from lib.jobs.monitor import NullMonitor, JOB_STATUS_ERROR
+from core.lib.jobs.monitor import NullMonitor, JOB_STATUS_ERROR
 
 __author__ = 'Federico Schmidt'
 

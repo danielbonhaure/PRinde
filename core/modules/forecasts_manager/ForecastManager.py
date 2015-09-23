@@ -9,11 +9,11 @@ from core.lib.io.file import create_folder_with_permissions
 from core.lib.utils.log import log_format_exception
 from core.modules.simulations_manager.CampaignWriter import CampaignWriter
 from core.lib.utils.extended_collections import DotDict
-from modules.simulations_manager.weather_makers.CombinedSeriesMaker import CombinedSeriesMaker
+from core.modules.simulations_manager.weather_makers.CombinedSeriesMaker import CombinedSeriesMaker
 from core.modules.simulations_manager.weather_makers.HistoricalSeriesMaker import HistoricalSeriesMaker
 from core.modules.simulations_manager.RunpSIMS import RunpSIMS
-from lib.jobs.monitor import NullMonitor, JOB_STATUS_WAITING, JOB_STATUS_RUNNING, ProgressMonitor
-from modules.config.priority import RUN_FORECAST
+from core.lib.jobs.monitor import NullMonitor, JOB_STATUS_WAITING, JOB_STATUS_RUNNING, ProgressMonitor
+from core.modules.config.priority import RUN_FORECAST
 
 __author__ = 'Federico Schmidt'
 

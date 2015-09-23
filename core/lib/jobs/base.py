@@ -4,8 +4,8 @@ from datetime import datetime
 from uuid import uuid4
 import logging
 
-from lib.jobs.monitor import NullMonitor, JOB_STATUS_ERROR
-from lib.utils.log import log_format_exception
+from core.lib.jobs.monitor import NullMonitor, JOB_STATUS_ERROR
+from core.lib.utils.log import log_format_exception
 
 __author__ = 'Federico Schmidt'
 

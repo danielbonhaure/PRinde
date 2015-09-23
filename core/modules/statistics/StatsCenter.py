@@ -1,11 +1,7 @@
 from abc import abstractmethod
-import copy
 from datetime import datetime
-import logging
-
 from apscheduler.events import *
-
-from lib.jobs.monitor import ProgressObserver, JOB_ENDED, JOB_STATUS_FINISHED, SUBJOB_ENDED
+from core.lib.jobs.monitor import ProgressObserver, JOB_ENDED, JOB_STATUS_FINISHED, SUBJOB_ENDED
 
 __author__ = 'federico'
 

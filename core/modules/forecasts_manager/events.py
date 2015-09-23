@@ -24,6 +24,7 @@ def register_signals():
     return
 
 
-def shutdown_system():
+def shutdown_system(*args):
+    print (args)
     print("Shutting down.")
     return

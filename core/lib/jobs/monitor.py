@@ -1,10 +1,9 @@
 from abc import abstractmethod
-
-__author__ = 'Federico Schmidt'
-
 import time
 from datetime import datetime
 import copy
+
+__author__ = 'Federico Schmidt'
 
 JOB_STARTED = 1
 JOB_UPDATED = 2

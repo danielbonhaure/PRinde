@@ -18,9 +18,12 @@ var prindeApp = angular.module('prinde', [
 ]);
 
 prindeApp.factory('socket', function (socketFactory) {
+    if (!location.origin)
+        location.origin = location.protocol + "//" + location.host;
+
     return socketFactory({
         prefix: '',
-        ioSocket: io.connect('http://localhost:5000/observers')
+        ioSocket: io.connect(location.origin + '/observers')
     });
 });
 

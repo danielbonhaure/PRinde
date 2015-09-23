@@ -31,7 +31,7 @@ impute_mf <- function(datosEstacion, variable, estaciones, missingIndexes, regis
 
     if(max_parallelism > 1) {
         if(require(doMC)) {
-            registerDoMC(min(ncol(impData), max_parallelism))
+            registerDoMC(min(ncol(impData) - 2, max_parallelism))
             impData <- missForest(impData, ntree=100, parallelize='forests')$ximp
         } else {
             impData <- missForest(impData, ntree=100)$ximp

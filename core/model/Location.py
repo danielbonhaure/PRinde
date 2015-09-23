@@ -1,8 +1,6 @@
 import logging
 from xxhash import xxh64
-from lib.utils.extended_collections import DotDict
-from bson.binary import Binary
-from lib.utils.py3k import to_bytes
+from core.lib.utils.extended_collections import DotDict
 
 __author__ = 'Federico Schmidt'
 

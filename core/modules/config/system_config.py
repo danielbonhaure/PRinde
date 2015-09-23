@@ -9,11 +9,11 @@ from watchdog.events import FileSystemEventHandler
 from core.lib.io.file import listdir_fullpath
 from core.lib.utils.extended_collections import DotDict
 from core.lib.utils.database import DatabaseUtils
-from lib.jobs.monitor import NullMonitor, JOB_STATUS_WAITING, JOB_STATUS_RUNNING
-from lib.sync import JobsLock
-from modules.config.database_check import CheckWeatherDB, CheckRindeDB
-from modules.config.loaders import ForecastLoader
-from modules.config.priority import LOAD_CONFIGURATION
+from core.lib.jobs.monitor import NullMonitor, JOB_STATUS_WAITING, JOB_STATUS_RUNNING
+from core.lib.sync import JobsLock
+from core.modules.config.database_check import CheckWeatherDB, CheckRindeDB
+from core.modules.config.loaders import ForecastLoader
+from core.modules.config.priority import LOAD_CONFIGURATION
 
 __author__ = 'Federico Schmidt'
 
@@ -60,6 +60,9 @@ class SystemConfiguration(DotDict, FileSystemEventHandler):
         logging.getLogger('apscheduler.executors').setLevel(logging.WARN)
         logging.getLogger('apscheduler.scheduler').setLevel(logging.WARN)
         logging.getLogger("requests").setLevel(logging.WARN)
+        logging.getLogger("socketio.virtsocket").setLevel(logging.WARN)
+        logging.getLogger("geventwebsocket.handler").setLevel(logging.WARN)
+        logging.getLogger("urllib3").setLevel(logging.WARN)
 
         ch = logging.StreamHandler()
         ch.setLevel(logging.DEBUG)

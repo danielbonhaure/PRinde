@@ -1,16 +1,14 @@
 name: 'Rinde de Soja en Argentina'
 
-#forecast_date: 'now'
-#forecast_date: ['2014-11-01', '2014-11-15', '2014-12-01', '2014-12-15', '2015-01-01', '2015-01-15', '2015-02-01', '2015-02-15', '2015-03-01', '2015-03-15', '2015-04-01', '2015-04-15']
-#forecast_date: ['2015-12-01', '2015-11-01']
-forecast_date: ['2015-01-01', '2015-02-01', '2015-03-01']
+forecast_date: ['2015-01-01', '2015-02-01', '2015-03-01', '2015-04-17', '2015-09-22']
 
 crop_type: 'SB'
 crop_template: 'SB.json'
 
 configuration:
-    # Format: days (int) | "HH:mm[:ss]" (string)
-    frequency: 10 #'72:00:00'
+    # Format: days (int)
+    # frequency: 10  # Por ahora usemos fechas, después vemos si sirve fijar frecuencias.
+
     # Weather series type: combined, historic or artificial.
     weather_series: 'combined'
 
@@ -18,7 +16,7 @@ configuration:
 locations:
     loc_1: {
         name: "Benito Juárez",
-        #coord_x: '-59.78',
+        #coord_x: '-59.78',  # Si no se especifica, lo completa el sistema.
         #coord_y: '-37.72',
         weather_station: 87649
     }

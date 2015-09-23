@@ -12,6 +12,9 @@ if [ ! -z "$MONGO_NOT_FOUND" ]; then
     sudo service mongod start
 fi
 
+# Install Postgres
+# sudo apt-get install -y postgresql-9.3 postgresql-contrib-9.3
+
 # Setup
 sudo apt-get install -y build-essential python-dev python-pip
 sudo apt-get install -y python-psycopg2
@@ -23,3 +26,4 @@ sudo pip install jsonschema
 sudo pip install pymongo
 sudo pip install apscheduler
 sudo pip install Flask
+sudo pip install Flask-SocketIO==0.6.0

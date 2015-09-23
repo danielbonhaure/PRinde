@@ -1,4 +1,4 @@
-from lib.jobs.base import BaseJob
+from core.lib.jobs.base import BaseJob
 import re
 from datetime import datetime
 import shlex
@@ -6,9 +6,8 @@ import subprocess
 import select
 import sys
 import os
-import signal
 import logging
-from lib.jobs.monitor import NullMonitor, ProgressMonitor
+from core.lib.jobs.monitor import NullMonitor, ProgressMonitor
 
 __author__ = 'Federico Schmidt'
 

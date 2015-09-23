@@ -1,13 +1,10 @@
-import logging
 import os
-from bson import json_util
-import json
 from apscheduler.triggers.interval import IntervalTrigger
 from flask import Flask, request, Response, jsonify
 from flask.ext.socketio import SocketIO
 from datetime import datetime
-from lib.jobs.monitor import ProgressObserver, SUBJOB_UPDATED, JOB_ENDED
-from modules.statistics.StatsCenter import StatEventListener
+from core.lib.jobs.monitor import ProgressObserver, SUBJOB_UPDATED, JOB_ENDED
+from core.modules.statistics.StatsCenter import StatEventListener
 
 __author__ = 'Federico Schmidt'
 
@@ -59,7 +56,6 @@ class WebServer(StatEventListener, ProgressObserver):
         """
         Emits only to the caller (via web sockets) the pending and finished job queues.
         """
-        logging.getLogger().debug('WS: Get tasks.')
         request.namespace.emit('tasks', {
             'job_queue': self.stats.tasks,
             'finished_tasks': self.stats.finished_tasks
@@ -72,7 +68,6 @@ class WebServer(StatEventListener, ProgressObserver):
         Automatically joins the caller to the job room if an active job details are requested.
         :param job_id:
         """
-        logging.getLogger().debug('WS: Get job details.')
         if job_id in self.stats.running_tasks:
             # Join this client to the job_id room.
             request.namespace.join_room(str(job_id))
@@ -244,4 +239,4 @@ class WebServer(StatEventListener, ProgressObserver):
             self.socketio.emit('active_tasks_event', event.serialize(), namespace='/observers')
 
     def start(self):
-        self.socketio.run(self.app)
+        self.socketio.run(self.app, host='0.0.0.0')
