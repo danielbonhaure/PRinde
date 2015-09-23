@@ -80,14 +80,18 @@ class StatsCenter(ProgressObserver):
 
             # Check if the job was removed from the schedulers queue.
             # A job may be ran and never deleted (perdiodic jobs).
-            if not self.scheduler.get_job(event.job_id):
-                # If it was removed, delete it from pending tasks.
-                del self.tasks[event.job_id]
-            else:
+            if self.scheduler.get_job(event.job_id):
+            # if not self.scheduler.get_job(event.job_id):
+            #     # If it was removed, delete it from pending tasks.
+            #     del self.tasks[event.job_id]
+            # else:
                 # Add the execution time to the list of run times.
                 if 'run_times' not in self.tasks[event.job_id]:
                     self.tasks[event.job_id]['run_times'] = []
                 self.tasks[event.job_id]['run_times'].insert(0, end_time)
+        elif event.code & EVENT_JOB_REMOVED:
+            if event.job_id in self.tasks:
+                del self.tasks[event.job_id]
 
         # Notify observers.
         for listener in self.event_listeners:

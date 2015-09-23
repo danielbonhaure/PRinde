@@ -13,6 +13,7 @@ var prindeApp = angular.module('prinde', [
     'jobsModule',
     'sysConfigModule',
     'forecastsModule',
+    'weatherModule',
     'modalsControllers'
 ]);
 
@@ -57,6 +58,10 @@ prindeApp.config(['$routeProvider', '$locationProvider', function ($routeProvide
         when('/forecasts', {
             templateUrl: 'static/partials/forecasts.html',
             controller: 'forecastsController'
+        }).
+        when('/weather', {
+            templateUrl: 'static/partials/weather.html',
+            controller: 'weatherController'
         }).
         when('/job/:jobId', {
             templateUrl: 'static/partials/job.html',

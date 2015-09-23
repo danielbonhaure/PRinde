@@ -186,11 +186,12 @@ class SystemConfiguration(DotDict, FileSystemEventHandler):
 
     @staticmethod
     def load_forecasts(config_object, forecast_list):
-        loader = ForecastLoader(jobs_lock=config_object.jobs_lock, system_config=config_object, run_blocking=False)
+        loader = ForecastLoader(jobs_lock=config_object.jobs_lock, system_config=config_object)
+        config_object.forecasts_loader = loader
         _threads = []
 
         for file_name in forecast_list:
-            t = threading.Thread(target=loader.start, args=(file_name,))
+            t = threading.Thread(target=loader.load_file, args=(file_name,))
             _threads.append(t)
             t.start()
 
@@ -257,4 +258,5 @@ class SystemConfiguration(DotDict, FileSystemEventHandler):
         del view['jobs_lock']
         del view['system_config_yaml']
         del view['forecasts_files']
+        del view['forecasts_loader']
         return view.to_json()

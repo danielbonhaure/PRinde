@@ -4,7 +4,7 @@
 
 var job = angular.module('jobsModule', []);
 
-job.controller('jobController', function ($scope, $rootScope, $routeParams, socket, jobsConstants) {
+job.controller('jobController', function ($scope, $rootScope, $routeParams, $modal, $http, $location, socket, jobsConstants) {
     $scope.jobId = $routeParams.jobId;
     $scope.task_details = {};
     $scope.sub_jobs = {};
@@ -49,8 +49,10 @@ job.controller('jobController', function ($scope, $rootScope, $routeParams, sock
         task_details['current_value'] = e.current_value;
         if (task_details.job.status in jobsConstants.status_description) {
             task_details.status = jobsConstants.status_description[task_details.job.status];
+            task_details.can_be_modified = false;
         } else {
             task_details.status = jobsConstants.status_description[jobsConstants.status.JOB_STATUS_INACTIVE];
+            task_details.can_be_modified = true;
         }
 
         $scope.$apply();
@@ -73,9 +75,43 @@ job.controller('jobController', function ($scope, $rootScope, $routeParams, sock
     socket.on('job_details', jobDetails);
     socket.on('active_tasks_event', processEvent);
 
-    //$rootScope.$on('unload_jobController', function() {
-    //   $scope.$destroy();
-    //});
+    $scope.showConfirmRescheduleModal = function (job_id) {
+
+        var modalInstance = $modal.open({
+            templateUrl: 'static/partials/modals/confirm.html',
+            controller: 'ConfirmModalController',
+            resolve: {
+                action: function() {
+                    return 'run job "' + job_id + '" now'
+                }
+            }
+        });
+
+        modalInstance.result.then(function () {
+            $http.get('/api/job/run_now/' + job_id).success(function () {
+                $location.path('/');
+            });
+        });
+    };
+
+    $scope.showConfirmDeleteModal = function (job_id) {
+
+        var modalInstance = $modal.open({
+            templateUrl: 'static/partials/modals/confirm.html',
+            controller: 'ConfirmModalController',
+            resolve: {
+                action: function() {
+                    return 'cancel job "' + job_id + '"'
+                }
+            }
+        });
+
+        modalInstance.result.then(function () {
+            $http.get('/api/job/cancel/' + job_id).success(function () {
+                $location.path('/');
+            });
+        });
+    };
 
     $scope.$on('$destroy', function () {
         socket.removeListener('connect', onConnected);

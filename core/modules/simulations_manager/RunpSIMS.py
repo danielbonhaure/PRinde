@@ -40,7 +40,7 @@ class RunpSIMS:
         end_time = datetime.now()
 
         logging.getLogger().info('Finished running pSIMS for forecast "%s" (%s). Retval = %d. Time: %s.' %
-                                       (forecast.name, forecast.forecast_date, ret_val, end_time - start_time))
+                                 (forecast.name, forecast.forecast_date, ret_val, end_time - start_time))
 
         if ret_val != 0:
             progress_monitor.job_ended(end_status=JOB_STATUS_ERROR)
@@ -106,10 +106,8 @@ class RunpSIMS:
                                 if total == 0:
                                     continue
 
-                                if total != sim_count or failed:
-                                    logging.getLogger().error("pSIMS total tasks (%s) doesn't match total "
-                                                              "simulation count (%s). A task has failed." %
-                                                              (total, sim_count))
+                                if failed:
+                                    logging.getLogger().error("A task has failed, dumping pSIMS output.")
                                     err_file_name = "ERR [%s] - %s.txt" % (datetime.now().isoformat(), forecast_name)
                                     with open(err_file_name, mode='w') as err_file:
                                         err_file.write(''.join(stdout_lines))

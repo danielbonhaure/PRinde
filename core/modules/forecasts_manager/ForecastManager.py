@@ -4,9 +4,7 @@ import shutil
 import threading
 from datetime import datetime, timedelta
 import logging
-import time
 import copy
-
 from core.lib.io.file import create_folder_with_permissions
 from core.lib.utils.log import log_format_exception
 from core.modules.simulations_manager.CampaignWriter import CampaignWriter
@@ -55,7 +53,6 @@ class ForecastManager:
         if run_date < datetime.now():
             # Run immediately.
             job_handle = self.scheduler.add_job(self.run_forecast, name=job_name, args=[forecast])
-            forecast['job_id'] = job_handle.id
         else:
             # Schedule for running at the specified date at 19:00.
             run_date = run_date.replace(hour=19)
@@ -63,7 +60,7 @@ class ForecastManager:
             # scheduler.add_job(Worker.create_and_run, 'interval', seconds=5, args=[job_0, scheduler])
             job_handle = self.scheduler.add_job(self.run_forecast, trigger='date', name=job_name, args=[forecast],
                                                 run_date=run_date)
-            forecast['job_id'] = job_handle.id
+        forecast['job_id'] = job_handle.id
 
     def reschedule_forecast(self, forecast, now=False,):
         job_name = "Rescheduled: %s (%s)" % (forecast.name, forecast.forecast_date)
@@ -97,7 +94,7 @@ class ForecastManager:
 
             forecast = copy.deepcopy(yield_forecast)
             try:
-                run_start_time = time.time()
+                run_start_time = datetime.now()
 
                 # Get MongoDB connection.
                 db = self.system_config.database['rinde_db']
@@ -225,7 +222,9 @@ class ForecastManager:
                         '_id': {
                             '$in': reference_ids
                         }
-                    })
+                    }, projection=['_id'])
+
+                    found_reference_simulations = [s['_id'] for s in found_reference_simulations]
 
                     diff = set(reference_ids) - set(found_reference_simulations)
                     if len(diff) > 0:
@@ -234,10 +233,18 @@ class ForecastManager:
                         ref_forecast.name = 'Reference simulations for forecast %s' % forecast.name
                         ref_forecast.configuration.weather_series = 'historic'
 
-                        for loc_simulations in ref_forecast.simulations.values():
-                            for sim in loc_simulations:
-                                if sim.reference_id not in diff:
-                                    loc_simulations.remove(sim)
+                        rm_locs = []
+
+                        for loc_key, loc_simulations in ref_forecast.simulations.iteritems():
+                            # Filter reference simulations.
+                            loc_simulations[:] = [x for x in loc_simulations if x.reference_id in diff]
+
+                            if len(loc_simulations) == 0:
+                                rm_locs.append(loc_key)
+
+                        for loc_key in rm_locs:
+                            del ref_forecast.locations[loc_key]
+                            del ref_forecast.simulations[loc_key]
 
                         self.schedule_forecast(ref_forecast)
 
@@ -259,7 +266,7 @@ class ForecastManager:
                 psims_exit_code = self.psims_runner.run(forecast, progress_monitor=psims_monitor, verbose=True)
 
                 logging.getLogger().info('Finished running forecast "%s" (time=%s).\n' %
-                                         (forecast.name, repr(time.time() - run_start_time)))
+                                         (forecast.name, datetime.now() - run_start_time))
             except:
                 logging.getLogger().error("Failed to run forecast '%s'. Reason: %s" %
                                           (forecast.name, log_format_exception()))
@@ -283,6 +290,7 @@ class ForecastManager:
                     pass
                 else:
                     # Clean the rundir.
-                    shutil.rmtree(forecast.paths.rundir)
+                    if os.path.exists(forecast.paths.rundir):
+                        shutil.rmtree(forecast.paths.rundir)
                     # Check simulation results.
                     pass

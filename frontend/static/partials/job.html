@@ -13,6 +13,14 @@
                     <!--<span class="glyphicon glyphicon-tasks"></span>-->
                     <i class="fa fa-info"></i>
                     <strong>Job Details</strong>
+                    <span class="pull-right reload-button cancel-job" ng-show="task_details.can_be_modified"
+                          ng-click="showConfirmDeleteModal(task_details.job.id)">
+                        <i class="fa fa-ban"></i>Cancel job
+                    </span>
+                    <span class="pull-right reload-button" ng-show="task_details.can_be_modified"
+                          ng-click="showConfirmRescheduleModal(task_details.job.id)">
+                        <i class="fa fa-play"></i>Run now
+                    </span>
                 </div>
                 <div class="panel-body">
                     <ul ng-show="Utils.keys(task_details).length > 0" class="list-group">

@@ -8,7 +8,7 @@ from lib.jobs.monitor import JOB_STATUS_WAITING, JOB_STATUS_RUNNING
 from lib.utils.database import DatabaseUtils
 import csv
 from datetime import datetime, timedelta
-from core.lib.utils.extended_collections import group_by
+from core.lib.utils.extended_collections import group_by, DotDict
 import cStringIO
 from modules.data_updater.impute import RunImputation
 
@@ -20,7 +20,7 @@ class WeatherUpdater:
         self.system_config = system_config
         self.wth_db = None
         self.weather_stations_ids = set()
-        self.wth_max_date = {}
+        self.wth_max_date = DotDict()
 
     def add_weather_station_id(self, omm_id):
         try:

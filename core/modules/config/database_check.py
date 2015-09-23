@@ -49,7 +49,7 @@ class CheckRindeDB(BaseJob):
             'reference_simulations': {'water_content', 'location_id', '_id', 'soil_id', 'crop_type'},
             'reference_rainfall': {'omm_id', '_id'},
             'forecasts': {'_id', 'forecast_date'},
-            'simulations': {'forecast_date', 'location_id', '_id', u'crop_type'}
+            'simulations': {'forecast_date', 'location_id', '_id', 'crop_type'}
         }
         self.system_config = system_config
 

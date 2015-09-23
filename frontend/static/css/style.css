@@ -48,7 +48,8 @@ body .panel ul .list-group-item .run-times {
   max-height: 150px;
   overflow: auto;
 }
-body .panel .label-default, body .panel .badge {
+body .panel .label-default,
+body .panel .badge {
   background-color: #777;
 }
 body .panel .badge {
@@ -56,7 +57,6 @@ body .panel .badge {
 }
 body .panel .panel {
   /* Nested panels should have a border and shouldn't have padding. */
-
   margin-bottom: 0;
 }
 body .panel .panel .panel-body {
@@ -64,12 +64,14 @@ body .panel .panel .panel-body {
   border-top: none;
   margin: 0;
 }
-.panel-heading  > i, .panel-heading span {
+.panel-heading > i,
+.panel-heading span {
   margin-right: 10px;
 }
 .panel-heading .reload-button {
-  margin-top: 2px;
   font-weight: 400;
+  margin-left: 10px;
+  margin-top: 2px;
   margin-right: 0;
 }
 .panel-heading .reload-button i {
@@ -78,6 +80,9 @@ body .panel .panel .panel-body {
 .panel-heading .reload-button:hover {
   cursor: pointer;
   text-decoration: underline;
+}
+.panel-heading .cancel-job:hover {
+  color: #b04643;
 }
 div.main-view {
   position: absolute;
@@ -118,7 +123,8 @@ div.main-view div.row:first-child {
   height: 20px;
   background-color: #606f7d;
 }
-::-webkit-scrollbar-thumb:hover, ::-webkit-scrollbar-thumb:active {
+::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:active {
   background-color: #647482;
   border-left: 3px solid #485563;
   border-right: 3px solid #485563;
@@ -154,10 +160,10 @@ footer #log {
   padding: 5px 10px;
   text-align: center;
 }
-footer #log  > div {
+footer #log > div {
   text-align: left;
 }
-footer #log  > div pre {
+footer #log > div pre {
   font-size: inherit;
   padding: 0;
   margin: 0;
@@ -166,7 +172,7 @@ footer #log  > div pre {
   background-color: transparent;
   font-family: inherit;
 }
-footer #log  > div.text-danger {
+footer #log > div.text-danger {
   font-weight: 400;
 }
 footer #log.minimized {
@@ -181,11 +187,11 @@ footer.minimized {
 footer .panel-heading .btn-group {
   margin-top: -1px;
 }
-footer .panel-heading .btn-group  > .btn:last-child {
+footer .panel-heading .btn-group > .btn:last-child {
   border-bottom-right-radius: 2px;
   border-top-right-radius: 2px;
 }
-footer .panel-heading .btn-group  > .btn:first-child {
+footer .panel-heading .btn-group > .btn:first-child {
   border-bottom-left-radius: 2px;
   border-top-left-radius: 2px;
 }

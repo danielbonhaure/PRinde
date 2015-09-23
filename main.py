@@ -87,20 +87,21 @@ class Main:
 
         # Instantiate the forecast manager.
         self.forecast_manager = ForecastManager(self.scheduler, self.system_config, self.weather_updater)
+        self.web_server.forecast_manager = self.forecast_manager
 
         for omm_id in self.system_config.weather_stations_ids:
             self.weather_updater.add_weather_station_id(omm_id)
 
-        # self.scheduler.add_job(self.weather_updater.update_weather_db, name='Update weather database',
-        #                        trigger='interval', days=1, next_run_time=datetime.now())
+        self.scheduler.add_job(self.weather_updater.update_weather_db, name='Update weather database',
+                               trigger='interval', days=1, next_run_time=datetime.now())
         # Schedule the update of weather data max dates to be ran once a day.
-        # self.scheduler.add_job(self.weather_updater.update_max_dates, name='Update weather data max dates',
-        #                        trigger='interval', days=1, next_run_time=datetime.now())
+        self.scheduler.add_job(self.weather_updater.update_max_dates, name='Update weather data max dates',
+                               trigger='interval', days=1, next_run_time=datetime.now())
         # Schedule the update of rainfall quantiles every 120 days.
         self.scheduler.add_job(self.weather_updater.update_rainfall_quantiles, trigger='interval', days=120,
                                name='Update rainfall quantiles')
 
-        # self.forecast_manager.start()
+        self.forecast_manager.start()
         self.system_config.logger.info("Forecast manager started.")
         self.system_config.logger.info("Done initializing services.")
 
