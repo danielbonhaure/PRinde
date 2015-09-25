@@ -25,8 +25,7 @@ class HistoricalSeriesMaker(DatabaseWeatherSeries):
         wth_db_connection = self.system_config.database['weather_db']
         cursor = wth_db_connection.cursor()
 
-        start_time = time.time()
+        # start_time = time.time()
         cursor.execute("SELECT pr_historic_series(%s, %s)", (omm_id, wth_output))
-        logging.getLogger().debug("Export historic series for station: %s. Forecast Date: %s. Time: %s." %
-                                  (omm_id, forecast_date, (time.time() - start_time)))
-        pass
+        # logging.getLogger().debug("Export historic series for station: %s. Forecast Date: %s. Time: %s." %
+        #                           (omm_id, forecast_date, (time.time() - start_time)))

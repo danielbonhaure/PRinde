@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import logging
+import os
 from apscheduler.executors.pool import ThreadPoolExecutor
 import sys
 import signal
@@ -32,6 +33,8 @@ class Main:
         self.stats = None
         # Get system root path.
         root_path = absdirname(__file__)
+        # Change the current working directory to the root path.
+        os.chdir(root_path)
 
         self.system_config = None
 
@@ -70,6 +73,9 @@ class Main:
         self.bootstrap()
         self.scheduler = MonitoringScheduler(excecutors={
             'default': ThreadPoolExecutor(max_workers=self.system_config.max_parallelism)
+        }, job_defaults={
+            'coalesce': True,
+            'misfire_grace_time': 23*60*60  # 23 hours of grace time
         })
         self.stats = StatsCenter(self.scheduler)
         self.web_server = WebServer(self.stats, self.scheduler, self.system_config)

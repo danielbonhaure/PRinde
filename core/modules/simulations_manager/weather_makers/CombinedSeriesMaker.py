@@ -24,9 +24,9 @@ class CombinedSeriesMaker(DatabaseWeatherSeries):
         wth_db_connection = self.system_config.database['weather_db']
         cursor = wth_db_connection.cursor()
 
-        start_time = time.time()
+        # start_time = time.time()
         cursor.execute("SELECT pr_create_campaigns(%s, %s, %s, %s, %s)",
                        (omm_id, start_date, forecast_date, end_date,
                         wth_output))
-        logging.getLogger().debug("Station: %s. Date: %s. Time: %s." %
-                                  (omm_id, forecast_date, (time.time() - start_time)))
+        # logging.getLogger().debug("Station: %s. Date: %s. Time: %s." %
+        #                           (omm_id, forecast_date, (time.time() - start_time)))

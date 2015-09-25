@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import os
+import re
 import shutil
 import threading
 from datetime import datetime, timedelta
 import logging
 import copy
-from core.lib.io.file import create_folder_with_permissions
+from core.lib.io.file import create_folder_with_permissions, listdir_fullpath
 from core.lib.utils.log import log_format_exception
 from core.modules.simulations_manager.CampaignWriter import CampaignWriter
 from core.lib.utils.extended_collections import DotDict
@@ -85,6 +86,7 @@ class ForecastManager:
         if not progress_monitor:
             progress_monitor = NullMonitor
 
+        progress_monitor.end_value = 5
         progress_monitor.job_started()
         progress_monitor.update_progress(job_status=JOB_STATUS_WAITING)
 
@@ -175,6 +177,12 @@ class ForecastManager:
                     self.reschedule_forecast(forecast)
                     return
 
+                progress_monitor.update_progress(new_value=1)
+
+                weather_series_monitor = ProgressMonitor(end_value=len(active_threads))
+                progress_monitor.add_subjob(weather_series_monitor, job_name='Create weather series')
+                joined_threads_count = 0
+
                 # Start all weather maker threads.
                 for t in active_threads.values():
                     t.start()
@@ -182,6 +190,11 @@ class ForecastManager:
                 # Wait for the weather grid to be populated.
                 for t in active_threads.values():
                     t.join()
+                    joined_threads_count += 1
+                    weather_series_monitor.update_progress(joined_threads_count)
+
+                weather_series_monitor.job_ended()
+                progress_monitor.update_progress(new_value=2)
 
                 # If the folder is empty, delete it.
                 if len(os.listdir(forecast.paths.wth_csv_read)) == 0:
@@ -248,8 +261,12 @@ class ForecastManager:
 
                         self.schedule_forecast(ref_forecast)
 
+                progress_monitor.update_progress(new_value=3)
+
                 forecast.paths.run_script_path = CampaignWriter.write_campaign(forecast, output_dir=forecast.paths.rundir)
                 forecast.simulation_count = len(simulations_ids)
+
+                progress_monitor.update_progress(new_value=4)
 
                 # Insertar ID's de simulaciones en el pronóstico.
                 if forecast_id:
@@ -261,9 +278,9 @@ class ForecastManager:
                     )
 
                 # Ejecutar simulaciones.
-                psims_monitor = ProgressMonitor()
-                progress_monitor.add_subjob(psims_monitor, job_name='Run pSIMS')
-                psims_exit_code = self.psims_runner.run(forecast, progress_monitor=psims_monitor, verbose=True)
+                weather_series_monitor = ProgressMonitor()
+                progress_monitor.add_subjob(weather_series_monitor, job_name='Run pSIMS')
+                psims_exit_code = self.psims_runner.run(forecast, progress_monitor=weather_series_monitor, verbose=True)
 
                 logging.getLogger().info('Finished running forecast "%s" (time=%s).\n' %
                                          (forecast.name, datetime.now() - run_start_time))
@@ -283,14 +300,23 @@ class ForecastManager:
                         if forecast_id:
                             db.forecasts.delete_one({"_id": forecast_id})
 
-                if psims_exit_code and psims_exit_code != 0:
-
-
-                    # Reschedule (and notify?)
-                    pass
-                else:
+                if not psims_exit_code or psims_exit_code == 0:
                     # Clean the rundir.
                     if os.path.exists(forecast.paths.rundir):
                         shutil.rmtree(forecast.paths.rundir)
-                    # Check simulation results.
-                    pass
+
+                if psims_exit_code == 0:
+                    # Clean pSIMS run folder.
+                    rundir_regex = re.compile('.+/run(\d){3}$')
+                    files_filter = lambda file_name: rundir_regex.match(file_name) is not None
+
+                    psims_run_dirs = sorted(listdir_fullpath(forecast.paths.psims, filter=files_filter),
+                                            reverse=True)
+
+                    if len(psims_run_dirs) > 0:
+                        print("Removing file %s" % psims_run_dirs[0])
+
+                        # Remove the last runNNN directory (the one this execution created).
+                        shutil.rmtree(psims_run_dirs[0])
+
+                    # Check simulation results?.
