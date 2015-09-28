@@ -11,7 +11,7 @@ from core.lib.utils.extended_collections import DotDict
 from core.lib.utils.database import DatabaseUtils
 from core.lib.jobs.monitor import NullMonitor, JOB_STATUS_WAITING, JOB_STATUS_RUNNING
 from core.lib.sync import JobsLock
-from core.modules.config.database_check import CheckWeatherDB, CheckRindeDB
+from core.modules.config.database_check import CheckWeatherDB, CheckYieldDB
 from core.modules.config.loaders import ForecastLoader
 from core.modules.config.priority import LOAD_CONFIGURATION
 
@@ -136,9 +136,8 @@ class SystemConfiguration(DotDict, FileSystemEventHandler):
         wth_db_checker = CheckWeatherDB(system_config=config_object)
         wth_db_checker.start()
 
-        rinde_db_checker = CheckRindeDB(system_config=config_object)
+        rinde_db_checker = CheckYieldDB(system_config=config_object)
         rinde_db_checker.start()
-
 
         config_object.alias_dict = None
         if config_object.alias_keys_path:

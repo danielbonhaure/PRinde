@@ -9,9 +9,9 @@ from apscheduler.schedulers import SchedulerNotRunningError
 from core.modules.data_updater.WeatherUpdater import WeatherUpdater
 from core.lib.utils.log import log_format_exception
 from core.modules.config.system_config import SystemConfiguration
-from core.modules.forecasts_manager.events import register_signals
 from core.modules.forecasts_manager.boot import boot_system
 from core.modules.forecasts_manager.ForecastManager import ForecastManager
+from core.modules.data_updater.sync import YieldDatabaseSync
 from core.lib.io.file import absdirname
 from core.lib.jobs.scheduler import MonitoringScheduler
 from core.lib.logging.stream import WebStream
@@ -48,6 +48,7 @@ class Main:
 
         self.forecast_manager = None
         self.weather_updater = WeatherUpdater(self.system_config)
+        self.db_sync = YieldDatabaseSync(self.system_config)
 
     def bootstrap(self):
         boot_system(self.system_config)
@@ -115,19 +116,18 @@ class Main:
         # Schedule the update of rainfall quantiles every 120 days.
         self.scheduler.add_job(self.weather_updater.update_rainfall_quantiles, trigger='interval', days=120,
                                name='Update rainfall quantiles')
+        # Schedule the synchronization of yield databases (between backend and frontend).
+        # This is actually performed only if such database is defined inside the config/database.yaml file.
+        self.scheduler.add_job(self.db_sync, trigger='interval', days=1, name='Synchronize yield databases')
 
         self.forecast_manager.start()
         self.system_config.logger.info("Forecast manager started.")
         self.system_config.logger.info("Done initializing services.")
 
-        # Join threads with main thread. Main thread blocks here.
-        # for th in self.system_threads:
-        #     th.join()
-
         # Block main thread.
         while True:
-            # Sleep 1000 seconds.
-            time.sleep(1000)
+            # Sleep 1 day.
+            time.sleep(86400)
 
     def stop(self, *args):
         self.scheduler.shutdown(wait=False)

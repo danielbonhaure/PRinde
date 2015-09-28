@@ -36,9 +36,9 @@ class CheckWeatherDB(BaseJob):
                                'Consider running setup.sh again.' % views_diff)
 
 
-class CheckRindeDB(BaseJob):
+class CheckYieldDB(BaseJob):
     def __init__(self, system_config):
-        super(CheckRindeDB, self).__init__(name='Check Mongo output DB')
+        super(CheckYieldDB, self).__init__(name='Check Mongo output DB')
         self.needed_collections = {'locations', 'forecasts', 'reference_rainfall', 'reference_simulations',
                                    'simulations'}
         self.collection_indexes = {
@@ -51,7 +51,7 @@ class CheckRindeDB(BaseJob):
         self.system_config = system_config
 
     def run(self):
-        db = self.system_config.database['rinde_db']
+        db = self.system_config.database['yield_db']
         collections = set(db.collection_names())
 
         if self.needed_collections & collections != self.needed_collections:

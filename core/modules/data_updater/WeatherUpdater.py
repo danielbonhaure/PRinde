@@ -282,7 +282,7 @@ class WeatherUpdater:
                 # np_prcp_values = WeatherUpdater.parse_rainfalls(daily_cursor)
 
                 # Update (or insert) weather quantiles.
-                db = self.system_config.database['rinde_db']
+                db = self.system_config.database['yield_db']
                 db.reference_rainfall.update_one(
                     {"omm_id": omm_id},
                     {"$set": {

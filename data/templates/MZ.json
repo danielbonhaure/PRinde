@@ -1,6 +1,6 @@
 {
     "exname_o": "Salado basin",
-    "local_name": "Soybean",
+    "local_name": "Maize",
     "person_notes": "BERT, F.E.",
     "institution": "NSF - IAI",
     "site_name": "GenericLatitude, GenericLongitude",
@@ -76,7 +76,7 @@
         "events": [
             {
                 "cul_id": "Variable",
-                "crid": "SB",
+                "crid": "MZ",
                 "cul_name": "Variable",
                 "event": "planting",
                 "seqid": "1",
@@ -130,7 +130,7 @@
             },
             {
                 "seqid": "1",
-                "ha_name": "SB",
+                "ha_name": "MZ",
                 "date": "yyyy1231",
                 "event": "harvest"
             }
@@ -148,7 +148,7 @@
                     "sdyer": "79",
                     "rseed": "2150",
                     "sname": "JUN-SOIL1-MZ1-hi",
-                    "smodel": "SBGRO"
+                    "smodel": "MZCER"
                 },
                 "options": {
                     "water": "Y",

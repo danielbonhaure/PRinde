@@ -40,7 +40,7 @@ class ForecastManager:
     def schedule_forecast(self, forecast):
         job_name = "%s (%s)" % (forecast.name, forecast.forecast_date)
         # Get MongoDB connection.
-        db = self.system_config.database['rinde_db']
+        db = self.system_config.database['yield_db']
 
         existing = db.forecasts.find_one({'_id': forecast.id})
         if existing:
@@ -99,7 +99,7 @@ class ForecastManager:
                 run_start_time = datetime.now()
 
                 # Get MongoDB connection.
-                db = self.system_config.database['rinde_db']
+                db = self.system_config.database['yield_db']
 
                 wth_series_maker = None
                 forecast.configuration['simulation_collection'] = 'simulations'
@@ -117,7 +117,7 @@ class ForecastManager:
                 forecast.folder_name = folder_name.encode('unicode-escape')
 
                 # Add folder name to rundir and create it.
-                forecast.paths.rundir = os.path.abspath(os.path.join(forecast.paths.rundir, folder_name))
+                forecast.paths.rundir = os.path.abspath(os.path.join(forecast.paths.rundir, folder_name)).encode('unicode-escape')
                 create_folder_with_permissions(forecast.paths.rundir)
 
                 # Create a folder for the weather grid inside that rundir.
@@ -129,8 +129,8 @@ class ForecastManager:
                 create_folder_with_permissions(forecast.paths.soil_grid_path)
 
                 # Create the folder where we'll read the CSV files created by the database.
-                forecast.paths.wth_csv_read = os.path.join(forecast.paths.wth_csv_read, folder_name)
-                forecast.paths.wth_csv_export = os.path.join(forecast.paths.wth_csv_export, folder_name)
+                forecast.paths.wth_csv_read = os.path.join(forecast.paths.wth_csv_read, folder_name).encode('unicode-escape')
+                forecast.paths.wth_csv_export = os.path.join(forecast.paths.wth_csv_export, folder_name).encode('unicode-escape')
                 create_folder_with_permissions(forecast.paths.wth_csv_read)
 
                 active_threads = dict()
@@ -317,6 +317,6 @@ class ForecastManager:
                         print("Removing file %s" % psims_run_dirs[0])
 
                         # Remove the last runNNN directory (the one this execution created).
-                        shutil.rmtree(psims_run_dirs[0])
+                        # shutil.rmtree(psims_run_dirs[0])
 
                     # Check simulation results?.
