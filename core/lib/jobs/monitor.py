@@ -178,5 +178,5 @@ class NullMonitor(ProgressMonitor):
     def add_subjob(self, subjob_progress_monitor,  job_name=None):
         pass
 
-    def add_listener(self, l, mask=EVENT_ALL):
+    def add_listener(self, l, mask=None):
         pass

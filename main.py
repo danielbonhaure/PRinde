@@ -2,24 +2,25 @@
 # -*- coding: utf-8 -*-
 import logging
 import os
-from apscheduler.executors.pool import ThreadPoolExecutor
 import sys
 import signal
-from apscheduler.schedulers import SchedulerNotRunningError
+import threading
+from datetime import datetime
+import time
+
+from apscheduler.executors.pool import ThreadPoolExecutor
+
 from core.modules.data_updater.WeatherUpdater import WeatherUpdater
 from core.lib.utils.log import log_format_exception
 from core.modules.config.system_config import SystemConfiguration
-from core.modules.forecasts_manager.boot import boot_system
-from core.modules.forecasts_manager.ForecastManager import ForecastManager
+from core.modules.config.boot import boot_system
+from core.modules.simulations_manager.ForecastManager import ForecastManager
 from core.modules.data_updater.sync import YieldDatabaseSync
 from core.lib.io.file import absdirname
 from core.lib.jobs.scheduler import MonitoringScheduler
 from core.lib.logging.stream import WebStream
 from core.modules.statistics.StatsCenter import StatsCenter
 from frontend.web import WebServer
-import threading
-from datetime import datetime
-import time
 
 __author__ = 'Federico Schmidt'
 

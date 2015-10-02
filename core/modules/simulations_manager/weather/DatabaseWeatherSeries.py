@@ -1,12 +1,13 @@
 import abc
 import re
 import threading
-from core.modules.simulations_manager.WeatherSeriesMaker import WeatherSeriesMaker
-from core.lib.geo.grid import latlon_to_grid
-from core.lib.io.file import listdir_fullpath, create_folder_with_permissions
 import os.path
 import shutil
 import csv
+
+from core.modules.simulations_manager.weather.WeatherSeriesMaker import WeatherSeriesMaker
+from core.lib.geo.grid import latlon_to_grid
+from core.lib.io.file import listdir_fullpath, create_folder_with_permissions
 
 __author__ = 'Federico Schmidt'
 

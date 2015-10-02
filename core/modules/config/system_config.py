@@ -4,8 +4,6 @@ import os.path
 import threading
 import logging
 import logging.config
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
 from core.lib.io.file import listdir_fullpath
 from core.lib.utils.extended_collections import DotDict
 from core.lib.utils.database import DatabaseUtils
@@ -18,7 +16,7 @@ from core.modules.config.priority import LOAD_CONFIGURATION
 __author__ = 'Federico Schmidt'
 
 
-class SystemConfiguration(DotDict, FileSystemEventHandler):
+class SystemConfiguration(DotDict):
 
     def __init__(self, root_path):
         super(SystemConfiguration, self).__init__()
@@ -83,7 +81,6 @@ class SystemConfiguration(DotDict, FileSystemEventHandler):
         self.alias_dict = None
         self.max_parallelism = 1
         self.jobs_lock = None
-        self.watch_thread = None
         self.observer = None
 
     @staticmethod
@@ -161,31 +158,6 @@ class SystemConfiguration(DotDict, FileSystemEventHandler):
 
         return forecast_file_list
 
-        #     try:
-        #         forecast = DotDict(yaml.safe_load(open(file_name)))
-        #         forecast['file_name'] = file_name
-        #
-        #         builder = ForecastBuilder(forecast, self.simulation_schema_path)
-        #         builder.replace_alias(alias_dict)
-        #         builder.inherit_config(system_config)
-        #         # Build and append forecasts.
-        #         for f in builder.build():
-        #             self.__dict__['forecasts'].append(f)
-        #             station_ids.update(set([loc['weather_station'] for loc in f.locations.values()]))
-        #     except Exception:
-        #         logging.getLogger().error("Skipping forecast file '%s'. Reason: %s." %
-        #                                         (file_name, log_format_exception()))
-        #
-        # self.__dict__['weather_stations_ids'] = station_ids
-
-        # If the watch thread isn't already loaded, create and start it.
-        # if not config_object.watch_thread:
-        #     # Create a Thread with "watch" function and start it.
-        #     config_object.watch_thread = threading.Thread(target=config_object.watch)
-        #     #self.watch_thread.start()
-
-        # return self.watch_thread
-
     @staticmethod
     def load_forecasts(config_object, forecast_list):
         loader = ForecastLoader(jobs_lock=config_object.jobs_lock, system_config=config_object)
@@ -220,41 +192,12 @@ class SystemConfiguration(DotDict, FileSystemEventHandler):
             except Exception, ex:
                 raise RuntimeError('Configuration not updated. An exception was raised: %s' % ex)
 
-    def watch(self):
-        """
-        This function is a new thread, instantiates the watchdog.Observer thread and registers this object (self)
-        as the Event Handler (see watchdog's documentation).
-        :return: None
-        """
-        # We'll watch the system's config parent path.
-        watch_path = os.path.dirname(self.config_path)
-
-        self.observer = Observer()
-        self.observer.schedule(self, watch_path, recursive=True)
-        self.observer.start()
-        self.observer.join()
-
-    def on_modified(self, event):
-        """
-        Overrides the FileSystemEventHandler.on_modified function, will be triggered every time a file or directory
-        changes inside the configuration folder.
-        :param event: The object representing the event, see Watchdog's documentation.
-        :return: None
-        """
-        if not event.is_directory and \
-                event.src_path.startswith(self.config_path) and \
-                event.src_path.endswith('yaml'):
-            # Reload config.
-            pass
-            # self.load
-
     def public_view(self):
         view = DotDict(copy.copy(self.__dict__))
         del view['database']
         del view['database_config']
         del view['forecasts']
         del view['logger']
-        del view['watch_thread']
         del view['observer']
         del view['alias_dict']
         del view['jobs_lock']

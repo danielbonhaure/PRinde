@@ -119,13 +119,20 @@ class WeatherUpdater:
                 if len(stations_updated) > 0:
                     cursor.execute("COMMIT")
                     impute_job = RunImputation(system_config=self.system_config, parent_task_monitor=progress_monitor)
-                    ret_val = impute_job.start(weather_stations=stations_updated.intersection(self.weather_stations_ids))
+
+                    stations_to_impute = stations_updated.intersection(self.weather_stations_ids)
+
+                    if len(stations_to_impute) > 0:
+                        ret_val = impute_job.start(weather_stations=stations_to_impute)
+                    else:
+                        ret_val = 0
+
+                    pm = ProgressMonitor()
+                    progress_monitor.add_subjob(pm, 'Refresh materialized view')
+                    # Refresh materialized view.
+                    self.refresh_view(pm)
 
                     if ret_val == 0:
-                        pm = ProgressMonitor()
-                        progress_monitor.add_subjob(pm, 'Refresh materialized view')
-                        # Refresh materialized view.
-                        self.refresh_view(pm)
                         # Update max dates again.
                         self.update_max_dates(run_blocking=False)
                         logging.info('Updated weather data for station(s): %s.' % stations_updated)

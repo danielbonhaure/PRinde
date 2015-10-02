@@ -3,15 +3,14 @@ import os
 import re
 import shutil
 import threading
-from datetime import datetime, timedelta
 import logging
 import copy
+from datetime import datetime, timedelta
 from core.lib.io.file import create_folder_with_permissions, listdir_fullpath
 from core.lib.utils.log import log_format_exception
 from core.modules.simulations_manager.CampaignWriter import CampaignWriter
-from core.lib.utils.extended_collections import DotDict
-from core.modules.simulations_manager.weather_makers.CombinedSeriesMaker import CombinedSeriesMaker
-from core.modules.simulations_manager.weather_makers.HistoricalSeriesMaker import HistoricalSeriesMaker
+from core.modules.simulations_manager.weather.CombinedSeriesMaker import CombinedSeriesMaker
+from core.modules.simulations_manager.weather.HistoricalSeriesMaker import HistoricalSeriesMaker
 from core.modules.simulations_manager.RunpSIMS import RunpSIMS
 from core.lib.jobs.monitor import NullMonitor, JOB_STATUS_WAITING, JOB_STATUS_RUNNING, ProgressMonitor
 from core.modules.config.priority import RUN_FORECAST
@@ -117,7 +116,8 @@ class ForecastManager:
                 forecast.folder_name = folder_name.encode('unicode-escape')
 
                 # Add folder name to rundir and create it.
-                forecast.paths.rundir = os.path.abspath(os.path.join(forecast.paths.rundir, folder_name)).encode('unicode-escape')
+                forecast.paths.rundir = os.path.abspath(os.path.join(forecast.paths.rundir,
+                                                                     folder_name)).encode('unicode-escape')
                 create_folder_with_permissions(forecast.paths.rundir)
 
                 # Create a folder for the weather grid inside that rundir.
@@ -214,13 +214,11 @@ class ForecastManager:
                     for sim in loc_simulations:
                         sim.location = forecast.locations[loc_key]
                         sim.weather_station = forecast.weather_stations[sim.location.weather_station]
-                        if forecast_id:
-                            sim.forecast_id = forecast_id
-                            sim.forecast_date = forecast.forecast_date
-                        sim.execution_details = DotDict()
 
                         # If a simulation has an associated forecast, it should go inside the 'simulations' collection.
                         if forecast_id:
+                            sim.forecast_id = forecast_id
+                            sim.forecast_date = forecast.forecast_date
                             sim_id = db.simulations.insert_one(sim.persistent_view()).inserted_id
                             reference_ids.append(sim.reference_id)
                         else:

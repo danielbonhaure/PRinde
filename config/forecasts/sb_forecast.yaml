@@ -1,6 +1,6 @@
 name: 'Rinde de Soja en Argentina'
 
-forecast_date: ['2015-01-01', '2015-02-01', '2015-03-01', '2015-04-17', '2015-09-22']
+forecast_date: ['2015-12-15']
 
 crop_type: 'SB'
 crop_template: 'SB.json'
@@ -1882,5 +1882,5 @@ agronomic_management:
 # -----------------------------------------------------------------------------------------------------------------------------------------
 
 results:
-    cycle: ["PDAT", "HWAM"]
+    cycle: ["HWAM"]
     daily: ["stress"]

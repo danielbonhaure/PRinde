@@ -1,8 +1,9 @@
 import json
 import os
 import numpy as np
+
 from core.lib.io.file import create_folder_with_permissions
-from core.modules.simulations_manager.SoilDAO import SoilDAO
+from core.modules.simulations_manager.soil.SoilDAO import SoilDAO
 
 __author__ = 'Federico Schmidt'
 

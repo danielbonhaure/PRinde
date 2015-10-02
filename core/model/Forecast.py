@@ -1,9 +1,10 @@
 import copy
 from datetime import datetime
+from xxhash import xxh64
+
 from core.lib.io.file import fileNameWithoutExtension
 from core.lib.utils.extended_collections import DotDict
-from core.lib.netcdf.WeatherNetCDFWriter import WeatherNetCDFWriter
-from xxhash import xxh64
+from core.modules.simulations_manager.psims.WeatherNetCDFWriter import WeatherNetCDFWriter
 
 __author__ = 'Federico Schmidt'
 
@@ -121,8 +122,9 @@ class Forecast(DotDict):
             return None
 
         view = copy.deepcopy(self.__dict__)
+        del view['simulations_id']
         del view['paths']
-        del view['configuration']['paths']
+        del view['configuration']
         del view['folder_name']
         del view['weather_stations']
         view['result_variables'] = view['results']
@@ -154,16 +156,10 @@ class Forecast(DotDict):
 
     def public_view(self, forecasts_paths):
         view = DotDict(copy.deepcopy(self.__dict__))
-        # del view['paths']
-        # del view['configuration']['paths']
-        # del view['folder_name']
-        # del view['weather_stations']
         del view['results']
         del view['simulations']
 
         view['campaign_name'] = self.campaign_name
-        # view['locations'] = []
-        # view['simulations'] = []
         view['forecast_date'] = self.forecast_date
 
         if 'rainfall' in view:
