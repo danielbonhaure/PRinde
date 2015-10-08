@@ -7,9 +7,7 @@ import signal
 import threading
 from datetime import datetime
 import time
-
 from apscheduler.executors.pool import ThreadPoolExecutor
-
 from core.modules.data_updater.WeatherUpdater import WeatherUpdater
 from core.lib.utils.log import log_format_exception
 from core.modules.config.system_config import SystemConfiguration

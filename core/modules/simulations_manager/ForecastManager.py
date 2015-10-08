@@ -111,7 +111,7 @@ class ForecastManager:
                 else:
                     raise RuntimeError('Weather series type "%s" unsupported.' % forecast.configuration.weather_series)
 
-                folder_name = "%s - %s" % (datetime.now().isoformat(), forecast['name'])
+                folder_name = "%s" % (datetime.now().isoformat())
                 folder_name = folder_name.replace('"', '').replace('\'', '').replace(' ', '_')
                 forecast.folder_name = folder_name.encode('unicode-escape')
 
@@ -175,7 +175,7 @@ class ForecastManager:
                     logging.warning("Couldn't run forecast \"%s\" because the following weather stations don't have "
                                     "updated data: %s." % (forecast_full_name, list(stations_not_updated)))
                     self.reschedule_forecast(forecast)
-                    return
+                    return 0
 
                 progress_monitor.update_progress(new_value=1)
 
@@ -280,6 +280,16 @@ class ForecastManager:
                 progress_monitor.add_subjob(weather_series_monitor, job_name='Run pSIMS')
                 psims_exit_code = self.psims_runner.run(forecast, progress_monitor=weather_series_monitor, verbose=True)
 
+                # Check results
+                if psims_exit_code == 0:
+                    inserted_count = db[forecast.configuration['simulation_collection']].count({
+                        '_id': {'$in': simulations_ids}
+                    })
+
+                    if len(simulations_ids) != inserted_count:
+                        raise RuntimeError('Mismatch between simulations id\'s length and inserted id\'s '
+                                           'length (%s != %s)' % (len(simulations_ids), inserted_count))
+
                 logging.getLogger().info('Finished running forecast "%s" (time=%s).\n' %
                                          (forecast.name, datetime.now() - run_start_time))
             except:
@@ -297,6 +307,7 @@ class ForecastManager:
                             )
                         if forecast_id:
                             db.forecasts.delete_one({"_id": forecast_id})
+                    return -1
 
                 if not psims_exit_code or psims_exit_code == 0:
                     # Clean the rundir.
@@ -312,9 +323,7 @@ class ForecastManager:
                                             reverse=True)
 
                     if len(psims_run_dirs) > 0:
-                        print("Removing file %s" % psims_run_dirs[0])
-
                         # Remove the last runNNN directory (the one this execution created).
-                        # shutil.rmtree(psims_run_dirs[0])
+                        shutil.rmtree(psims_run_dirs[0])
 
-                    # Check simulation results?.
+                return psims_exit_code

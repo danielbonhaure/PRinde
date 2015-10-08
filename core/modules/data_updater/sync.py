@@ -1,6 +1,6 @@
 from pymongo.errors import BulkWriteError
 from core.lib.jobs.base import BaseJob
-from core.lib.jobs.monitor import ProgressMonitor, JOB_STATUS_WAITING
+from core.lib.jobs.monitor import ProgressMonitor, JOB_STATUS_WAITING, JOB_STATUS_RUNNING
 
 __author__ = 'Federico Schmidt'
 
@@ -16,6 +16,7 @@ class YieldDatabaseSync(BaseJob):
 
         # Acquire a read lock (parallel job).
         with self.system_config.jobs_lock.parallel_job():
+            self.progress_monitor.update_progress(job_status=JOB_STATUS_RUNNING)
             if 'yield_sync_db' in self.system_config.database:
                 source_db = self.system_config.database['yield_db']
                 target_db = self.system_config.database['yield_sync_db']
