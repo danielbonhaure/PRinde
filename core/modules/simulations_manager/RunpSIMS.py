@@ -39,7 +39,7 @@ class RunpSIMS:
                                progress_monitor, verbose)
         end_time = datetime.now()
 
-        logging.getLogger().info('Finished running pSIMS for forecast "%s" (%s). Retval = %d. Time: %s.' %
+        logging.getLogger().info('Finished running pSIMS for forecast "%s" (%s). Retval = %s. Time: %s.' %
                                  (forecast.name, forecast.forecast_date, ret_val, end_time - start_time))
 
         if ret_val != 0:

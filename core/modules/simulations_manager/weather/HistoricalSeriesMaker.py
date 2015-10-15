@@ -1,7 +1,5 @@
-import os
-import time
-import logging
-
+# coding=utf-8
+import itertools
 from core.lib.dssat.DSSATWthWriter import DSSATWthWriter
 from core.modules.simulations_manager.weather.DatabaseWeatherSeries import DatabaseWeatherSeries
 
@@ -14,18 +12,20 @@ class HistoricalSeriesMaker(DatabaseWeatherSeries):
             weather_writer = DSSATWthWriter
         super(HistoricalSeriesMaker, self).__init__(system_config, max_parallelism, weather_writer)
 
-    def create_series(self, omm_id, forecast, extract_rainfall=True):
-        return DatabaseWeatherSeries.create_series(self, omm_id, forecast, False)
+    def create_series(self, location, forecast, extract_rainfall=True):
+        return DatabaseWeatherSeries.create_series(self, location, forecast)
 
-    def create_from_db(self, omm_id, forecast):
-        wth_output = os.path.join(forecast.paths.wth_csv_export, str(omm_id))
-
-        forecast_date = forecast.forecast_date
+    def create_from_db(self, location, forecast):
+        omm_id = location['weather_station']
 
         wth_db_connection = self.system_config.database['weather_db']
         cursor = wth_db_connection.cursor()
 
-        # start_time = time.time()
-        cursor.execute("SELECT pr_historic_series(%s, %s)", (omm_id, wth_output))
-        # logging.getLogger().debug("Export historic series for station: %s. Forecast Date: %s. Time: %s." %
-        #                           (omm_id, forecast_date, (time.time() - start_time)))
+        cursor.execute('SELECT pr_campañas_completas(%s)', (omm_id,))
+        full_campaigns = cursor.fetchall()
+
+        for campaign in full_campaigns:
+            campaign_year = campaign[0]
+            cursor.execute("SELECT * FROM pr_serie_agraria(%s, %s)", (omm_id, campaign_year))
+            colnames = [tuple([desc[0] for desc in cursor.description])]
+            yield (campaign_year, itertools.chain(colnames, cursor))

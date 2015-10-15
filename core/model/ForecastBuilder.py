@@ -20,21 +20,21 @@ class ForecastBuilder:
         if schema_path and os.path.exists(schema_path):
             self.simulation_schema = json.load(open(schema_path, mode='r'))
 
-    def inherit_config(self, system_config=None):
+    def inherit_config(self, parent_config=None):
         forecast_file = self.forecast_file
 
         if 'configuration' not in forecast_file:
-            forecast_file['configuration'] = system_config
+            forecast_file['configuration'] = parent_config
         else:
-            new_config = copy.deepcopy(system_config)
+            new_config = copy.deepcopy(parent_config)
             new_config.update(forecast_file['configuration'])
             forecast_file['configuration'] = new_config
 
         # Ensure the paralellism degree of a forecast respects the global system limit.
-        if forecast_file['configuration']['max_parallelism'] > system_config['max_parallelism']:
-            forecast_file['configuration']['max_parallellism'] = system_config['max_parallelism']
+        if forecast_file['configuration']['max_parallelism'] > parent_config['max_parallelism']:
+            forecast_file['configuration']['max_parallellism'] = parent_config['max_parallelism']
 
-    def replace_alias(self, alias_dict):
+    def replace_aliases(self, alias_dict):
         if alias_dict:
             self.__replace_keys__(self.forecast_file, alias_dict)
 
@@ -116,7 +116,8 @@ class ForecastBuilder:
                         ic_water_var = 'frac_full'
                         ic_water_var_content = sim.initial_conditions['frac_full']
 
-                    # TODO: ¿puede ic_water_var_content ser None en alguna circunstancia? NO!
+                    if not ic_water_var_content:
+                        raise RuntimeError("Water initial conditions can't be None")
 
                     # Unwind initial conditions.
                     if isinstance(ic_water_var_content, DotDict):
@@ -141,7 +142,7 @@ class ForecastBuilder:
                 sims = copy.deepcopy(simulations)
 
                 if not isinstance(date, str):
-                    raise RuntimeError('Forecast date must be a string, found: %s.' % date)
+                    raise RuntimeError('Forecast date must be a string, found: %s (%s).' % (type(date), date))
 
                 f = Forecast(forecast, sims)
                 f.forecast_date = date

@@ -6,14 +6,16 @@ import threading
 import logging
 import copy
 from datetime import datetime, timedelta
+
 from core.lib.io.file import create_folder_with_permissions, listdir_fullpath
 from core.lib.utils.log import log_format_exception
 from core.modules.simulations_manager.CampaignWriter import CampaignWriter
 from core.modules.simulations_manager.weather.CombinedSeriesMaker import CombinedSeriesMaker
+# from core.modules.simulations_manager.weather.csv.CombinedSeriesMaker import CSVCombinedSeriesMaker
 from core.modules.simulations_manager.weather.HistoricalSeriesMaker import HistoricalSeriesMaker
 from core.modules.simulations_manager.RunpSIMS import RunpSIMS
 from core.lib.jobs.monitor import NullMonitor, JOB_STATUS_WAITING, JOB_STATUS_RUNNING, ProgressMonitor
-from core.modules.config.priority import RUN_FORECAST
+from core.modules.config.priority import RUN_FORECAST, RUN_REFERENCE_FORECAST
 
 __author__ = 'Federico Schmidt'
 
@@ -25,6 +27,7 @@ class ForecastManager:
         self.psims_runner = RunpSIMS()
         self.scheduler = scheduler
         self.weather_updater = weather_updater
+        self.scheduled_reference_simulations_ids = set()
 
     def start(self):
         for file_name, forecast_list in self.system_config.forecasts.iteritems():
@@ -36,7 +39,7 @@ class ForecastManager:
         for forecast in self.system_config.forecasts:
             self.run_forecast(forecast)
 
-    def schedule_forecast(self, forecast):
+    def schedule_forecast(self, forecast, priority=RUN_FORECAST):
         job_name = "%s (%s)" % (forecast.name, forecast.forecast_date)
         # Get MongoDB connection.
         db = self.system_config.database['yield_db']
@@ -52,17 +55,18 @@ class ForecastManager:
 
         if run_date < datetime.now():
             # Run immediately.
-            job_handle = self.scheduler.add_job(self.run_forecast, name=job_name, args=[forecast])
+            job_handle = self.scheduler.add_job(self.run_forecast, name=job_name, args=[forecast],
+                                                kwargs={'priority': priority})
         else:
             # Schedule for running at the specified date at 19:00.
             run_date = run_date.replace(hour=19)
 
             # scheduler.add_job(Worker.create_and_run, 'interval', seconds=5, args=[job_0, scheduler])
             job_handle = self.scheduler.add_job(self.run_forecast, trigger='date', name=job_name, args=[forecast],
-                                                run_date=run_date)
+                                                kwargs={'priority': priority}, run_date=run_date)
         forecast['job_id'] = job_handle.id
 
-    def reschedule_forecast(self, forecast, now=False,):
+    def reschedule_forecast(self, forecast, now=False):
         job_name = "Rescheduled: %s (%s)" % (forecast.name, forecast.forecast_date)
         if now:
             new_run_date = datetime.now()
@@ -72,7 +76,7 @@ class ForecastManager:
                                             run_date=new_run_date)
         forecast['job_id'] = job_handle.id
 
-    def run_forecast(self, yield_forecast, progress_monitor=None):
+    def run_forecast(self, yield_forecast, priority=RUN_FORECAST, progress_monitor=None):
         forecast_full_name = '%s (%s)' % (yield_forecast.name, yield_forecast.forecast_date)
         logging.getLogger().info('Running forecast "%s".' % forecast_full_name)
 
@@ -89,7 +93,7 @@ class ForecastManager:
         progress_monitor.job_started()
         progress_monitor.update_progress(job_status=JOB_STATUS_WAITING)
 
-        with self.system_config.jobs_lock.blocking_job(priority=RUN_FORECAST):
+        with self.system_config.jobs_lock.blocking_job(priority=priority):
             # Lock acquired.
             progress_monitor.update_progress(job_status=JOB_STATUS_RUNNING)
 
@@ -155,17 +159,17 @@ class ForecastManager:
                     }, upsert=True)
 
                     if omm_id not in self.weather_updater.wth_max_date:
-                        stations_not_updated.add(omm_id)
                         self.weather_updater.add_weather_station_id(omm_id)
+                        stations_not_updated.add(omm_id)
                         continue
                     elif self.weather_updater.wth_max_date[omm_id] < run_date:
-                            stations_not_updated.add(omm_id)
-                            continue
+                        stations_not_updated.add(omm_id)
+                        continue
                     elif omm_id not in active_threads:
                         # Weather station data updated, forecast can be ran.
                         active_threads[omm_id] = threading.Thread(target=wth_series_maker.create_series,
                                                                   name='create_series for omm_id = %s' % omm_id,
-                                                                  args=(omm_id, forecast))
+                                                                  args=(location, forecast))
                     else:
                         # Weather station already has an associated thread that will create the weather series.
                         continue
@@ -206,6 +210,9 @@ class ForecastManager:
                     is_reference_forecast = False
                     forecast_id = db.forecasts.insert_one(forecast_persistent_view).inserted_id
 
+                    if not forecast_id:
+                        raise RuntimeError('Failed to insert forecast with id: %s' % forecast_persistent_view['_id'])
+
                 simulations_ids = []
                 reference_ids = []
 
@@ -235,12 +242,12 @@ class ForecastManager:
                         }
                     }, projection=['_id'])
 
-                    found_reference_simulations = [s['_id'] for s in found_reference_simulations]
+                    found_reference_simulations = set([s['_id'] for s in found_reference_simulations])
 
-                    diff = set(reference_ids) - set(found_reference_simulations)
+                    diff = set(reference_ids) - found_reference_simulations - self.scheduled_reference_simulations_ids
                     if len(diff) > 0:
                         # There are simulations that don't have a reference simulation calculated.
-                        ref_forecast = copy.copy(yield_forecast)
+                        ref_forecast = copy.deepcopy(yield_forecast)
                         ref_forecast.name = 'Reference simulations for forecast %s' % forecast.name
                         ref_forecast.configuration.weather_series = 'historic'
 
@@ -257,7 +264,12 @@ class ForecastManager:
                             del ref_forecast.locations[loc_key]
                             del ref_forecast.simulations[loc_key]
 
-                        self.schedule_forecast(ref_forecast)
+                        self.schedule_forecast(ref_forecast, priority=RUN_REFERENCE_FORECAST)
+                        self.scheduled_reference_simulations_ids |= diff
+                        logging.info('Scheduled reference simulations for forecast: %s' % forecast.name)
+                else:
+                    # Remove this reference forecasts id's.
+                    self.scheduled_reference_simulations_ids -= set(reference_ids)
 
                 progress_monitor.update_progress(new_value=3)
 

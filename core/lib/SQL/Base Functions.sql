@@ -34,7 +34,7 @@ RETURNS TABLE (pr_year INT) AS $$
     SELECT c2.pr_year FROM count_agrario c2
     LEFT JOIN count_agrario c1 ON c2.pr_year-1 = c1.pr_year
     LEFT JOIN count_agrario c3 ON c2.pr_year+1 = c3.pr_year
-    WHERE c2.count >= 365 AND c1.count >= 60 AND c3.count >= 60
+    WHERE c2.count >= 365 AND c1.count >= 60 AND c3.count >= 200
     ORDER BY 1
 $$ LANGUAGE sql;
 
@@ -152,7 +152,7 @@ AS $$
             -- Salteamos el año actual.
             -- CONTINUE WHEN loop_year.pr_year >= current_year;
 
-            path := output_folder || '/' || id_estacion  || ' - ' || loop_year.pr_year|| '.csv';
+            path := output_folder || '/' || id_estacion  || ' - ' || loop_year.pr_year || '.csv';
 
             command := 'COPY ( SELECT * FROM pr_crear_serie( ' || id_estacion || ', ''' || campaign_start || '''::date, ''' ||
                                  curr_date || '''::date, ''' || campaign_end || '''::date, ' || loop_year.pr_year || ' ) ) ' ||
@@ -212,7 +212,7 @@ AS $$
         fecha_fin_serie DATE;
     BEGIN
         fecha_inicio := (año_agrario || '-03-01')::date;
-        fecha_fin := (año_agrario || '-04-30')::date + '395 day'::interval;
+        fecha_fin := (año_agrario || '-12-31')::date + '200 day'::interval;
 
         fecha_inicio_serie := ('1950' || TO_CHAR(fecha_inicio, '-MM-DD'))::date;
         fecha_fin_serie := fecha_inicio_serie + '630 day'::interval;

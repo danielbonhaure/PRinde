@@ -1,0 +1,1711 @@
+name: 'Rinde de Maíz Tardío en Argentina'
+
+forecast_date: ['2008-12-15']
+
+crop_type: 'MZ-L'
+crop_template: 'MZ.json'
+
+configuration:
+    # Format: days (int)
+    # frequency: 10  # Por ahora usemos fechas, después vemos si sirve fijar frecuencias.
+
+    # Weather series type: combined, historic or artificial.
+    weather_series: 'combined'
+
+# Locations to be simulated, coordinates and OMM ID of the associated weather station
+locations:
+    loc_1: {
+        name: "Benito Juárez",
+        coord_x: '-59.78',  # Si no se especifica, lo completa el sistema.
+        coord_y: '-37.72',
+        weather_station: 87649
+    }
+
+    loc_2: {
+        name: "Coronel Suárez",
+        coord_x: '-61.88',
+        coord_y: '-37.43',
+        weather_station: 87637
+    }
+
+    loc_3: {
+        name: "Gualeguaychú",
+        coord_x: '-58.62',
+        coord_y: '-33',
+        weather_station: 87497
+    }
+
+    loc_4: {
+        name: "Junín",
+        coord_x: '-60.92',
+        coord_y: '-34.55',
+        weather_station: 87548
+    }
+
+    loc_5: {
+        name: "Laboulaye",
+        coord_x: '-63.37',
+        coord_y: '-34.13',
+        weather_station: 87534
+    }
+
+    loc_6: {
+        name: "Marcos Juárez",
+        coord_x: '-62.15',
+        coord_y: '-32.7',
+        weather_station: 87467
+    }
+
+    loc_7: {
+        name: "Nueve de Julio",
+        coord_x: '-60.88',
+        coord_y: '-35.45',
+        weather_station: 87550
+    }
+
+    loc_8: {
+        name: "Paraná",
+        coord_x: '-60.48',
+        coord_y: '-31.78',
+        weather_station: 87374
+    }
+
+    loc_9: {
+        name: "Pehuajó",
+        coord_x: '-61.9',
+        coord_y: '-35.87',
+        weather_station: 87544
+    }
+
+    loc_10: {
+        name: "Pilar",
+        coord_x: '-63.88',
+        coord_y: '-31.67',
+        weather_station: 87349
+    }
+
+    loc_11: {
+        name: "Reconquista",
+        coord_x: '-59.7',
+        coord_y: '-29.18',
+        weather_station: 87270
+    }
+
+    loc_12: {
+         name: "Río Cuarto",
+         coord_x: '-64.23',
+         coord_y: '-33.12',
+         weather_station: 87453
+    }
+
+    loc_13: {
+         name: "Tandil",
+         coord_x: '-59.25',
+         coord_y: '-37.23',
+         weather_station: 87645
+    }
+
+    loc_14: {
+         name: "Tres Arroyos",
+         coord_x: '-60.25',
+         coord_y: '-38.33',
+         weather_station: 87688
+    }
+
+
+# -----------------------------------------------------------------------------------------------------------------------------------------
+
+site_characteristics:
+
+    loc_1:
+        soil_1: {
+            id: "SU87649001",                    # Soil id as it appears in the DSSAT soil file (ID_SOIL)
+            series: "Azul",                      # Soil series
+            scs_family: "Argiudol típico",       # Taxonomic classification (USDA-Soil Taxonomy)
+            prop: 0.33,                           # Proportion of area occupied by the soil in the location/cartografic unit to be simulated
+            n_horizons: 3                        # Number of horizons of the soil
+        }
+        soil_2: {
+            id: "SU87649002",
+            series: "Laprida",
+            scs_family: "Argiudol típico",
+            prop: 0.33,
+            n_horizons: 6
+        }
+        soil_3: {
+            id: "SU87649003",
+            series: "Ramon Santamarina",
+            scs_family: "Argiudol típico",
+            prop: 0.34,
+            n_horizons: 7
+        }
+
+    loc_2:
+        soil_1: {
+            id: "SU87636001",
+            series: "La Carolina",
+            scs_family: "Hapludol típico",
+            prop: 0.5,
+            n_horizons: 8
+        }
+        soil_2: {
+            id: "SU87636002",
+            series: "Guaminí",
+            scs_family: "Hapludol éntico",
+            prop: 0.5,
+            n_horizons: 7
+        }
+        soil_3: {
+            id: "SU87636003",
+            series: "Laprida",
+            scs_family: "Argiudol típico",
+            prop: 0.5,
+            n_horizons: 8
+        }
+
+    loc_3:
+        soil_1: {
+            id: "SU87497001",
+            series: "La Concordia",
+            scs_family: "Pelludert árgico",
+            prop: 0.5,
+            n_horizons: 9
+        }
+        soil_2: {
+            id: "SU87497002",
+            series: "La Blanqueada",
+            scs_family: "Argiudol vértico",
+            prop: 0.5,
+            n_horizons: 9
+        }
+        soil_3: {
+            id: "SU87497003",
+            series: "Arroyo Animal",
+            scs_family: "Argiudol ácuico",
+            prop: 0.5,
+            n_horizons: 8
+        }
+        soil_4: {
+            id: "SU87497004",
+            series: "Aldea Asunción",
+            scs_family: "Hapludol fluventico",
+            prop: 0.5,
+            n_horizons: 8
+        }
+
+    loc_4:
+        soil_1: {
+            id: "SU87548001",
+            series: "Saforcada",
+            scs_family: "Hapludol éntico",
+            prop: 0.5,
+            n_horizons: 9
+        }
+        soil_2: {
+            id: "SU87548002",
+            series: "Santa Isabel",
+            scs_family: "Hapludol típico",
+            prop: 0.5,
+            n_horizons: 10
+        }
+        soil_3: {
+            id: "SU87548003",
+            series: "Ortiz de Rosas",
+            scs_family: "Hapludol thapto árgico",
+            prop: 0.5,
+            n_horizons: 8
+        }
+        soil_4: {
+            id: "SU87548004",
+            series: "Delgado",
+            scs_family: "Argiudol típico",
+            prop: 0.5,
+            n_horizons: 8
+        }
+
+
+
+    loc_5:
+        soil_1: {
+            id: "SU87534001",
+            series: "Cañada Seca",
+            scs_family: "Hapludol thapto árgico",
+            prop: 0.25,
+            n_horizons: 9
+        }
+        soil_2: {
+            id: "SU87534002",
+            series: "Laboulaye",
+            scs_family: "Haplustol udorténtico",
+            prop: 0.25,
+            n_horizons: 10
+        }
+        soil_3: {
+            id: "SU87534003",
+            series: "Rosales",
+            scs_family: "Natralbol típico",
+            prop: 0.25,
+            n_horizons: 9
+        }
+        soil_4: {
+            id: "SU87534004",
+            series: "Las Marinas",
+            scs_family: "Argialbol típico",
+            prop: 0.25,
+            n_horizons: 11
+        }
+
+
+
+    loc_6:
+        soil_1: {
+            id: "SU87467001",
+            series: "Monte Buey",
+            scs_family: "Argiudol típico",
+            prop: 0.3,
+            n_horizons: 12
+        }
+        soil_2: {
+            id: "SU87467002",
+            series: "Marcos Juárez",
+            scs_family: "Argiudol típico",
+            prop: 0.33,
+            n_horizons: 12
+        }
+        soil_3: {
+            id: "SU87467003",
+            series: "San Marcos",
+            scs_family: "Hapludol éntico",
+            prop: 0.34,
+            n_horizons: 11
+        }
+
+
+
+    loc_7:
+        soil_1: {
+            id: "SU87550001",
+            series: "Ortiz de Rosas",
+            scs_family: "Hapludol thapto árgico",
+            prop: 0.33,
+            n_horizons: 9
+        }
+        soil_2: {
+            id: "SU87550002",
+            series: "Norumbega",
+            scs_family: "Hapludol éntico",
+            prop: 0.33,
+            n_horizons: 10
+        }
+        soil_3: {
+            id: "SU87550003",
+            series: "Bragado",
+            scs_family: "Hapludol típico",
+            prop: 0.34,
+            n_horizons: 11
+        }
+
+
+
+    loc_8:
+        soil_1: {
+            id: "SU87374001",
+            series: "Tezanos Pinto",
+            scs_family: "Argiudol ácuico",
+            prop: 0.33,
+            n_horizons: 6
+        }
+        soil_2: {
+            id: "SU87374002",
+            series: "El Triángulo",
+            scs_family: "Peludert argílico crómico",
+            prop: 0.33,
+            n_horizons: 5
+        }
+        soil_3: {
+            id: "SU87374003",
+            series: "Damasio",
+            scs_family: "Argiudol vértico",
+            prop: 0.34,
+            n_horizons: 6
+        }
+
+
+
+    loc_9:
+        soil_1: {
+            id: "SU87544001",
+            series: "Pehuajó",
+            scs_family: "Hapludol típico",
+            prop: 0.33,
+            n_horizons: 10
+        }
+        soil_2: {
+            id: "SU87544002",
+            series: "San Jorge",
+            scs_family: "Hapludol éntico",
+            prop: 0.33,
+            n_horizons: 10
+        }
+        soil_3: {
+            id: "SU87544003",
+            series: "Ortiz de Rosas",
+            scs_family: "Hapludol thapto árgico",
+            prop: 0.34,
+            n_horizons: 10
+        }
+
+
+
+    loc_10:
+        soil_1: {
+            id: "SU87349001",
+            series: "Sacanta",
+            scs_family: "Haplustol típico",
+            prop: 0.25,
+            n_horizons: 10
+        }
+        soil_2: {
+            id: "SU87349002",
+            series: "Oncativo",
+            scs_family: "Haplustol éntico",
+            prop: 0.25,
+            n_horizons: 10
+        }
+        soil_3: {
+            id: "SU87349003",
+            series: "Matorrales",
+            scs_family: "Argiustol típico",
+            prop: 0.25,
+            n_horizons: 10
+        }
+        soil_4: {
+            id: "SU87349004",
+            series: "Manfredi",
+            scs_family: "Haplustol típico",
+            prop: 0.25,
+            n_horizons: 9
+        }
+
+
+
+    loc_11:
+        soil_1: {
+            id: "SU87270001",
+            series: "180 PT 33",
+            scs_family: "Udipsament thapto árgico",
+            prop: 0.166,
+            n_horizons: 6
+        }
+        soil_2: {
+            id: "SU87270002",
+            series: "150 PT 22",
+            scs_family: "Udipsament típico",
+            prop: 0.166,
+            n_horizons: 6
+        }
+        soil_3: {
+            id: "SU87270003",
+            series: "150 PT 29",
+            scs_family: "Argiudol típico",
+            prop: 0.166,
+            n_horizons: 6
+        }
+        soil_4: {
+            id: "SU87270004",
+            series: "120 PT 35",
+            scs_family: "Argiudol vértico",
+            prop: 0.166,
+            n_horizons: 5
+        }
+        soil_5: {
+            id: "SU87270005",
+            series: "150 PT 11",
+            scs_family: "Artiudol ácuico",
+            prop: 0.166,
+            n_horizons: 6
+        }
+        soil_6: {
+            id: "SU87270006",
+            series: "150 PT 48",
+            scs_family: "Argialbol argiácuico",
+            prop: 0.17,
+            n_horizons: 6
+        }
+
+
+
+    loc_12:
+        soil_1: {
+            id: "SU87453001",
+            series: "Olaeta",
+            scs_family: "Haplustol éntico",
+            prop: 0.25,
+            n_horizons: 9
+        }
+        soil_2: {
+            id: "SU87453002",
+            series: "General Dehesa",
+            scs_family: "Haplustol típico",
+            prop: 0.25,
+            n_horizons: 10
+        }
+        soil_3: {
+            id: "SU87453003",
+            series: "Alejo Ledesma",
+            scs_family: "Argiustol udorthentico",
+            prop: 0.25,
+            n_horizons: 9
+        }
+        soil_4: {
+            id: "SU87453004",
+            series: "Leguizamón",
+            scs_family: "Haplustol údico",
+            prop: 0.25,
+            n_horizons: 9
+        }
+
+
+
+    loc_13:
+        soil_1: {
+            id: "SU87645001",
+            series: "Tandil",
+            scs_family: "Argiudol típico",
+            prop: 0.25,
+            n_horizons: 7
+        }
+        soil_2: {
+            id: "SU87645002",
+            series: "Mar del Plata (tosca 140 cm)",
+            scs_family: "Argiudol típico",
+            prop: 0.25,
+            n_horizons: 7
+        }
+        soil_3: {
+            id: "SU87645003",
+            series: "Mar del Plata (tosca 60 cm)",
+            scs_family: "Argiudol típico",
+            prop: 0.25,
+            n_horizons: 4
+        }
+        soil_4: {
+            id: "SU87645004",
+            series: "Egana",
+            scs_family: "Hapludol thapto árgico",
+            prop: 0.25,
+            n_horizons: 7
+        }
+
+
+
+    loc_14:
+        soil_1: {
+            id: "SU87688001",
+            series: "Estancia Aldecoa",
+            scs_family: "Argiudol ácuico",
+            prop: 0.2,
+            n_horizons: 6
+        }
+        soil_2: {
+            id: "SU87688002",
+            series: "Ramón Santamarina",
+            scs_family: "Argiudol típico",
+            prop: 0.2,
+            n_horizons: 7
+        }
+        soil_3: {
+            id: "SU87688003",
+            series: "Tres Arroyos somera",
+            scs_family: "Argiudol típico",
+            prop: 0.2,
+            n_horizons: 4
+        }
+        soil_4: {
+            id: "SU87688004",
+            series: "Tres Arroyos profunda",
+            scs_family: "Argiudol típico",
+            prop: 0.2,
+            n_horizons: 7
+        }
+        soil_5: {
+            id: "SU87688005",
+            series: "Ochandio",
+            scs_family: "Hapludol típico",
+            prop: 0.2,
+            n_horizons: 7
+        }
+
+
+# -----------------------------------------------------------------------------------------------------------------------------------------
+
+initial_conditions:
+    loc_1:
+        soil_1:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.3]
+            no3_ppm_hrzn: [17.9, 8.4, 3.9]
+
+        soil_2:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [21.2, 10.1, 4.5, 1.9, 0.6, 0.1]
+
+        soil_3:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [16.0, 7.5, 3.3, 1.1, 0.3, 0.1, 0.1]
+
+    loc_2:
+        soil_1:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [14.2, 6.6, 2.8, 0.9, 0.2, 0.1, 0.1, 0.1]
+
+        soil_2:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [17.6, 8.3, 3.7, 1.4, 0.4, 0.1, 0.1]
+
+        soil_3:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [22.1, 10.6, 4.8, 1.9, 0.6, 0.1, 0.1, 0.1]
+
+    loc_3:
+        soil_1:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [24.6, 11.8, 5.4, 2.2, 0.6, 0.1, 0.1, 0.1, 0.1]
+
+        soil_2:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [20.0, 9.5, 4.3, 1.6, 0.3, 0.1, 0.1, 0.1, 0.1]
+
+        soil_3:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [19.4, 9.2, 4.1, 1.5, 0.5, 0.1, 0.1, 0.1]
+
+        soil_4:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [12.1, 5.5, 2.3, 0.6, 0.1, 0.1, 0.1, 0.1]
+
+    loc_4:
+        soil_1:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [17.7, 8.3, 3.7, 1.4, 0.2, 0.1, 0.1, 0.1, 0.1]
+
+        soil_2:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [18.5, 8.8, 3.9, 1.4, 0.2, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+        soil_3:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [14.2, 6.6, 2.8, 0.9, 0.2, 0.1, 0.1, 0.1]
+
+        soil_4:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [19.1, 9.1, 4.0, 1.5, 0.5, 0.1, 0.1, 0.1]
+
+    loc_5:
+        soil_1:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [16.6, 7.8, 3.4, 1.2, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+        soil_2:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [18.2, 8.6, 3.8, 1.4, 0.2, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+        soil_3:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [14.7, 6.8, 2.9, 0.9, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+        soil_4:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [20.6, 9.8, 4.4, 1.7, 0.3, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+    loc_6:
+        soil_1:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [22.4, 10.7, 4.8, 1.9, 0.4, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+        soil_2:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [28.8, 13.9, 6.5, 2.8, 0.9, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+        soil_3:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [22.7, 10.8, 4.9, 2.0, 0.5, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+    loc_7:
+        soil_1:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [14.2, 6.6, 2.8, 0.9, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+        soil_2:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [11.8, 5.4, 2.2, 0.6, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+        soil_3:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [18.5, 8.8, 3.9, 1.4, 0.2, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+    loc_8:
+        soil_1:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [16.5, 7.8, 3.4, 1.4, 0.4, 0.1]
+
+        soil_2:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3]
+            no3_ppm_hrzn: [16.0, 7.5, 3.3, 1.3, 0.4]
+
+        soil_3:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [24.9, 11.9, 5.5, 2.5, 0.9, 0.2]
+
+    loc_9:
+        soil_1:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [19.1, 9.1, 4.0, 1.5, 0.3, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+        soil_2:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [17.3, 8.2, 3.6, 1.3, 0.2, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+        soil_3:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [15.1, 7.0, 3.0, 1.0, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+    loc_10:
+        soil_1:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [17.0, 8.0, 3.5, 1.3, 0.2, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+        soil_2:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [16.6, 7.8, 3.4, 1.2, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+        soil_3:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [16.6, 7.8, 3.4, 1.2, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+        soil_4:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [14.5, 6.8, 2.9, 0.9, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+    loc_11:
+        soil_1:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [11.5, 5.3, 2.1, 0.8, 0.1, 0.1]
+
+        soil_2:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [16.6, 7.8, 3.4, 1.4, 0.4, 0.1]
+
+        soil_3:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [23.0, 11.0, 5.0, 2.2, 0.8, 0.1]
+
+        soil_4:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3]
+            no3_ppm_hrzn: [13.3, 6.2, 2.6, 1.0, 0.2]
+
+        soil_5:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [20.3, 9.7, 4.3, 1.8, 0.6, 0.1]
+
+        soil_6:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [15.4, 7.2, 3.1, 1.3, 0.4, 0.1]
+
+    loc_12:
+        soil_1:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [11.5, 5.3, 2.1, 0.6, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+        soil_2:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [22.1, 10.6, 4.8, 1.9, 0.4, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+        soil_3:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [13.0, 6.0, 2.5, 0.8, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+        soil_4:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [13.3, 6.2, 2.6, 0.8, 0.1, 0.1, 0.1, 0.1, 0.1]
+
+    loc_13:
+        soil_1:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [13.3, 6.2, 2.6, 0.8, 0.1, 0.1, 0.1]
+
+        soil_2:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [18.8, 8.9, 4.0, 1.5, 0.5, 0.1, 0.1]
+
+        soil_3:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.3, 0.3]
+            no3_ppm_hrzn: [18.8, 8.9, 4.2, 1.8]
+
+        soil_4:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [12.4, 5.7, 2.4, 0.7, 0.1, 0.1, 0.1]
+
+    loc_14:
+        soil_1:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [17.4, 8.2, 3.6, 1.5, 0.5, 0.1]
+
+        soil_2:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [16.0, 7.5, 3.3, 1.1, 0.3, 0.1, 0.1]
+
+        soil_3:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.3, 0.3]
+            no3_ppm_hrzn: [17.3, 8.2, 3.8, 1.6]
+
+        soil_4:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [16.3, 7.7, 3.4, 1.2, 0.3, 0.1, 0.1]
+
+        soil_5:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [15.7, 7.3, 3.1, 1.1, 0.3, 0.1, 0.1]
+
+
+
+agronomic_management:
+# Benito Juárez
+    loc_1:
+        soil_1:
+            mgmt_1: {
+                mgmt_name: "5 Dic - 120N - 4.5pl",
+                cultivar_id: "UAIC10",        # Id of cultivar as it appears in the DSSAT genotype file (INGENO)
+                planting_date: "yyyy1205",    # Planting date (PDATE)
+                plant_population: 4.5,        # Planting population at emergence(PPOE)
+                n_fert_date: "1",             # Fertilization date(FDATE)
+                n_fert_code: "FE005",         # Fertilizer application/placement, code (FMCD)
+                n_fert_dose: 50,              # N in applied fertilizer, kg ha-1 (FAMN)
+                irrig_date: "yyyy1205"
+            }
+
+        soil_2:
+            mgmt_1: {
+                mgmt_name: "5 Dic - 120N - 4.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1205",
+                plant_population: 4.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 50,
+                irrig_date: "yyyy1205"
+            }
+            
+        soil_3:
+            mgmt_1: {
+                mgmt_name: "5 Dic - 120N - 4.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1205",
+                plant_population: 4.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 50,
+                irrig_date: "yyyy1205"
+            }
+
+
+# Coronel Suárez
+    loc_2:
+        soil_1:
+            mgmt_1: {
+                mgmt_name: "1 Dic - 120N - 4.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1201",
+                plant_population: 4.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 50,
+                irrig_date: "yyyy1201"
+            }
+
+        soil_2:
+            mgmt_1: {
+                mgmt_name: "1 Dic - 120N - 4.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1201",
+                plant_population: 4.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 50,
+                irrig_date: "yyyy1201"
+            }
+
+        soil_3:
+            mgmt_1: {
+                mgmt_name: "1 Dic - 120N - 4.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1201",
+                plant_population: 4.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 50,
+                irrig_date: "yyyy1201"
+            }
+
+
+#  Gualeguaychú
+    loc_3:
+        soil_1:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 120N - 5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 50,
+                irrig_date: "yyyy1130"
+            }
+
+        soil_2:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 120N - 5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 50,
+                irrig_date: "yyyy1130"
+            }
+
+        soil_3:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 120N - 5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 50,
+                irrig_date: "yyyy1130"
+            }
+
+        soil_4:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 120N - 5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 50,
+                irrig_date: "yyyy1130"
+            }
+
+
+# Junín
+    loc_4:
+        soil_1:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 130N - 6pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 6,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,
+                irrig_date: "yyyy1130"
+            }
+            
+
+        soil_2:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 130N - 6pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 6,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,
+                irrig_date: "yyyy1130"
+            }
+            
+
+        soil_3:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 130N - 6pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 6,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,
+                irrig_date: "yyyy1130"
+            }
+            
+
+        soil_4:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 130N - 6pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 6,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,
+                irrig_date: "yyyy1130"
+            }
+            
+
+
+# Laboulaye
+    loc_5:
+        soil_1:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 130N - 6pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 6,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,
+                irrig_date: "yyyy1130"
+            }
+            
+
+
+        soil_2:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 130N - 6pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 6,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,
+                irrig_date: "yyyy1130"
+            }
+            
+
+        soil_3:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 130N - 6pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 6,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,
+                irrig_date: "yyyy1130"
+            }
+            
+
+        soil_4:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 130N - 6pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 6,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,
+                irrig_date: "yyyy1130"
+            }
+            
+
+
+# Marcos Juárez
+    loc_6:
+        soil_1:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 130N - 6pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 6,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,
+                irrig_date: "yyyy1130"
+            }
+            
+
+
+        soil_2:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 130N - 6pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 6,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,
+                irrig_date: "yyyy1130"
+            }
+            
+
+        soil_3:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 130N - 6pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 6,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,
+                irrig_date: "yyyy1130"
+            }
+            
+
+
+
+# Nueve de Julio
+    loc_7:
+        soil_1:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 130N - 5.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 5.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,
+                irrig_date: "yyyy1130"
+            }
+            
+
+        soil_2:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 130N - 5.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 5.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,
+                irrig_date: "yyyy1130"
+            }
+            
+
+        soil_3:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 130N - 5.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 5.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,
+                irrig_date: "yyyy1130"
+            }
+            
+
+
+
+# Parana
+    loc_8:
+        soil_1:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 120N - 5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 50,
+                irrig_date: "yyyy1130"
+            }
+            
+
+        soil_2:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 120N - 5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 50,
+                irrig_date: "yyyy1130"
+            }
+            
+
+        soil_3:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 120N - 5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 50,
+                irrig_date: "yyyy1130"
+            }
+            
+
+
+# Pehuajó
+    loc_9:
+        soil_1:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 130N - 5.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 5.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,
+                irrig_date: "yyyy1130"
+            }
+            
+
+        soil_2:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 130N - 5.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 5.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,
+                irrig_date: "yyyy1130"
+            }
+            
+
+        soil_3:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 130N - 5.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 5.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,
+                irrig_date: "yyyy1130"
+            }
+            
+
+
+# Pilar
+    loc_10:
+        soil_1:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 130N - 5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,
+                irrig_date: "yyyy1130"
+            }
+             
+        soil_2:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 130N - 5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,
+                irrig_date: "yyyy1130"
+            }
+            
+
+        soil_3:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 130N - 5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,
+                irrig_date: "yyyy1130"
+            }
+            
+
+        soil_4:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 130N - 5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,
+                irrig_date: "yyyy1130"
+            }
+            
+
+
+# Reconquista
+    loc_11:
+        soil_1:
+            mgmt_1: {
+                mgmt_name: "15 Dic - 100N - 4.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1215",
+                plant_population: 4.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 30,
+                irrig_date: "yyyy1215"
+            }
+            
+
+        soil_2:
+            mgmt_1: {
+                mgmt_name: "15 Dic - 100N - 4.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1215",
+                plant_population: 4.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 30,
+                irrig_date: "yyyy1215"
+            }
+            
+
+        soil_3:
+            mgmt_1: {
+                mgmt_name: "15 Dic - 100N - 4.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1215",
+                plant_population: 4.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 30,
+                irrig_date: "yyyy1215"
+            }
+            
+
+        soil_4:
+            mgmt_1: {
+                mgmt_name: "15 Dic - 100N - 4.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1215",
+                plant_population: 4.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 30,
+                irrig_date: "yyyy1215"
+            }
+            
+
+        soil_5:
+            mgmt_1: {
+                mgmt_name: "15 Dic - 100N - 4.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1215",
+                plant_population: 4.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 30,
+                irrig_date: "yyyy1215"
+            }
+            
+
+        soil_6:
+            mgmt_1: {
+                mgmt_name: "15 Dic - 100N - 4.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1215",
+                plant_population: 4.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 30,
+                irrig_date: "yyyy1215"
+            }
+            
+
+
+# Rio Cuarto
+    loc_12:
+        soil_1:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 130N - 5.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 5.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,
+                irrig_date: "yyyy1130"
+            }
+            
+
+        soil_2:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 130N - 5.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 5.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,
+                irrig_date: "yyyy1130"
+            }
+
+        soil_3:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 130N - 5.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 5.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,
+                irrig_date: "yyyy1130"
+            }
+
+
+        soil_4:
+            mgmt_1: {
+                mgmt_name: "30 Nov - 130N - 5.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1130",
+                plant_population: 5.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,
+                irrig_date: "yyyy1130"
+            }
+
+
+# Tandil
+    loc_13:
+        soil_1:
+            mgmt_1: {
+                mgmt_name: "5 Dic - 120N - 5.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1205",
+                plant_population: 5.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 50,
+                irrig_date: "yyyy1205"
+            }
+            
+
+        soil_2:
+            mgmt_1: {
+                mgmt_name: "5 Dic - 120N - 5.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1205",
+                plant_population: 5.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 50,
+                irrig_date: "yyyy1205"
+            }
+            
+
+        soil_3:
+            mgmt_1: {
+                mgmt_name: "5 Dic - 120N - 5.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1205",
+                plant_population: 5.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 50,
+                irrig_date: "yyyy1205"
+            }
+            
+
+        soil_4:
+            mgmt_1: {
+                mgmt_name: "5 Dic - 120N - 5.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1205",
+                plant_population: 5.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 50,
+                irrig_date: "yyyy1205"
+            }
+            
+
+
+
+# Tres Arroyos
+    loc_14:
+        soil_1:
+            mgmt_1: {
+                mgmt_name: "1 Dic - 110N - 4.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1201",
+                plant_population: 4.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 40,
+                irrig_date: "yyyy1201"
+            }
+            
+
+        soil_2:
+            mgmt_1: {
+                mgmt_name: "1 Dic - 110N - 4.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1201",
+                plant_population: 4.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 40,
+                irrig_date: "yyyy1201"
+            }
+            
+
+        soil_3:
+            mgmt_1: {
+                mgmt_name: "1 Dic - 110N - 4.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1201",
+                plant_population: 4.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 40,
+                irrig_date: "yyyy1201"
+            }
+            
+
+        soil_4:
+            mgmt_1: {
+                mgmt_name: "1 Dic - 110N - 4.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1201",
+                plant_population: 4.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 40,
+                irrig_date: "yyyy1201"
+            }
+            
+
+        soil_5:
+            mgmt_1: {
+                mgmt_name: "1 Dic - 110N - 4.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy1201",
+                plant_population: 4.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 40,
+                irrig_date: "yyyy1201"
+            }
+            
+
+
+# -----------------------------------------------------------------------------------------------------------------------------------------
+
+results:
+    cycle: ["HWAM"]
+    daily: ["stress"]

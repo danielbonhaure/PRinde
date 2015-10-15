@@ -16,8 +16,8 @@ configuration:
 locations:
     loc_1: {
         name: "Benito Juárez",
-        #coord_x: '-59.78',  # Si no se especifica, lo completa el sistema.
-        #coord_y: '-37.72',
+        coord_x: '-59.78',  # Si no se especifica, lo completa el sistema.
+        coord_y: '-37.72',
         weather_station: 87649
     }
 
@@ -30,8 +30,8 @@ locations:
 
     loc_3: {
         name: "Gualeguaychú",
-        coord_x: '-60.88',
-        coord_y: '-35.45',
+        coord_x: '-58.62',
+        coord_y: '-33',
         weather_station: 87497
     }
 
@@ -58,8 +58,8 @@ locations:
 
     loc_7: {
         name: "Nueve de Julio",
-        coord_x: '-62.15',
-        coord_y: '-32.7',
+        coord_x: '-60.88',
+        coord_y: '-35.45',
         weather_station: 87550
     }
 

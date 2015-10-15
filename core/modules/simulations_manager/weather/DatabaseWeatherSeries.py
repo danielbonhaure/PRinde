@@ -2,8 +2,6 @@ import abc
 import re
 import threading
 import os.path
-import shutil
-import csv
 
 from core.modules.simulations_manager.weather.WeatherSeriesMaker import WeatherSeriesMaker
 from core.lib.geo.grid import latlon_to_grid
@@ -21,24 +19,14 @@ class DatabaseWeatherSeries(WeatherSeriesMaker):
         self.weather_writer = weather_writer
         self.concurrency_lock = threading.BoundedSemaphore(self.max_paralellism)
 
-    def create_series(self, omm_id, forecast, extract_rainfall=True):
+    def create_series(self, location, forecast, extract_rainfall=True):
         with self.concurrency_lock:
+            omm_id = location['weather_station']
             output_path = os.path.join(forecast.paths.wth_csv_read, str(omm_id))
             create_folder_with_permissions(output_path)
 
-            # Create the weather series in CSV format.
-            self.create_from_db(omm_id, forecast)
+            station_info = self.expand_station_info(location)
 
-            # List the directory where the CSV files with the weather information are.
-            dir_list = sorted(listdir_fullpath(output_path, onlyFiles=True, filter=(lambda x: x.endswith('csv'))))
-
-            # Build the main file path (the file with the weather station's information).
-            main_file = os.path.join(output_path, ('_' + str(omm_id) + '.csv'))
-
-            if main_file not in dir_list:
-                raise RuntimeError('Missing station information for a weather serie (omm_id = %s).' % omm_id)
-
-            station_info = self.read_station_info(open(main_file))
             forecast.weather_stations[omm_id] = station_info
 
             weather_grid = forecast.paths['weather_grid_path']
@@ -51,51 +39,37 @@ class DatabaseWeatherSeries(WeatherSeriesMaker):
             if not os.path.exists(grid_column_folder):
                 create_folder_with_permissions(grid_column_folder)
 
-            dir_list.remove(main_file)
-
-            result_ok, rainfall_data = self.weather_writer.join_csv_files(dir_list, grid_column_folder,
-                                                                          extract_rainfall=extract_rainfall,
-                                                                          forecast_date=forecast.forecast_date,
-                                                                          station_data=station_info)
+            rainfall_dict = dict()
+            scen_names = []
+            scen_index = 0
+            for scen_year, scen_weather in self.create_from_db(location, forecast):
+                variables_dict = self.weather_writer.write_wth_file(scen_index, scen_weather, grid_column_folder,
+                                                                    location)
+                if extract_rainfall:
+                    self.weather_writer.extract_rainfall(rainfall_dict, variables_dict, forecast.forecast_date,
+                                                         scen_year)
+                scen_names.append(scen_year)
+                scen_index += 1
 
             if extract_rainfall:
-                forecast.rainfall[str(omm_id)] = rainfall_data
+                forecast.rainfall[str(omm_id)] = rainfall_dict
 
-            if result_ok:
-                shutil.rmtree(output_path)
-                forecast.weather_stations[omm_id]['weather_path'] = grid_column_folder
-                forecast.weather_stations[omm_id]['num_scenarios'] = len(dir_list)
-                forecast.weather_stations[omm_id]['scen_names'] = [DatabaseWeatherSeries.__scen_name__(csv_file) for
-                                                                   csv_file in dir_list]
-            else:
-                raise RuntimeError('Couldn\'t create weather file(s) in folder "%s".' % grid_column_folder)
+            forecast.weather_stations[omm_id]['weather_path'] = grid_column_folder
+            forecast.weather_stations[omm_id]['num_scenarios'] = len(scen_names)
+            forecast.weather_stations[omm_id]['scen_names'] = scen_names
 
-    def read_station_info(self, csv_file):
-        csv_file = csv.reader(csv_file, delimiter='\t')
+    def expand_station_info(self, station_info):
+        keys = station_info.keys()
 
-        header = csv_file.next()
-        row = csv_file.next()
-
-        info = dict()
-
-        for index, item in enumerate(header):
-            info[item] = row[index]
-
-        keys = info.keys()
-
-        if 'lat_dec' in keys and 'lon_dec' in keys:
-            cell = latlon_to_grid(lat_dec=float(info.get('lat_dec')),
-                                  lon_dec=float(info.get('lon_dec')),
+        if 'grid_row' not in keys or 'grid_column' not in keys:
+            cell = latlon_to_grid(lat_dec=float(station_info.get('coord_y')),
+                                  lon_dec=float(station_info.get('coord_x')),
                                   resolution=self.system_config.grid_resolution)
-            info['grid_row'] = cell.row
-            info['grid_column'] = cell.column
-        return info
-
-    @staticmethod
-    def __scen_name__(csv_filename):
-        str_year = DatabaseWeatherSeries.name_re.match(os.path.basename(csv_filename)).groups()[0]
-        return int(str_year)
+            station_info['grid_row'] = cell.row
+            station_info['grid_column'] = cell.column
+        return station_info
 
     @abc.abstractmethod
-    def create_from_db(self, omm_id, forecast):
-        pass
+    def create_from_db(self, location, forecast):
+        return iter([])
+

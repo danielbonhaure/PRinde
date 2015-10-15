@@ -46,7 +46,7 @@ class ForecastLoader:
                                                           self.system_config.database['weather_db'])
 
             builder = ForecastBuilder(forecast, self.system_config)
-            builder.replace_alias(self.system_config.alias_dict)
+            builder.replace_aliases(self.system_config.alias_dict)
             builder.inherit_config(self.system_config.system_config_yaml)
             # Build and append forecasts.
             for f in builder.build():

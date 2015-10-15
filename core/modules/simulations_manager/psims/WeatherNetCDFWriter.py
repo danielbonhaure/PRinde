@@ -2,7 +2,7 @@
 import os
 import logging
 
-from core.modules.simulations_manager.weather.DatabaseWeatherSeries import DatabaseWeatherSeries
+from core.modules.simulations_manager.weather.csv.CSVDatabaseWeatherSeries import CSVDatabaseWeatherSeries
 
 __author__ = 'Federico Schmidt'
 
@@ -45,7 +45,7 @@ class WeatherNetCDFWriter:
         scen_names = [0]
         if len(csv_files) > 1:
             # If there's more than one file, we extract the scenario name (the year of the climate series).
-            scen_names = [DatabaseWeatherSeries.__scen_name__(i) for i in csv_files]
+            scen_names = [CSVDatabaseWeatherSeries.__scen_name__(i) for i in csv_files]
 
         expected_variables = {'fecha', 'rad', 'tmax', 'tmin', 'prcp'}
         var_units = {
