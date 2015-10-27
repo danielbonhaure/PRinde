@@ -75,9 +75,8 @@ def create_folder(folder):
         # Si no existe, la intentamos crear.
         try:
             os.makedirs(folder)
-        except Exception:
-            print "No se pudo crear la carpeta: " + folder + "."
-            return False
+        except Exception, ex:
+            print "No se pudo crear la carpeta: " + folder + ". Exception: %s" % ex
     return os.path.exists(folder) and not os.path.isfile(folder)
 
 

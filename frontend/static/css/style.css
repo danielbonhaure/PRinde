@@ -60,7 +60,6 @@ body .panel .badge {
 }
 body .panel .panel {
   /* Nested panels should have a border and shouldn't have padding. */
-  margin-bottom: 0;
 }
 body .panel .panel .panel-body {
   border: 2px solid #485563;

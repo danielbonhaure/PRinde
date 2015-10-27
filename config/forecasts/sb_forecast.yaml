@@ -1,14 +1,11 @@
 name: 'Rinde de Soja en Argentina'
 
-forecast_date: ['2015-12-15']
+forecast_date: ['2015-10-01']
 
 crop_type: 'SB'
 crop_template: 'SB.json'
 
 configuration:
-    # Format: days (int)
-    # frequency: 10  # Por ahora usemos fechas, después vemos si sirve fijar frecuencias.
-
     # Weather series type: combined, historic or artificial.
     weather_series: 'combined'
 
@@ -1883,4 +1880,3 @@ agronomic_management:
 
 results:
     cycle: ["HWAM"]
-    daily: ["stress"]

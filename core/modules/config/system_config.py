@@ -27,7 +27,7 @@ class SystemConfiguration(DotDict):
 
         # Create system configuration path relative to root.
         self.system_config_path = os.path.join(self.config_path, 'system.yaml')
-        self.alias_keys_path = os.path.join(self.config_path, 'alias.json')
+        self.alias_keys_path = os.path.join(self.config_path, 'schema', 'alias.json')
         self.databases_config_path = os.path.join(self.config_path, 'database.yaml')
         self.forecasts_path = os.path.join(self.config_path, 'forecasts')
 

@@ -8,6 +8,6 @@
     "nh4_ppm_hrzn": "icnh4",
     "no3_ppm_hrzn": "icno3",
     "cultivar_id": "cul_id",
-    "plant_population": "plpoe",
+    "plant_population": "plpop",
     "irrig_date": "date_4"
 }

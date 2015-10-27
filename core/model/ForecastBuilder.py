@@ -30,6 +30,9 @@ class ForecastBuilder:
             new_config.update(forecast_file['configuration'])
             forecast_file['configuration'] = new_config
 
+        if 'weather_series' not in forecast_file.configuration:
+            forecast_file.configuration['weather_series'] = 'combined'
+
         # Ensure the paralellism degree of a forecast respects the global system limit.
         if forecast_file['configuration']['max_parallelism'] > parent_config['max_parallelism']:
             forecast_file['configuration']['max_parallellism'] = parent_config['max_parallelism']

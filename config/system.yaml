@@ -1,4 +1,4 @@
-grid_resolution: 30 # Lat/lon grid resolution in arcminutes...
+grid_resolution: 30 # Lat/lon grid resolution in arcminutes.
 max_parallelism: 4
 
 paths:

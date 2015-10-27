@@ -33,7 +33,7 @@ class RunImputation(BaseJob):
         ret_val = self.__run__(weather_stations, verbose)
         end_time = datetime.now()
 
-        logging.getLogger().info('Finished running imputation job for stations: %s. Retval = %d. Time: %s.' %
+        logging.getLogger().info('Finished running imputation job for stations: %s. Retval = %s. Time: %s.' %
                                  (weather_stations, ret_val, end_time - start_time))
 
         return ret_val
