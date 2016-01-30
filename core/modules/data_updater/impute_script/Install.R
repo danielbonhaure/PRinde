@@ -7,5 +7,6 @@ suppressPackageStartupMessages(if(!require(doMC)) { install.packages("doMC", dep
 suppressPackageStartupMessages(if(!require(gstat)) { install.packages("gstat"); require(gstat) }) # sudo apt-get install libgeos-dev
 suppressPackageStartupMessages(if(!require(geosphere)) { install.packages("geosphere"); require(geosphere) })
 suppressPackageStartupMessages(if(!require(rgdal)) { install.packages("rgdal"); require(rgdal) });  # sudo apt-get install libproj-dev libgdal-dev
-suppressPackageStartupMessages(if(!require(dplyr)) { install.packages("dplyr", dependencies=TRUE); require(dplyr) });
 suppressPackageStartupMessages(if(!require(optparse)) { install.packages("optparse", dependencies=TRUE); require(optparse) });
+suppressPackageStartupMessages(if(!require(xts)) { install.packages("xts"); require(xts); })
+suppressPackageStartupMessages(if(!require(dplyr)) { install.packages("dplyr", dependencies=TRUE); require(dplyr) });

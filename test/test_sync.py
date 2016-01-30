@@ -200,3 +200,29 @@ class TestPrioritizedRWLock(unittest.TestCase):
         time.sleep(1)
         # Once the writer finishes, the two readers should run parallel.
         self.assertEqual(lock.active_readers, 2)
+
+    def test_jobs_lock_readers_parallelism(self):
+        lock = JobsLock(max_parallel_tasks=2)
+        _threads = []
+        run_order = []
+
+        _threads.append(Reader(lock, "reader 1", run_order))
+        _threads.append(Reader(lock, "reader 2", run_order))
+        _threads.append(Reader(lock, "reader 3", run_order))
+
+        for t in _threads:
+            t.start()
+            # Small sleep to ensure threads are executed in this order.
+            time.sleep(0.05)
+
+        self.assertEqual(lock.active_readers, 2)
+        self.assertEqual(lock.waiting_readers, 1)
+
+        time.sleep(0.5)
+        # Once both readers finish, the waiting reader should be released.
+        self.assertEqual(lock.active_readers, 1)
+        self.assertEqual(lock.waiting_readers, 0)
+
+        time.sleep(0.5)
+        self.assertEqual(lock.active_readers, 0)
+        self.assertEqual(lock.waiting_readers, 0)

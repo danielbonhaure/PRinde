@@ -33,12 +33,14 @@ option_list = list(
 )
 opt = parse_args(OptionParser(option_list=option_list))
 
-# ###########################
+###########################
 # opt$stations <- '87649,87270,87688,87497,87467,87534,87453,87374,87349,87544,87548,87645,87550,87637'
 # opt$stations <- '87374,87349,87544,87548,87645,87550,87637'
-# opt$host <- '192.168.1.115'
+# opt$stations <- '9987001'
+# opt$host <- '192.168.1.151'
+# opt$database <- 'crcssa'
 # opt$parallelism <- 4
-# ###########################
+###########################
 
 stations <- as.integer(unlist(strsplit(opt$stations, ',')))
 stations <- stations[!is.na(stations)]
@@ -51,7 +53,7 @@ estacionesID <- stations
 # Creamos la conexión con la base de datos.
 conexion <- pg_connect(user=opt$user, host=opt$host, dbname=opt$database, port=opt$port, password=opt$password)
 
-dbGetQuery(conexion, "BEGIN TRANSACTION")
+
 
 tryCatch({
     # Obtenemos los datos de las estaciones.
@@ -84,6 +86,9 @@ tryCatch({
 
 
     for(estacion in estacionesID) {
+        # Creamos una transacción por cada estación.
+        response <- dbGetQuery(conexion, "BEGIN TRANSACTION")
+
         datosEstacion <- registrosDiarios[registrosDiarios$omm_id == estacion,]
         indexesToWrite <- c()
 
@@ -160,7 +165,11 @@ tryCatch({
             estimado <- estimarRadiacion(estaciones=estaciones[estaciones$omm_id == estacion, ], registrosDiarios=records)
 
             if(estimado$not_estimated > 0) {
-                errors <- c(errors, paste0("Failed to estimate ", estimado$not_estimated, " radiation values for station ", estacion, "."))
+                error_details <- paste0("Failed to estimate ", estimado$not_estimated, " radiation values for station ", estacion, ". Rolling back it's data.")
+                errors <<- c(errors, error_details)
+                writeLines(error_details)
+                dbRollback(conexion)
+                next;
             } else {
                 estimado <- estimado$results %>% select(one_of('omm_id', 'fecha', 'rad'))
 
@@ -180,6 +189,8 @@ tryCatch({
                 }
             }
         }
+
+        dbCommit(conexion)
     }
 }, warning = function(warn){
     errors <<- c(errors, warn)
@@ -188,12 +199,10 @@ tryCatch({
 }, finally =  {
     if (length(errors) > 0 | exit_status != 0) {
         exit_status <<- 1
-        writeLines('> Errors arised, rolling back transaction.')
+        writeLines('> Errors arised, see log for details.')
         writeLines(paste(errors, collapse = '\n\n'))
-        dbRollback(conexion)
     } else {
         writeLines('> Success.')
-        dbCommit(conexion)
     }
     dbDisconnect(conexion)
 })

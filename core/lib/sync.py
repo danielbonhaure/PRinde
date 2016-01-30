@@ -138,6 +138,19 @@ class JobsLock(PrioritizedRWLock):
                     self.active_readers += 1
                     self.waiting_readers -= 1
 
+    def release_read(self):
+        with self.inner_lock:
+            self.active_readers -= 1
+            if len(self.queued_writers) != 0:
+                if self.active_readers == 0:
+                    self.__unlock_writer__()
+            elif self.waiting_readers > 0:
+                # Release a reader.
+                self.read_lock.release()
+                # Update active and waiting readers count.
+                self.active_readers += 1
+                self.waiting_readers -= 1
+
     # Create aliases for the reader and writer context managers.
     def parallel_job(self):
         return self.reader()

@@ -94,8 +94,9 @@ class RunImputation(BaseJob):
                                         n_processed_stations += 1
                                         self.progress_monitor.update_progress(new_value=n_processed_stations)
 
-                            if 'Sucess' in read:
+                            if 'Success' in read:
                                 self.progress_monitor.update_progress(new_value=self.progress_monitor.end_value)
+                                return 0
 
                     elif event & select.EPOLLHUP:
                         if fileno == p.stdout.fileno():

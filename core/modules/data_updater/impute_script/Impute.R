@@ -2,7 +2,7 @@
 impute_mf <- function(datosEstacion, variable, estaciones, missingIndexes, registrosVecinos, vecinos.data, max_parallelism=1) {
     impData <- as.tbl(datosEstacion[-missingIndexes,]) %>%
         sample_n(0.5 * nrow(datosEstacion)) %>%
-        union(datosEstacion[missingIndexes,]) %>%
+        bind_rows(as.tbl(datosEstacion[missingIndexes,])) %>%
         arrange(fecha)
     impData <- impData %>% select(one_of('omm_id', 'fecha', 'tmax', 'tmin', 'prcp', 'helio', 'nub'))
     missingIndexesSubset <- which(is.na(impData[, variable]))

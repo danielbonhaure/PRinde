@@ -1,5 +1,3 @@
-suppressPackageStartupMessages(if(!require(xts)) { install.packages("xts"); require(xts); })
-
 ### Estima la radiación solar diaria en MJ/m² tomando como parámetro las mediciones de las
 ### variables requeridas por el método.
 ### Si no se nos pasa la temperatura mínima del día siguiente se calculará asumiendo que la
@@ -54,7 +52,6 @@ calibrate.bristowcampbell.xts <- function(xtsdata, days = NULL, fieldnames=c('tm
     # Extraemos los campos de la serie XTS.
     Tmax <- data[, fieldnames[1]]
     Tmin <- data[, fieldnames[2]]
-    extraT <- data[, fieldnames[3]]
     rad <- data[, fieldnames[4]]
     tmin.next <- data[, 'tmin.next']
 
