@@ -1,29 +1,31 @@
-root             "%s"
-variables        %s
-ref_year         %d
-delta            %d
-scens            %d
-sim_data         $root/campaigns/run/sim_data.json
-postprocess      "OUT2Mongo.py -i Summary.OUT --database Rinde --collection %s --field cycle_results --simulation_data $sim_data"
-num_years        1
-soils            $root/campaigns/run/soils
-weather          $root/campaigns/run/wth
-refdata          $root/data/dssat_files
-var_units        "kg/ha","mm" # Creo que no se necesita
-long_names       "Yield","Precipitation" # Creo que no se necesita
-tappcamp         "camp2json.py -c campaign.nc4 -e exp_template.json -o experiment.json"
-tappinp          "jsons2dssat.py -e experiment.json -s soil.json -x X1234567.EXP -S SOIL.SOL"
-executable       "DSCSM046 A X1234567.EXP"
-tappwth          "cp"
-outtypes         .WTH,.EXP,.SOL,y.OUT,.json
-PATH             $PATH:"$root/tapps/pdssat/":"$root/tapps/common/"
-model            dssat45
-out_file         simulations.sb         # Only for NetCDF output
-num_lats         3                      # Only for NetCDF output
-num_lons         13                      # Only for NetCDF output
-lat_zero         90.5                   # Only for NetCDF output
-lon_zero         -180.5                 # Only for NetCDF output
-irr_flag         false
-num_chunks       1
-plots            false
-agg              false
+root                 "%s"
+variables            %s
+daily_variables      %s
+ref_year             %d
+delta                %d
+scens                %d
+sim_data             $root/campaigns/run/sim_data.json
+postprocess          "OUT2Mongo.py -i Summary.OUT --database Rinde --collection %s --field cycle_results --simulation_data $sim_data"
+postprocess_daily    "DailyOUT2Mongo.py --database Rinde --collection %s --field daily_results --simulation_data $sim_data --omitted_value 0"
+num_years            1
+soils                $root/campaigns/run/soils
+weather              $root/campaigns/run/wth
+refdata              $root/data/dssat_files
+tappcamp             "camp2json.py -c campaign.nc4 -e exp_template.json -o experiment.json"
+tappinp              "jsons2dssat.py -e experiment.json -s soil.json -x X1234567.EXP -S SOIL.SOL"
+executable           "DSCSM046 A X1234567.EXP"
+tappwth              "cp" # cp = copy already created weather files (requires knowing the pSIMS weather structure beforehand)
+outtypes             .WTH,.EXP,.SOL,.OUT,.json
+PATH                 $PATH:"$root/tapps/pdssat/":"$root/tapps/common/":"$root/tapps/pdssat/daily"
+model                dssat45
+long_names           "Yield","Precipitation" # Only for NetCDF output
+var_units            "kg/ha","mm"            # Only for NetCDF output
+out_file             simulations.sb          # Only for NetCDF output
+num_lats             3                       # Only for NetCDF output
+num_lons             13                      # Only for NetCDF output
+lat_zero             90.5                    # Only for NetCDF output
+lon_zero             -180.5                  # Only for NetCDF output
+irr_flag             false
+num_chunks           1
+plots                false
+agg                  false

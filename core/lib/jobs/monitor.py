@@ -159,6 +159,16 @@ class ProgressMonitor(ProgressObserver):
                 l['listener'].progress_changed(event)
 
     def add_listener(self, l, mask=EVENT_ALL):
+        for i, listener_tuple in enumerate(self._progress_listeners):
+            msk = listener_tuple['mask']
+            listener = listener_tuple['listener']
+            # If we find the listener already registered do not add it again.
+            if listener == l:
+                if msk == mask:
+                    return
+                # Change the mask and return.
+                self._progress_listeners[i]['mask'] = mask
+                return
         self._progress_listeners.append({'mask': mask, 'listener': l})
 
 

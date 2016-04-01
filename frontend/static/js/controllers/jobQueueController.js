@@ -53,6 +53,7 @@ jobQueue.controller('jobQueueController', function ($scope, $rootScope, socket, 
         var completed = Math.max((e.current_value - e.start_value) / Math.max(e.end_value, 1) * 100, 0);
         active_jobs[job_id]['perc_completed'] = completed;
         active_jobs[job_id]['current_value'] = e.current_value;
+        active_jobs[job_id]['end_value'] = e.end_value;
 
         if (e.job.status in jobsConstants.status_description) {
             active_jobs[job_id].status = jobsConstants.status_description[e.job.status];

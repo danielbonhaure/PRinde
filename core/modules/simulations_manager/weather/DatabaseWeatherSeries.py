@@ -22,8 +22,6 @@ class DatabaseWeatherSeries(WeatherSeriesMaker):
     def create_series(self, location, forecast, extract_rainfall=True):
         with self.concurrency_lock:
             omm_id = location['weather_station']
-            output_path = os.path.join(forecast.paths.wth_csv_read, str(omm_id))
-            create_folder_with_permissions(output_path)
 
             station_info = self.expand_station_info(location)
 

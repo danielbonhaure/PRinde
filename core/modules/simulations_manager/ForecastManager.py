@@ -201,7 +201,7 @@ class ForecastManager:
                 progress_monitor.update_progress(new_value=2)
 
                 # If the folder is empty, delete it.
-                if len(os.listdir(forecast.paths.wth_csv_read)) == 0:
+                if os.path.exists(forecast.paths.wth_csv_read) and len(os.listdir(forecast.paths.wth_csv_read)) == 0:
                     shutil.rmtree(forecast.paths.wth_csv_read)
 
                 forecast_persistent_view = forecast.persistent_view()

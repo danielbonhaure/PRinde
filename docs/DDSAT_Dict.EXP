@@ -1,0 +1,85 @@
+*EXP.DETAILS: [exname_o(10)][local_name(60)]                      
+
+*GENERAL
+@PEOPLE
+ [person_notes(75)]                                                                
+@ADDRESS
+ [institution(75)]                                                                  
+@SITE
+ [site_name(75)]
+@NOTES
+ [tr_notes(75)]                                                               
+
+
+*TREATMENTS                                 -------------FACTOR LEVELS------------
+@N R    O    C    TNAME.................... CU FL SA IC MP MI MF MR MC MT ME MH SM
+ 1 [sq] [op] [co] [trt_name(25)]            [   Automatically handled by pSIMS   ]
+
+
+*CULTIVARS
+@C CR     INGENO   CNAME
+ 1 [crid] [cul_id] [cul_name(16)]        
+
+
+*FIELDS
+@L ID_FIELD       WSTA....    FLSA    FLOB          FLDT     FLDD     FLDS    FLST    SLTX    SLDP     ID_SOIL     FLNAME
+ 1 [id_field(8)]  [wst_id]  [flsl]  [flob]  [fl_drntype]  [fldrd]  [fldrs]  [flst]  [sltx]  [sldp]  [soil_id*]  [fl_name]
+@L ...........XCRD ...........YCRD .....    ELEV .............AREA    .SLEN    .FLWR    .SLAS    FLHST    FHDUR
+ 1            [fl_long(15)]   [fl_lat(15)]  [flele(9)]        [farea] -99    [fllwr]  [flsla]  [flhst]  [fhdur]
+
+
+*INITIAL CONDITIONS
+@C      PCR     ICDAT    ICRT    ICND     ICRN     ICRE    ICWD    ICRES   ICREN   ICREP    ICRIP    ICRID     ICNAME
+ 1  [icpcr]  [icdat*]  [icrt]  [icnd]  [icrz#]  [icrze]  [icwt]  [icrag]  [icrn]  [icrp]  [icrip]  [icrdp]  [ic_name]
+@C     ICBL                 SH2O      SNH4      SNO3
+ 1  [icbl*]  [ich2o|ich2o_frac*]  [icnh4*]  [icno3*]
+ 1  [icbl*]  [ich2o|ich2o_frac*]  [icnh4*]  [icno3*]
+ 1  [icbl*]  [ich2o|ich2o_frac*]  [icnh4*]  [icno3*]
+
+
+*PLANTING DETAILS
+@P PDATE       EDATE    PPOP    PPOE   PLME   PLDS   PLRS   PLRD   PLDP    PLWT   PAGE    PENV   PLPH    SPRL    PLNAME
+ 1 [date_1*] [pldae] [plpoe] [plpop] [plma] [plds] [plrs] [plrd] [pldp] [plmwt] [page] [plenv] [plph] [plspl] [pl_name]
+
+
+*IRRIGATION AND WATER MANAGEMENT
+@I     EFIR     IDEP     ITHR     IEPT     IOFF    IAME    IAMT     IRNAME
+ 1  [ireff]  [irmdp]  [irthr]  [irept]  [irstg]  [iame]  [iamt]  [ir_name]
+@I     IDATE    IROP    IRVAL
+ 1 [date_4*]  [irop]  [irval]
+
+
+*FERTILIZERS (INORGANIC)
+@F     FDATE      FMCD   	 FACD       FDEP       FAMN       FAMP       FAMK       FAMC       FAMO       FOCD      FERNAME
+ 1 [date_2*]  [fecd_1]  [feacd_1]  [fedep_1]  [feamn_1]  [feamp_1]  [feamk_1]  [feamc_1]  [feamo_1]  [feocd_1]  [fe_name_1]
+ 1 [date_3*]  [fecd_2]  [feacd_2]  [fedep_2]  [feamn_2]  [feamp_2]  [feamk_2]  [feamc_2]  [feamo_2]  [feocd_2]  [fe_name_2]
+
+
+*HARVEST DETAILS
+@H     HDATE     HSTG     HCOM    HSIZE     HPC    HBPC  HNAME
+ 1 [date_5*]  [hastg]  [hacom]  [hasiz]  [hap%]  [hab%]  [ha_name]
+
+
+*SIMULATION CONTROLS
+@N GENERAL       NYERS   NREPS   START                SDATE   RSEED SNAME.................... SMODEL
+ 1 GE          [nyers] [nreps] [start] [sdate|sdyer+sdday*] [rseed] [sname]                   [smodel]
+@N OPTIONS       WATER   NITRO   SYMBI   PHOSP   POTAS   DISES   CHEM   TILL   CO2
+ 1 OP          [water] [nitro] [symbi] [phosp] [potas] [dises] [chem] [till] [co2]
+ @N METHODS      WTHER   INCON   LIGHT   EVAPO   INFIL   PHOTO   HYDRO   NSWIT   MESOM   MESEV   MESOL
+ 1 ME          [wther] [incon] [light] [evapo] [infil] [photo] [hydro] [nswit] [mesom] [mesev] [mesol]
+ @N MANAGEMENT   PLANT   IRRIG   FERTI   RESID   HARVS
+ 1 MA          [plant] [irrig] [ferti] [resid] [harvs]
+@N OUTPUTS       FNAME   OVVEW   SUMRY   FROPT   GROUT   CAOUT   WAOUT   NIOUT   MIOUT   DIOUT   VBOSE   CHOUT   OPOUT
+ 1 OU          [fname] [ovvew] [sumry] [fropt] [grout] [caout] [waout] [niout] [miout] [diout] [vbose] [chout] [opout]
+
+@  AUTOMATIC MANAGEMENT
+@N PLANTING            PFRST         PLAST   PH2OL   PH2OU   PH2OD   PSTMX   PSTMN
+ 1 PL          [pfyer+pfday] [plyer+plday] [ph2ol] [ph2ou] [ph2od] [pstmx] [pstmn]
+@N IRRIGATION    IMDEP   ITHRL   ITHRU   IROFF   IMETH   IRAMT   IREFF
+ 1 IR          [imdep] [ithrl] [ithru] [iroff] [imeth] [iramt] [ireff]
+@N NITROGEN      NMDEP   NMTHR   NAMNT   NCODE   NAOFF
+ 1 NI          [nmdep] [nmthr] [namnt] [ncode] [naoff]
+@N RESIDUES      RIPCN   RTIME   RIDEP
+ 1 RE          [ripcn] [rtime] [ridep]
+@N HARVEST       HFRST         HLAST   HPCNP   HPCNR
+ 1 HA          [hfrst] [hlyer+hlday] [hpcnp] [hpcnr]

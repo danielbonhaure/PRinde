@@ -48,6 +48,12 @@ class Forecast(DotDict):
         if 'results' not in yaml:
             yaml['results'] = {'cyclic': ['HWAM'], 'daily': []}
 
+        if 'daily' not in yaml['results']:
+            yaml['results']['daily'] = []
+
+        if 'cyclic' not in yaml['results']:
+            yaml['results']['cyclic'] = []
+
         # Keys that belong to simulation objects and must be deleted from a Forecast object.
         simulation_keys = ['initial_conditions', 'agronomic_management', 'site_characteristics']
         for key in simulation_keys:

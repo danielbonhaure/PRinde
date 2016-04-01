@@ -32,7 +32,8 @@ class CampaignWriter:
         res_variables = set(forecast.results.cycle)
         if 'ADAT' in res_variables or 'MDAT' in res_variables:
             res_variables.add('PDAT')
-        variables = ','.join(res_variables)
+        cycle_variables = ','.join(res_variables)
+        daily_variables = ','.join(set(forecast.results.daily))
 
         ref_year = forecast.campaign_start_date.year
         if forecast.configuration.weather_series == 'historic':
@@ -53,10 +54,12 @@ class CampaignWriter:
             with open(params_file_path, 'w') as rundir_params:
                 rundir_params.write(params % (
                     psims_path,
-                    variables,
+                    cycle_variables,
+                    daily_variables,
                     ref_year,
                     delta,
                     n_scens,
+                    out_collection_name,
                     out_collection_name
                 ))
 

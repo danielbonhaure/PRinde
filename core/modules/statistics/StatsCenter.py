@@ -1,5 +1,6 @@
 from abc import abstractmethod
 from datetime import datetime
+import logging
 from apscheduler.events import *
 from core.lib.jobs.monitor import ProgressObserver, JOB_ENDED, JOB_STATUS_FINISHED, SUBJOB_ENDED
 
@@ -56,9 +57,11 @@ class StatsCenter(ProgressObserver):
         scheduler.add_listener(scheduler_evt_decorator(self), mask=self.scheduler_events)
 
     def job_event_listener(self, event):
+        # Find the job linked to the event if the job is still in the scheduler.
+        # "job" will be None if the job was removed or it was executed and it was a one time job.
+        job = self.scheduler.get_job(event.job_id)
+        now = datetime.now(self.scheduler.timezone)
         if event.code & EVENT_JOB_ADDED:
-            job = self.scheduler.get_job(event.job_id)
-            now = datetime.now(self.scheduler.timezone)
             self.tasks[event.job_id] = {
                 'job': StatsCenter.job_view(job),
                 'next_run': job.trigger.get_next_fire_time(None, now).strftime('%Y-%m-%d %H:%M:%S')
@@ -76,15 +79,14 @@ class StatsCenter(ProgressObserver):
 
             # Check if the job was removed from the schedulers queue.
             # A job may be ran and never deleted (perdiodic jobs).
-            if self.scheduler.get_job(event.job_id):
-            # if not self.scheduler.get_job(event.job_id):
-            #     # If it was removed, delete it from pending tasks.
-            #     del self.tasks[event.job_id]
-            # else:
+            if job:
                 # Add the execution time to the list of run times.
                 if 'run_times' not in self.tasks[event.job_id]:
                     self.tasks[event.job_id]['run_times'] = []
                 self.tasks[event.job_id]['run_times'].insert(0, end_time)
+                # Update next run time.
+                self.tasks[event.job_id]['next_run'] = job.trigger.get_next_fire_time(None, now).strftime(
+                    '%Y-%m-%d %H:%M:%S')
         elif event.code & EVENT_JOB_REMOVED:
             if event.job_id in self.tasks:
                 del self.tasks[event.job_id]
@@ -98,6 +100,7 @@ class StatsCenter(ProgressObserver):
             self.init_jobs()
         elif event.code & EVENT_SCHEDULER_SHUTDOWN:
             pass
+            logging.warn('Scheduler shutdown.')
             # TODO:propagate system shutdown (or try to restart the scheduler if it was caused by an error?).
 
     def init_jobs(self):

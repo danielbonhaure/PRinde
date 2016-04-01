@@ -3,36 +3,9 @@ import time
 import unittest
 
 from core.lib.sync import PrioritizedRWLock, JobsLock
+from test.mock import ReaderThread, WriterThread
 
 __author__ = 'Federico Schmidt'
-
-class Reader(threading.Thread):
-
-    def __init__(self, rwlock, id, run_order):
-        super(Reader, self).__init__()
-        self.rwlock = rwlock
-        self.id = id
-        self.run_order = run_order
-
-    def run(self):
-        with self.rwlock.reader():
-            time.sleep(0.5)
-            self.run_order.append(self.id)
-
-
-class Writer(threading.Thread):
-
-    def __init__(self, rwlock, id, run_order, priority=0):
-        super(Writer, self).__init__()
-        self.rwlock = rwlock
-        self.id = id
-        self.run_order = run_order
-        self.priority = priority
-
-    def run(self):
-        with self.rwlock.writer(self.priority):
-            time.sleep(1)
-            self.run_order.append(self.id)
 
 
 class TestPrioritizedRWLock(unittest.TestCase):
@@ -43,7 +16,7 @@ class TestPrioritizedRWLock(unittest.TestCase):
         run_order = []
 
         for i in range(0, 5):
-            r = Reader(lock, i, run_order)
+            r = ReaderThread(lock, i, run_order)
             _threads.append(r)
 
         for t in _threads:
@@ -61,11 +34,11 @@ class TestPrioritizedRWLock(unittest.TestCase):
         _threads = []
         run_order = []
 
-        w = Writer(lock, "writer", run_order)
+        w = WriterThread(lock, "writer", run_order)
         _threads.append(w)
 
         for i in range(0, 5):
-            r = Reader(lock, i, run_order)
+            r = ReaderThread(lock, i, run_order)
             _threads.append(r)
 
         for t in _threads:
@@ -88,9 +61,9 @@ class TestPrioritizedRWLock(unittest.TestCase):
         _threads = []
         run_order = []
 
-        r1 = Reader(lock, "reader 1", run_order)
-        w = Writer(lock, "writer", run_order)
-        r2 = Reader(lock, "reader 2", run_order)
+        r1 = ReaderThread(lock, "reader 1", run_order)
+        w = WriterThread(lock, "writer", run_order)
+        r2 = ReaderThread(lock, "reader 2", run_order)
 
         _threads.append(r1)
         _threads.append(w)
@@ -119,10 +92,10 @@ class TestPrioritizedRWLock(unittest.TestCase):
         _threads = []
         run_order = []
 
-        r1 = Reader(lock, "reader 1", run_order)
-        w1 = Writer(lock, "writer 1", run_order, priority=0)
-        r2 = Reader(lock, "reader 2", run_order)
-        w2 = Writer(lock, "writer 2", run_order, priority=1)  # This writer should run first.
+        r1 = ReaderThread(lock, "reader 1", run_order)
+        w1 = WriterThread(lock, "writer 1", run_order, priority=0)
+        r2 = ReaderThread(lock, "reader 2", run_order)
+        w2 = WriterThread(lock, "writer 2", run_order, priority=1)  # This writer should run first.
 
         _threads.append(r1)
         _threads.append(w1)
@@ -148,10 +121,10 @@ class TestPrioritizedRWLock(unittest.TestCase):
         _threads = []
         run_order = []
 
-        r1 = Reader(lock, "reader 1", run_order)
-        w1 = Writer(lock, "writer 1", run_order, priority=0)
-        r2 = Reader(lock, "reader 2", run_order)
-        w2 = Writer(lock, "writer 2", run_order, priority=1)  # This writer should run first.
+        r1 = ReaderThread(lock, "reader 1", run_order)
+        w1 = WriterThread(lock, "writer 1", run_order, priority=0)
+        r2 = ReaderThread(lock, "reader 2", run_order)
+        w2 = WriterThread(lock, "writer 2", run_order, priority=1)  # This writer should run first.
 
         _threads.append(r1)
         _threads.append(w1)
@@ -177,10 +150,10 @@ class TestPrioritizedRWLock(unittest.TestCase):
         _threads = []
         run_order = []
 
-        _threads.append(Reader(lock, "reader 1", run_order))
-        _threads.append(Writer(lock, "writer 1", run_order))
-        _threads.append(Reader(lock, "reader 2", run_order))
-        _threads.append(Reader(lock, "reader 3", run_order))
+        _threads.append(ReaderThread(lock, "reader 1", run_order))
+        _threads.append(WriterThread(lock, "writer 1", run_order))
+        _threads.append(ReaderThread(lock, "reader 2", run_order))
+        _threads.append(ReaderThread(lock, "reader 3", run_order))
 
         for t in _threads:
             t.start()
@@ -206,9 +179,9 @@ class TestPrioritizedRWLock(unittest.TestCase):
         _threads = []
         run_order = []
 
-        _threads.append(Reader(lock, "reader 1", run_order))
-        _threads.append(Reader(lock, "reader 2", run_order))
-        _threads.append(Reader(lock, "reader 3", run_order))
+        _threads.append(ReaderThread(lock, "reader 1", run_order))
+        _threads.append(ReaderThread(lock, "reader 2", run_order))
+        _threads.append(ReaderThread(lock, "reader 3", run_order))
 
         for t in _threads:
             t.start()

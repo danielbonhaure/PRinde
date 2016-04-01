@@ -12,7 +12,7 @@ class MonitoringScheduler(BackgroundScheduler):
         super(MonitoringScheduler, self).__init__(*args, **kwargs)
         self._progress_listeners = []
 
-    def add_job(self, func, *args, **kwargs):
+    def add_job(self, func, name=None, *args, **kwargs):
         """
         Adds a job to the scheduler. The func param can be either a function/method or a BaseJob instance.
         If it's a function, it'll be wrapped in a MonitoredFunctionJob in order to be traceable.
@@ -25,7 +25,7 @@ class MonitoringScheduler(BackgroundScheduler):
         else:
             job = func
         # Add the wrapped job to the real scheduler.
-        j = BackgroundScheduler.add_job(self, job.start, *args, **kwargs)
+        j = BackgroundScheduler.add_job(self, job.start, name=(name or job.name), *args, **kwargs)
         job.id = j.id
         job.name = j.name
 

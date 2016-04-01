@@ -92,4 +92,5 @@ class DatabaseUtils:
 
         if not os.path.isfile(pwd_file_path) or not os.path.exists(pwd_file_path):
             return None
-        return open(pwd_file_path, mode='r').read()
+        with open(pwd_file_path, mode='r') as f:
+            return f.read()
