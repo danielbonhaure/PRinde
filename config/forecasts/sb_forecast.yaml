@@ -1,6 +1,6 @@
 name: 'Rinde de Soja en Argentina'
 
-forecast_date: ['2015-10-30']
+forecast_date: ['2016-03-31']
 
 crop_type: 'SB'
 crop_template: 'SB.json'
@@ -1880,4 +1880,4 @@ agronomic_management:
 
 results:
     cycle: ["HWAM"]
-    daily: ["WSGD"]
+    daily: ["WSGD", "SWTD", "SWXD", "ETAC", "EOAC"]

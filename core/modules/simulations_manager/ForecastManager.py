@@ -133,8 +133,10 @@ class ForecastManager:
                 create_folder_with_permissions(forecast.paths.soil_grid_path)
 
                 # Create the folder where we'll read the CSV files created by the database.
-                forecast.paths.wth_csv_read = os.path.join(forecast.paths.wth_csv_read, folder_name).encode('unicode-escape')
-                forecast.paths.wth_csv_export = os.path.join(forecast.paths.wth_csv_export, folder_name).encode('unicode-escape')
+                forecast.paths.wth_csv_read = os.path.join(forecast.paths.wth_csv_read,
+                                                           folder_name).encode('unicode-escape')
+                forecast.paths.wth_csv_export = os.path.join(forecast.paths.wth_csv_export,
+                                                             folder_name).encode('unicode-escape')
                 create_folder_with_permissions(forecast.paths.wth_csv_read)
 
                 active_threads = dict()
@@ -273,7 +275,8 @@ class ForecastManager:
 
                 progress_monitor.update_progress(new_value=3)
 
-                forecast.paths.run_script_path = CampaignWriter.write_campaign(forecast, output_dir=forecast.paths.rundir)
+                forecast.paths.run_script_path = CampaignWriter.write_campaign(forecast,
+                                                                               output_dir=forecast.paths.rundir)
                 forecast.simulation_count = len(simulations_ids)
 
                 progress_monitor.update_progress(new_value=4)
@@ -294,13 +297,29 @@ class ForecastManager:
 
                 # Check results
                 if psims_exit_code == 0:
-                    inserted_count = db[forecast.configuration['simulation_collection']].count({
-                        '_id': {'$in': simulations_ids}
-                    })
+                    inserted_simulations = db[forecast.configuration['simulation_collection']].find(
+                        {
+                            '_id': {'$in': simulations_ids},
+                            # Find simulations that have results field (either cycle or daily).
+                            # This property is created by the pSIMS Mongo hook so if a simulation doesn't have this
+                            # field it means that the execution inside pSIMS failed.
+                            '$or': [{'daily_results': {'$exists': True}}, {'cycle_results': {'$exists': True}}]
+                        },
+                        projection=['daily_results', 'cycle_results', 'name'])
 
-                    if len(simulations_ids) != inserted_count:
-                        raise RuntimeError('Mismatch between simulations id\'s length and inserted id\'s '
-                                           'length (%s != %s)' % (len(simulations_ids), inserted_count))
+                    if len(simulations_ids) != inserted_simulations.count():
+                        raise RuntimeError('Mismatch between simulations id\'s length and finished simulations '
+                                           'count (%s != %s)' % (len(simulations_ids), inserted_simulations.count()))
+
+                    if 'HWAM' in forecast.results.cycle:
+                        # Check that there are no -99 values in the crop yield.
+                        for sim in inserted_simulations:
+                            if 'cycle_results' not in sim:
+                                continue
+                            for scenario in sim['cycle_results']['HWAM']['scenarios']:
+                                if scenario['value'] < 0:
+                                    raise RuntimeError('Found a negative value for HWAM inside a simulation (%s).' %
+                                                       sim['name'])
 
                 logging.getLogger().info('Finished running forecast "%s" (time=%s).\n' %
                                          (forecast.name, datetime.now() - run_start_time))

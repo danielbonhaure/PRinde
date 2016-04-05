@@ -1,6 +1,6 @@
 name: 'Rinde de Maíz Temprano en Argentina'
 
-forecast_date: ['2015-12-31']
+forecast_date: ['2016-03-31']
 
 crop_type: 'MZ-E'
 crop_template: 'MZ.json'
@@ -1707,4 +1707,4 @@ agronomic_management:
 
 results:
     cycle: ["HWAM"]
-    daily: ["WSGD"]
+    daily: ["WSGD", "SWTD", "SWXD", "ETAC", "EOAC"]
