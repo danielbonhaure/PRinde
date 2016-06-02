@@ -2,7 +2,7 @@ import copy
 from datetime import datetime
 from xxhash import xxh64
 
-from core.lib.io.file import fileNameWithoutExtension
+from core.lib.io.file import filename_without_ext
 from core.lib.utils.extended_collections import DotDict
 from core.modules.simulations_manager.psims.WeatherNetCDFWriter import WeatherNetCDFWriter
 
@@ -39,20 +39,24 @@ class Forecast(DotDict):
 
     def init_from_yaml(self, yaml):
         if 'name' not in yaml:
-            yaml['name'] = fileNameWithoutExtension(yaml['file_name'])
+            yaml['name'] = filename_without_ext(yaml['file_name'])
 
         if 'forecast_date' not in yaml:
-            # If there's no forecast date defined, we assume that the current date is the forecast date.
-            yaml['forecast_date'] = "now"
+            # If there's no forecast date defined, we explicitly define it as None.
+            yaml['forecast_date'] = None
 
         if 'results' not in yaml:
-            yaml['results'] = {'cyclic': ['HWAM'], 'daily': []}
+            raise RuntimeError('Missing results property in forecast file %s.' % yaml['file_name'])
+            # yaml['results'] = DotDict({'cycle': ['HWAM'], 'daily': []})
 
         if 'daily' not in yaml['results']:
             yaml['results']['daily'] = []
 
-        if 'cyclic' not in yaml['results']:
-            yaml['results']['cyclic'] = []
+        if 'cycle' not in yaml['results']:
+            yaml['results']['cycle'] = []
+
+        if len(yaml['results']['cycle']) == 0 and len(yaml['results']['daily']) == 0:
+            raise RuntimeError('No expected results variables were provided in forecast file %s.' % yaml['file_name'])
 
         # Keys that belong to simulation objects and must be deleted from a Forecast object.
         simulation_keys = ['initial_conditions', 'agronomic_management', 'site_characteristics']
@@ -64,16 +68,9 @@ class Forecast(DotDict):
 
     @property
     def id(self):
-        if self.configuration.weather_series == 'historic':
+        if self.configuration.weather_series in ['historic', 'netcdf']:
             self.simulations_id = 'ref_%s' % self.simulations_id
         return xxh64('%s,%s' % (self.forecast_date, self.simulations_id)).hexdigest()
-    #
-    # @property
-    # def binary_id(self):
-    #     # Forecasts that run historic simulations should have a different ID.
-    #     if self.configuration.weather_series == 'historic':
-    #         self.simulations_id = 'ref_%s' % self.simulations_id
-    #     return Binary(xxh64('%s,%s' % (self.forecast_date, self.simulations_id)).digest())
 
     @property
     def campaign_start_date(self):
@@ -81,7 +78,10 @@ class Forecast(DotDict):
         Calculates the start date of this forecast campaign.
         :rtype : datetime
         """
-        f_date = datetime.strptime(self.forecast_date, '%Y-%m-%d')
+        f_date = self.forecast_date
+        if f_date is None:
+            return None
+        f_date = datetime.strptime(f_date, '%Y-%m-%d')
 
         if f_date.month < 5:
             return f_date.replace(day=1, month=1, year=f_date.year - 1)
@@ -93,6 +93,9 @@ class Forecast(DotDict):
         Calculates the end date of this forecast campaign.
         :rtype : datetime
         """
+        f_date = self.forecast_date
+        if f_date is None:
+            return None
         f_date = datetime.strptime(self.forecast_date, '%Y-%m-%d')
 
         if f_date.month < 5:
@@ -123,8 +126,8 @@ class Forecast(DotDict):
         Subsets the object to keep only fields that are relevant for persistency.
         :return:
         """
-        # Forecasts that run historic simulations should not be persistent.
-        if self.configuration.weather_series == 'historic':
+        # Forecasts without a forecast date are just a collection of simulations and shouldn't have a persistent view.
+        if self.forecast_date is None or self.configuration.weather_series == 'historic':
             return None
 
         view = copy.deepcopy(self.__dict__)

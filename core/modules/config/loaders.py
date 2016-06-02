@@ -6,6 +6,9 @@ from core.model.ForecastBuilder import ForecastBuilder
 from core.modules.config import priority
 from core.lib.utils.log import log_format_exception
 from core.model.Location import Location
+from core.modules.simulations_manager.weather.CombinedSeriesMaker import CombinedSeriesMaker
+from core.modules.simulations_manager.weather.HistoricalSeriesMaker import HistoricalSeriesMaker
+from core.modules.simulations_manager.weather.NetCDFSeriesMaker import NetCDFSeriesMaker
 
 __author__ = 'Federico Schmidt'
 
@@ -15,6 +18,11 @@ class ForecastLoader:
     def __init__(self, jobs_lock, system_config):
         self.jobs_lock = jobs_lock
         self.system_config = system_config
+        self.weather_series_makers = {
+            'combined': CombinedSeriesMaker,
+            'historic': HistoricalSeriesMaker,
+            'netcdf': NetCDFSeriesMaker
+        }
 
     def load_file(self, forecast_file):
         with self.jobs_lock.parallel_job():
@@ -41,9 +49,16 @@ class ForecastLoader:
             forecast = DotDict(yaml.safe_load(open(forecast_file)))
             forecast['file_name'] = forecast_file
 
+            weather_series = forecast['configuration']['weather_series']
+            if weather_series not in self.weather_series_makers:
+                raise RuntimeError('Weather series of type %s not supported.' % weather_series)
+
+            forecast.configuration.weather_maker_class = self.weather_series_makers[weather_series]
+
             for loc_key in forecast['locations'].keys():
                 forecast['locations'][loc_key] = Location(forecast['locations'][loc_key],
-                                                          self.system_config.database['weather_db'])
+                                                          forecast,
+                                                          self.system_config)
 
             builder = ForecastBuilder(forecast, self.system_config)
             builder.replace_aliases(self.system_config.alias_dict)

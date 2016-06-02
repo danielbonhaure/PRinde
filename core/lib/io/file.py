@@ -80,8 +80,8 @@ def create_folder(folder):
     return os.path.exists(folder) and not os.path.isfile(folder)
 
 
-def fileNameWithoutExtension(file):
-    return os.path.splitext(os.path.basename(file))[0]
+def filename_without_ext(f):
+    return os.path.splitext(os.path.basename(f))[0]
 
 
 def create_folder_with_permissions(parent, folder_name=None, permissions=0777):

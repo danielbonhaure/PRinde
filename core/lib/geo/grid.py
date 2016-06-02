@@ -2,6 +2,7 @@ __author__ = 'Federico Schmidt'
 from collections import namedtuple
 import math
 
+
 def latlon_to_grid(lat_dec, lon_dec, resolution=30):
     """
     Translates latitude and longitude (in decimal degrees) to a row and column number
@@ -15,3 +16,4 @@ def latlon_to_grid(lat_dec, lon_dec, resolution=30):
     point.row = int(math.ceil((90 - lat_dec) * (60. / resolution)))
     point.column = int(math.ceil((180 + lon_dec) * (60. / resolution)))
     return point
+

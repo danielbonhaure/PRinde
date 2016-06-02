@@ -239,4 +239,7 @@ class WebServer(StatEventListener, ProgressObserver):
             self.socketio.emit('active_tasks_event', event.serialize(), namespace='/observers')
 
     def start(self):
-        self.socketio.run(self.app, host='0.0.0.0')
+        try:
+            self.socketio.run(self.app, host='0.0.0.0')
+        except:
+            self.socketio.run(self.app, host='0.0.0.0', port=5001)

@@ -35,9 +35,22 @@ class CampaignWriter:
         cycle_variables = ','.join(res_variables)
         daily_variables = ','.join(set(forecast.results.daily))
 
-        ref_year = forecast.campaign_start_date.year
-        if forecast.configuration.weather_series == 'historic':
-            ref_year = 1950
+        # Get the reference year from the campaign start date (if such date is actually defined).
+        ref_year = forecast.campaign_start_date
+
+        if ref_year is None:
+            if 'reference_year' in forecast.configuration:
+                ref_year = int(forecast.configuration.reference_year)
+            else:
+                raise RuntimeError("Missing reference year in forecast.configuration and we can't get it from "
+                                   "the campaign start date since the forecast_date is None.")
+        else:
+            ref_year = ref_year.year
+
+        num_years = 1
+        if 'num_years' in forecast.configuration:
+            num_years = int(forecast.configuration.num_years)
+            assert num_years > 0, 'Number of years must be greater than zero (found %d).' % num_years
 
         delta = forecast.configuration.grid_resolution
         out_collection_name = forecast.configuration['simulation_collection']
@@ -59,6 +72,7 @@ class CampaignWriter:
                     ref_year,
                     delta,
                     n_scens,
+                    num_years,
                     out_collection_name,
                     out_collection_name
                 ))
@@ -196,8 +210,8 @@ class CampaignWriter:
         n_scenarios = sim_stats['n_scenarios']
 
         cell_width = forecast.configuration.grid_resolution / 60.
-        lat_cells_dec = np.arange(90+cell_width, 90-(loc_count-1)*cell_width, -cell_width)
-        lon_cells_dec = np.arange(-180-cell_width, -180+(max_simulation_count-1)*cell_width, cell_width)
+        lat_cells_dec = np.arange(90+cell_width/2, 90-(loc_count-1)*cell_width, -cell_width)
+        lon_cells_dec = np.arange(-180-cell_width/2, -180+(max_simulation_count-1)*cell_width, cell_width)
 
         dim_sizes = [loc_count, max_simulation_count, n_scenarios, max_soil_layer_count]
         dim_var_contents = [lat_cells_dec, lon_cells_dec, np.arange(0, n_scenarios), np.arange(0, max_soil_layer_count)]
@@ -205,8 +219,8 @@ class CampaignWriter:
         # Create dimensions and associated variables.
         for dim_idx, dim in enumerate(['lat', 'lon', 'scen', 'soil_layer']):
             output_file.createDimension(dim, size=dim_sizes[dim_idx])
-            dim_var = output_file.createVariable(varname=dim, datatype='f4', dimensions=(dim,), fill_value=-99)
-            dim_var[:] = dim_var_contents[dim_idx]
+            dim_var = output_file.createVariable(varname=dim, datatype='f8', dimensions=(dim,), fill_value=-99)
+            dim_var[:] = dim_var_contents[dim_idx][0:dim_sizes[dim_idx]]
 
         wst_id = output_file.createVariable(varname='wst_id', datatype='u2', dimensions=('scen',), fill_value=-99)
         wst_id[:] = range(0, n_scenarios)

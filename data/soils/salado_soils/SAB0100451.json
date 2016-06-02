@@ -1,0 +1,88 @@
+{
+    "soils": [
+        {
+            "soil_id": "SAB0100451",
+            "sl_loc_3": "Laboulaye",
+            "soil_long": -64.0,
+            "smke": "IB001",
+            "sldp": "-99",
+            "classification": "Haplustol \u00ef\u00bf\u00bdntico",
+            "sscol": "-99",
+            "salb": "0.13",
+            "sldr": "0.15",
+            "slro": "73",
+            "slpf": "1.00",
+            "soil_name": "",
+            "slnf": "0.60",
+            "sl_loc_1": "ARGENTINA",
+            "slu1": "8.7",
+            "smpx": "IB001",
+            "soilLayer": [
+                {
+                    "slrgf": "1.00",
+                    "sldul": "0.216",
+                    "slbdm": "1.33",
+                    "slsil": "43.8",
+                    "slll": "0.082",
+                    "slcly": "10.4",
+                    "slni": "-99",
+                    "slcf": "00.0",
+                    "sloc": "0.80",
+                    "slmh": "A",
+                    "slphw": "6.3",
+                    "slsat": "0.425",
+                    "sllb": "020"
+                },
+                {
+                    "slrgf": "0.44",
+                    "sldul": "0.224",
+                    "slbdm": "1.35",
+                    "slsil": "45.8",
+                    "slll": "0.091",
+                    "slcly": "12.3",
+                    "slni": "-99",
+                    "slcf": "00.0",
+                    "sloc": "0.50",
+                    "slmh": "AC",
+                    "slphw": "6.9",
+                    "slsat": "0.419",
+                    "sllb": "044"
+                },
+                {
+                    "slrgf": "0.31",
+                    "sldul": "0.211",
+                    "slbdm": "1.38",
+                    "slsil": "48.5",
+                    "slll": "0.078",
+                    "slcly": "09.4",
+                    "slni": "-99",
+                    "slcf": "00.0",
+                    "sloc": "0.20",
+                    "slmh": "C",
+                    "slphw": "7.5",
+                    "slsat": "0.406",
+                    "sllb": "077"
+                },
+                {
+                    "slrgf": "0.11",
+                    "sldul": "0.215",
+                    "slbdm": "1.40",
+                    "slsil": "48.3",
+                    "slll": "0.082",
+                    "slcly": "10.4",
+                    "slni": "-99",
+                    "slcf": "00.0",
+                    "sloc": "0.05",
+                    "slmh": "Cca",
+                    "slphw": "8.3",
+                    "slsat": "0.400",
+                    "sllb": "120"
+                }
+            ],
+            "smhb": "IB001",
+            "soil_lat": -33.2,
+            "sltx": "Viejo",
+            "sl_source": "Rodeo"
+        }
+    ]
+}

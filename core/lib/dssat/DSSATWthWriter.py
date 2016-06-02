@@ -9,7 +9,7 @@ __author__ = 'Federico Schmidt'
 
 class DSSATWthWriter:
 
-    expected_variables = ['fecha', 'rad', 'tmax', 'tmin', 'prcp', 'fecha_original']
+    expected_variables = ['fecha', 'rad', 'tmax', 'tmin', 'prcp']
     expected_var_set = set(expected_variables)
 
     def __init__(self):
@@ -41,12 +41,20 @@ class DSSATWthWriter:
         return True, rainfall_data
 
     @staticmethod
-    def write_wth_file(scenario_index, file_rows_content, output_file_path, location):
+    def write_wth_file(scenario_index, file_rows_content, output_file_path, location, write_original_date=False):
         lat = float(location['coord_y'])
         lon = float(location['coord_x'])
 
         filler, filler2 = -99, 10  # used for ELEV, REFHT, WNDHT, respectively
         var_names = ['SRAD', 'TMAX', 'TMIN', 'RAIN']
+
+        _expected_variables = DSSATWthWriter.expected_variables
+        _expected_variables_set = DSSATWthWriter.expected_var_set
+        _variables_format = ['%.5d'] + ['%6.1f'] * len(var_names)
+        if write_original_date:
+            _expected_variables = DSSATWthWriter.expected_variables + ['fecha_original']
+            _expected_variables_set.add('fecha_original')
+            _variables_format += ['     !%2.d']
 
         csv_content = dict()
         csv_variables = []
@@ -58,8 +66,7 @@ class DSSATWthWriter:
                     csv_variables = row
 
                     # Check that the header variables match the expected variables.
-                    if len(DSSATWthWriter.expected_var_set.intersection(csv_variables)) != \
-                            len(DSSATWthWriter.expected_variables):
+                    if len(_expected_variables_set.intersection(csv_variables)) != len(_expected_variables):
                         raise RuntimeError("The variables in the weather stream (%s) don't match the expected ones (%s)"
                                            "." % (csv_variables, DSSATWthWriter.expected_variables))
 
@@ -119,10 +126,13 @@ class DSSATWthWriter:
         head += '%6d' % filler + '%6d' % filler2 + '\n'
         head += '@DATE' + ''.join(['%6s' % v for v in var_names]) + '\n'
 
+        if os.path.exists(filename):
+            raise RuntimeError('Attempted to write a weather file that was already created (%s).\n'
+                               'Increase the weather grid resolution to avoid collisions.' % filename)
         # write body
         with open(filename, 'w') as f:
             f.write(head)
-            np.savetxt(f, data, fmt=['%.5d'] + ['%6.1f'] * len(var_names) + ['     !%2.d'], delimiter='')
+            np.savetxt(f, data, fmt=_variables_format, delimiter='')
 
         return csv_content
 

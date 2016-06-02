@@ -85,7 +85,7 @@ class StatsCenter(ProgressObserver):
                     self.tasks[event.job_id]['run_times'] = []
                 self.tasks[event.job_id]['run_times'].insert(0, end_time)
                 # Update next run time.
-                self.tasks[event.job_id]['next_run'] = job.trigger.get_next_fire_time(None, now).strftime(
+                self.tasks[event.job_id]['next_run'] = job.trigger.get_next_fire_time(now, now).strftime(
                     '%Y-%m-%d %H:%M:%S')
         elif event.code & EVENT_JOB_REMOVED:
             if event.job_id in self.tasks:

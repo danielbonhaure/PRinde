@@ -10,9 +10,7 @@ from datetime import datetime, timedelta
 from core.lib.io.file import create_folder_with_permissions, listdir_fullpath
 from core.lib.utils.log import log_format_exception
 from core.modules.simulations_manager.CampaignWriter import CampaignWriter
-from core.modules.simulations_manager.weather.CombinedSeriesMaker import CombinedSeriesMaker
-# from core.modules.simulations_manager.weather.csv.CombinedSeriesMaker import CSVCombinedSeriesMaker
-from core.modules.simulations_manager.weather.HistoricalSeriesMaker import HistoricalSeriesMaker
+from core.modules.simulations_manager.weather.DatabaseWeatherSeries import DatabaseWeatherSeries
 from core.modules.simulations_manager.RunpSIMS import RunpSIMS
 from core.lib.jobs.monitor import NullMonitor, JOB_STATUS_WAITING, JOB_STATUS_RUNNING, ProgressMonitor
 from core.modules.config.priority import RUN_FORECAST, RUN_REFERENCE_FORECAST
@@ -51,7 +49,11 @@ class ForecastManager:
             ))
             return
 
-        run_date = datetime.strptime(forecast.forecast_date, '%Y-%m-%d')
+        run_date = forecast.forecast_date
+        if run_date is None:
+            run_date = datetime.now()
+        else:
+            run_date = datetime.strptime(run_date, '%Y-%m-%d')
 
         if run_date < datetime.now():
             # Run immediately.
@@ -104,16 +106,22 @@ class ForecastManager:
                 # Get MongoDB connection.
                 db = self.system_config.database['yield_db']
 
-                wth_series_maker = None
-                forecast.configuration['simulation_collection'] = 'simulations'
+                # Create an instance of the weather series maker.
+                wth_series_maker = forecast.configuration.weather_maker_class(self.system_config,
+                                                                              forecast.configuration.max_parallelism)
+                # The simulations collection can be defined by the user in the YAML file.
+                if 'simulation_collection' not in forecast.configuration:
+                    # If it's not defined, base the decision of which one to use on the type of weather series
+                    # the forecast will use.
+                    forecast.configuration['simulation_collection'] = 'simulations'
+                    if forecast.configuration.weather_series == 'historic':
+                        forecast.configuration['simulation_collection'] = 'reference_simulations'
+                    if forecast.configuration.weather_series == 'netcdf':
+                        forecast.configuration['simulation_collection'] = 'netcdf_simulations'
 
-                if forecast.configuration.weather_series == 'combined':
-                    wth_series_maker = CombinedSeriesMaker(self.system_config, forecast.configuration.max_parallelism)
-                elif forecast.configuration.weather_series == 'historic':
-                    wth_series_maker = HistoricalSeriesMaker(self.system_config, forecast.configuration.max_parallelism)
-                    forecast.configuration['simulation_collection'] = 'reference_simulations'
-                else:
-                    raise RuntimeError('Weather series type "%s" unsupported.' % forecast.configuration.weather_series)
+                if forecast.configuration['simulation_collection'] not in db.collection_names():
+                    raise RuntimeError('The specified collection (%s) does not exist in the results database.' %
+                                       forecast.configuration['simulation_collection'])
 
                 folder_name = "%s" % (datetime.now().isoformat())
                 folder_name = folder_name.replace('"', '').replace('\'', '').replace(' ', '_')
@@ -145,29 +153,41 @@ class ForecastManager:
                 forecast.rainfall = {}
 
                 stations_not_updated = set()
-                run_date = datetime.strptime(forecast.forecast_date, '%Y-%m-%d').date()
+                if forecast.forecast_date is None:
+                    run_date = datetime.now()
+                else:
+                    run_date = datetime.strptime(forecast.forecast_date, '%Y-%m-%d').date()
 
                 for loc_key, location in forecast['locations'].iteritems():
                     omm_id = location['weather_station']
 
                     # Upsert location.
                     db.locations.update_one({'_id': location.id}, {
-                        '$set': {
-                            "name": location.name,
-                            "coord_x": location.coord_x,
-                            "coord_y": location.coord_y,
-                            "weather_station": location.weather_station
-                        }
+                        # '$set': {
+                        #     "name": location.name,
+                        #     "coord_x": location.coord_x,
+                        #     "coord_y": location.coord_y,
+                        #     "weather_station": location.weather_station
+                        # }
+                        '$set': location.persistent_view()
                     }, upsert=True)
 
-                    if omm_id not in self.weather_updater.wth_max_date:
-                        self.weather_updater.add_weather_station_id(omm_id)
-                        stations_not_updated.add(omm_id)
-                        continue
-                    elif self.weather_updater.wth_max_date[omm_id] < run_date:
-                        stations_not_updated.add(omm_id)
-                        continue
-                    elif omm_id not in active_threads:
+                    # If this forecast is creating weather files from the weather database, check that the station
+                    # associated with each location is currently updated.
+                    if issubclass(wth_series_maker, DatabaseWeatherSeries):
+                        if omm_id not in self.weather_updater.wth_max_date:
+                            # Since the system only updates weather info for the stations that are currently being used,
+                            # it may happen that the requested station is not in the weather updated max dates dict.
+                            self.weather_updater.add_weather_station_id(omm_id)
+                            stations_not_updated.add(omm_id)
+                            continue
+                        elif self.weather_updater.wth_max_date[omm_id] < run_date:
+                            # If the forecast date is greater than the max date of climate data for this station,
+                            # we add it to the not updated set.
+                            stations_not_updated.add(omm_id)
+                            continue
+
+                    if omm_id not in active_threads:
                         # Weather station data updated, forecast can be ran.
                         active_threads[omm_id] = threading.Thread(target=wth_series_maker.create_series,
                                                                   name='create_series for omm_id = %s' % omm_id,
@@ -204,6 +224,8 @@ class ForecastManager:
 
                 # If the folder is empty, delete it.
                 if os.path.exists(forecast.paths.wth_csv_read) and len(os.listdir(forecast.paths.wth_csv_read)) == 0:
+                    # These folder are used only by classes in core.modules.simulations_manager.weather.csv
+                    # The rest of the weather series makers use in-memory series creation.
                     shutil.rmtree(forecast.paths.wth_csv_read)
 
                 forecast_persistent_view = forecast.persistent_view()
@@ -224,17 +246,14 @@ class ForecastManager:
                         sim.location = forecast.locations[loc_key]
                         sim.weather_station = forecast.weather_stations[sim.location.weather_station]
 
-                        # If a simulation has an associated forecast, it should go inside the 'simulations' collection.
+                        sim_id = db[forecast.configuration['simulation_collection']].insert_one(sim.persistent_view()).inserted_id
+                        sim['_id'] = sim_id
+                        simulations_ids.append(sim_id)
+                        # If a simulation has an associated forecast, fill the associated fields.
                         if forecast_id:
                             sim.forecast_id = forecast_id
                             sim.forecast_date = forecast.forecast_date
-                            sim_id = db.simulations.insert_one(sim.persistent_view()).inserted_id
                             reference_ids.append(sim.reference_id)
-                        else:
-                            # Otherwise, it means it's a reference (historic) simulation.
-                            sim_id = db.reference_simulations.insert_one(sim.persistent_view()).inserted_id
-                        sim['_id'] = sim_id
-                        simulations_ids.append(sim_id)
 
                 if not is_reference_forecast:
                     # Find which simulations have a reference simulation associated.
@@ -252,6 +271,7 @@ class ForecastManager:
                         ref_forecast = copy.deepcopy(yield_forecast)
                         ref_forecast.name = 'Reference simulations for forecast %s' % forecast.name
                         ref_forecast.configuration.weather_series = 'historic'
+                        del ref_forecast.forecast_date
 
                         rm_locs = []
 
@@ -316,10 +336,20 @@ class ForecastManager:
                         for sim in inserted_simulations:
                             if 'cycle_results' not in sim:
                                 continue
-                            for scenario in sim['cycle_results']['HWAM']['scenarios']:
-                                if scenario['value'] < 0:
-                                    raise RuntimeError('Found a negative value for HWAM inside a simulation (%s).' %
-                                                       sim['name'])
+                            for scen_idx, scenario in enumerate(sim['cycle_results']['HWAM']['scenarios']):
+
+                                if not (isinstance(scenario['value'], int) or isinstance(scenario['value'], float)):
+                                    # Nested years inside the scenario.
+                                    for year_index, v in enumerate(scenario['value']):
+                                        if v['value'] < 0:
+                                            raise RuntimeError('Found a negative value for HWAM inside a simulation '
+                                                               '(%s, id = %s, scenario index = %d, year index = %d).' %
+                                                               (sim['name'], sim['_id'], scen_idx, year_index))
+
+                                elif scenario['value'] < 0:
+                                    raise RuntimeError('Found a negative value for HWAM inside a simulation (%s, '
+                                                       'id = %s, scenario index = %d).' % (sim['name'], sim['_id'],
+                                                                                           scen_idx))
 
                 logging.getLogger().info('Finished running forecast "%s" (time=%s).\n' %
                                          (forecast.name, datetime.now() - run_start_time))
