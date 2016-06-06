@@ -2,6 +2,13 @@
 # -*- coding: utf-8 -*-
 import logging
 import os
+from core.lib.io.file import absdirname
+
+# Get system root path.
+root_path = absdirname(__file__)
+# Change the current working directory to the root path.
+os.chdir(root_path)
+
 import sys
 import signal
 import threading
@@ -14,14 +21,12 @@ from core.modules.config.system_config import SystemConfiguration
 from core.modules.config.boot import boot_system
 from core.modules.simulations_manager.ForecastManager import ForecastManager
 from core.modules.data_updater.sync import YieldDatabaseSync
-from core.lib.io.file import absdirname
 from core.lib.jobs.scheduler import MonitoringScheduler
 from core.lib.logging.stream import WebStream
 from core.modules.statistics.StatsCenter import StatsCenter
 from frontend.web import WebServer
 
 __author__ = 'Federico Schmidt'
-
 
 class Main:
 
@@ -30,10 +35,6 @@ class Main:
         self.scheduler = None
         self.web_server = None
         self.stats = None
-        # Get system root path.
-        root_path = absdirname(__file__)
-        # Change the current working directory to the root path.
-        os.chdir(root_path)
 
         self.system_config = None
 

@@ -71,11 +71,6 @@ class NetCDFSeriesMaker(WeatherSeriesMaker):
                 # If it's an empty variable name, coerce it to None.
                 varnames['scen'] = None
 
-            if 'netcdf_x' not in location:
-                location['netcdf_x'] = location['coord_x']
-            if 'netcdf_y' not in location:
-                location['netcdf_y'] = location['coord_y']
-
             x_idx = x_proj.index(float(location['netcdf_x']))
             y_idx = y_proj.index(float(location['netcdf_y']))
 
@@ -124,3 +119,41 @@ class NetCDFSeriesMaker(WeatherSeriesMaker):
         access_tuple[time_var_idx] = Ellipsis
 
         return tuple(access_tuple)
+
+    @staticmethod
+    def validate_location(location_yaml, forecast, system_config):
+        """
+        This method should perform a check on a location yaml and fill any missing fields or correct any field with
+        invalid values.
+        :param location_yaml: The location YAML to check and fill.
+        :param forecast: The forecast to which the location belongs.
+        :param system_config: The system config.
+        :raise RuntimeError: if the location has any error that can't be corrected.
+        :returns The location YAML after being checked and filled (if necessary).
+        """
+        if 'netcdf_info' not in forecast.configuration:
+            if not os.path.exists(forecast.configuration.netcdf_source):
+                raise RuntimeError('NetCDF file with path "%s" does not exist.' % forecast.configuration.netcdf_source)
+
+            # nc = Dataset(forecast.configuration.netcdf_source, mode='r')
+            #
+            # varnames = {
+            #     'x': forecast.configuration.netcdf_variables.get('coord_x', 'x'),
+            #     'y': forecast.configuration.netcdf_variables.get('coord_y', 'y'),
+            #     'time': forecast.configuration.netcdf_variables.get('time', 'time'),
+            #     'scen': forecast.configuration.netcdf_variables.get('scenario', None),
+            #     'tx': forecast.configuration.netcdf_variables.get('tx', 'tx'),
+            #     'tn': forecast.configuration.netcdf_variables.get('tn', 'tn'),
+            #     'prcp': forecast.configuration.netcdf_variables.get('prcp', 'prcp'),
+            #     'srad': forecast.configuration.netcdf_variables.get('srad', 'srad')
+            # }
+            #
+            forecast.configuration['netcdf_info'] = {
+                'exists': True
+            }
+
+        if 'netcdf_x' not in location_yaml:
+            location_yaml['netcdf_x'] = location_yaml['coord_x']
+        if 'netcdf_y' not in location_yaml:
+            location_yaml['netcdf_y'] = location_yaml['coord_y']
+        return location_yaml
