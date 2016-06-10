@@ -104,7 +104,10 @@ class Forecast(DotDict):
 
     @property
     def campaign_name(self):
-        start_year = self.campaign_start_date.year
+        start_year = self.campaign_start_date
+        if not start_year:
+            return "None"
+        start_year = start_year.year
         return "%d/%d" % (start_year, start_year+1)
 
     def __getitem__(self, key):
