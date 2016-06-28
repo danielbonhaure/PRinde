@@ -206,7 +206,8 @@ class ForecastManager:
                 progress_monitor.update_progress(new_value=1)
 
                 weather_series_monitor = ProgressMonitor(end_value=len(active_threads))
-                progress_monitor.add_subjob(weather_series_monitor, job_name='Create weather series')
+                progress_monitor.add_subjob(weather_series_monitor, job_name='Create weather series (%s)' %
+                                                                             forecast.configuration.weather_maker_class)
                 joined_threads_count = 0
 
                 # Start all weather maker threads.
