@@ -16,9 +16,7 @@ class HistoricalSeriesMaker(DatabaseWeatherSeries):
     def create_series(self, location, forecast, extract_rainfall=True):
         # Force the forecast reference date to be 1950: this weather series creator exports all series with dates
         # starting in 1950. See core.lib.SQL.Base Functions.sql > pr_serie_agraria(omm_id int, year_agrario int)
-        logging.info('Forecast reference year: %s' % forecast.configuration.reference_year)
         forecast.configuration.reference_year = 1950
-        logging.info('Create series for location: ' % location)
         return DatabaseWeatherSeries.create_series(self, location, forecast)
 
     def create_from_db(self, location, forecast):

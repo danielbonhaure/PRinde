@@ -19,7 +19,6 @@ __author__ = 'Federico Schmidt'
 
 
 class ForecastManager:
-
     def __init__(self, scheduler, system_config, weather_updater):
         self.system_config = system_config
         self.psims_runner = RunpSIMS()
@@ -206,8 +205,9 @@ class ForecastManager:
                 progress_monitor.update_progress(new_value=1)
 
                 weather_series_monitor = ProgressMonitor(end_value=len(active_threads))
-                progress_monitor.add_subjob(weather_series_monitor, job_name='Create weather series (%s)' %
-                                                                             forecast.configuration.weather_maker_class)
+                progress_monitor.add_subjob(weather_series_monitor,
+                                            job_name='Create weather series (%s)' %
+                                                     forecast.configuration.weather_maker_class.__name__)
                 joined_threads_count = 0
 
                 # Start all weather maker threads.

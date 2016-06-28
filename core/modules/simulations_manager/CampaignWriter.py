@@ -35,17 +35,17 @@ class CampaignWriter:
         cycle_variables = ','.join(res_variables)
         daily_variables = ','.join(set(forecast.results.daily))
 
-        # Get the reference year from the campaign start date (if such date is actually defined).
-        ref_year = forecast.campaign_start_date
-
-        if ref_year is None:
-            if 'reference_year' in forecast.configuration:
-                ref_year = int(forecast.configuration.reference_year)
-            else:
-                raise RuntimeError("Missing reference year in forecast.configuration and we can't get it from "
-                                   "the campaign start date since the forecast_date is None.")
+        if 'reference_year' in forecast.configuration:
+            ref_year = int(forecast.configuration.reference_year)
         else:
-            ref_year = ref_year.year
+            # Get the reference year from the campaign start date (if such date is actually defined).
+            ref_year = forecast.campaign_start_date
+
+            if ref_year is None:
+                    raise RuntimeError("Missing reference year in forecast.configuration and we can't get it from "
+                                       "the campaign start date since the forecast_date is None.")
+            else:
+                ref_year = ref_year.year
 
         num_years = 1
         if 'num_years' in forecast.configuration:
