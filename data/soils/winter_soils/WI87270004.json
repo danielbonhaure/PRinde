@@ -1,0 +1,103 @@
+{
+    "soils": [
+        {
+            "soil_id": "WI87270004",
+            "sl_loc_3": "RECONQUISTA",
+            "soil_long": -59.1,
+            "smke": "IB001",
+            "sldp": "-99",
+            "classification": "ARGIUDOL VERTICO",
+            "sscol": "G",
+            "salb": "0.13",
+            "sldr": "0.05",
+            "slro": "81",
+            "slpf": "1.00",
+            "soil_name": "35",
+            "slnf": "0.60",
+            "sl_loc_1": "ARGENTINA",
+            "slu1": "23.5",
+            "smpx": "IB001",
+            "soilLayer": [
+                {
+                    "slrgf": "1.00",
+                    "sldul": "0.242",
+                    "slbdm": "1.15",
+                    "slsil": "64.3",
+                    "slll": "0.094",
+                    "slcly": "13.0",
+                    "slni": "-99",
+                    "slcf": "00.0",
+                    "sloc": "1.38",
+                    "slmh": "Ap",
+                    "slphw": "5.4",
+                    "slsat": "0.488",
+                    "sllb": "018"
+                },
+                {
+                    "slrgf": "0.39",
+                    "sldul": "0.316",
+                    "slbdm": "1.21",
+                    "slsil": "52.2",
+                    "slll": "0.176",
+                    "slcly": "31.5",
+                    "slni": "-99",
+                    "slcf": "00.0",
+                    "sloc": "0.98",
+                    "slmh": "B1",
+                    "slphw": "6.3",
+                    "slsat": "0.467",
+                    "sllb": "055"
+                },
+                {
+                    "slrgf": "0.12",
+                    "sldul": "0.369",
+                    "slbdm": "1.27",
+                    "slsil": "41.3",
+                    "slll": "0.238",
+                    "slcly": "45.5",
+                    "slni": "-99",
+                    "slcf": "00.0",
+                    "sloc": "0.49",
+                    "slmh": "21",
+                    "slphw": "7.2",
+                    "slsat": "0.445",
+                    "sllb": "080"
+                },
+                {
+                    "slrgf": "0.19",
+                    "sldul": "0.348",
+                    "slbdm": "1.30",
+                    "slsil": "45.3",
+                    "slll": "0.216",
+                    "slcly": "40.5",
+                    "slni": "-99",
+                    "slcf": "00.0",
+                    "sloc": "0.19",
+                    "slmh": "22",
+                    "slphw": "7.3",
+                    "slsat": "0.435",
+                    "sllb": "105"
+                },
+                {
+                    "slrgf": "0.16",
+                    "sldul": "0.325",
+                    "slbdm": "1.30",
+                    "slsil": "49.3",
+                    "slll": "0.192",
+                    "slcly": "35.0",
+                    "slni": "-99",
+                    "slcf": "00.0",
+                    "sloc": "0.16",
+                    "slmh": "B3",
+                    "slphw": "7.2",
+                    "slsat": "0.436",
+                    "sllb": "120"
+                }
+            ],
+            "smhb": "IB001",
+            "soil_lat": -29.4,
+            "sltx": "120",
+            "sl_source": "SCS"
+        }
+    ]
+}

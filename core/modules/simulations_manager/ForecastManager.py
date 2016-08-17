@@ -8,12 +8,15 @@ import copy
 from datetime import datetime, timedelta
 
 from core.lib.io.file import create_folder_with_permissions, listdir_fullpath
+from core.lib.utils.extended_collections import DotDict
 from core.lib.utils.log import log_format_exception
+from core.modules.config.loaders import ForecastLoader
 from core.modules.simulations_manager.CampaignWriter import CampaignWriter
 from core.modules.simulations_manager.weather.DatabaseWeatherSeries import DatabaseWeatherSeries
 from core.modules.simulations_manager.RunpSIMS import RunpSIMS
 from core.lib.jobs.monitor import NullMonitor, JOB_STATUS_WAITING, JOB_STATUS_RUNNING, ProgressMonitor
 from core.modules.config.priority import RUN_FORECAST, RUN_REFERENCE_FORECAST
+from core.modules.simulations_manager.weather.HistoricalSeriesMaker import HistoricalSeriesMaker
 
 __author__ = 'Federico Schmidt'
 
@@ -105,6 +108,16 @@ class ForecastManager:
                 # Get MongoDB connection.
                 db = self.system_config.database['yield_db']
 
+                # Add database connection information to the forecast config to use it when writing pSIMS params file.
+                forecast.configuration.database = DotDict({
+                    'name': db.name,
+                    'host': db.client.HOST,
+                    'port': db.client.PORT
+                })
+
+                forecast.configuration.weather_maker_class = ForecastLoader.weather_series_makers[
+                    forecast.configuration.weather_series]
+
                 # Create an instance of the weather series maker.
                 wth_series_maker = forecast.configuration.weather_maker_class(self.system_config,
                                                                               forecast.configuration.max_parallelism)
@@ -153,7 +166,7 @@ class ForecastManager:
 
                 stations_not_updated = set()
                 if forecast.forecast_date is None:
-                    run_date = datetime.now()
+                    run_date = datetime.now().date()
                 else:
                     run_date = datetime.strptime(forecast.forecast_date, '%Y-%m-%d').date()
 
@@ -173,14 +186,15 @@ class ForecastManager:
 
                     # If this forecast is creating weather files from the weather database, check that the station
                     # associated with each location is currently updated.
-                    if issubclass(wth_series_maker, DatabaseWeatherSeries):
+                    if issubclass(wth_series_maker.__class__, DatabaseWeatherSeries):
                         if omm_id not in self.weather_updater.wth_max_date:
                             # Since the system only updates weather info for the stations that are currently being used,
                             # it may happen that the requested station is not in the weather updated max dates dict.
                             self.weather_updater.add_weather_station_id(omm_id)
                             stations_not_updated.add(omm_id)
                             continue
-                        elif self.weather_updater.wth_max_date[omm_id] < run_date:
+                        elif not isinstance(wth_series_maker, HistoricalSeriesMaker) and \
+                                        self.weather_updater.wth_max_date[omm_id] < run_date:
                             # If the forecast date is greater than the max date of climate data for this station,
                             # we add it to the not updated set.
                             stations_not_updated.add(omm_id)
@@ -247,14 +261,15 @@ class ForecastManager:
                         sim.location = forecast.locations[loc_key]
                         sim.weather_station = forecast.weather_stations[sim.location.weather_station]
 
-                        sim_id = db[forecast.configuration['simulation_collection']].insert_one(sim.persistent_view()).inserted_id
-                        sim['_id'] = sim_id
-                        simulations_ids.append(sim_id)
                         # If a simulation has an associated forecast, fill the associated fields.
                         if forecast_id:
                             sim.forecast_id = forecast_id
                             sim.forecast_date = forecast.forecast_date
                             reference_ids.append(sim.reference_id)
+
+                        sim_id = db[forecast.configuration['simulation_collection']].insert_one(sim.persistent_view()).inserted_id
+                        sim['_id'] = sim_id
+                        simulations_ids.append(sim_id)
 
                 if not is_reference_forecast:
                     # Find which simulations have a reference simulation associated.
@@ -272,7 +287,7 @@ class ForecastManager:
                         ref_forecast = copy.deepcopy(yield_forecast)
                         ref_forecast.name = 'Reference simulations for forecast %s' % forecast.name
                         ref_forecast.configuration.weather_series = 'historic'
-                        del ref_forecast.forecast_date
+                        ref_forecast.forecast_date = None
 
                         rm_locs = []
 

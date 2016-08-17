@@ -6,8 +6,8 @@ delta                %d
 scens                %d
 num_years            %d
 sim_data             $root/campaigns/run/sim_data.json
-postprocess          "OUT2Mongo.py -i Summary.OUT --database Rinde --collection %s --field cycle_results --simulation_data $sim_data"
-postprocess_daily    "DailyOUT2Mongo.py --database Rinde --collection %s --field daily_results --simulation_data $sim_data --omitted_value 0"
+postprocess          "OUT2Mongo.py -i Summary.OUT --connection %s --database %s --collection %s --field cycle_results --simulation_data $sim_data"
+postprocess_daily    "DailyOUT2Mongo.py --connection %s --database %s --collection %s --field daily_results --simulation_data $sim_data --omitted_value 0"
 soils                $root/campaigns/run/soils
 weather              $root/campaigns/run/wth
 refdata              $root/data/dssat_files

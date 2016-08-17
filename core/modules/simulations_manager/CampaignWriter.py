@@ -60,6 +60,8 @@ class CampaignWriter:
         # scen_names = sorted(forecast.simulations.values()[0][0].weather_station['scen_names'][0:n_scens])
         # scen_names = str(scen_names).replace(' ', '')
 
+
+
         params_file = os.path.join('.', 'data', 'templates', 'params_template')
         with open(params_file, 'r') as pfile:
             params = pfile.read()
@@ -73,7 +75,11 @@ class CampaignWriter:
                     delta,
                     n_scens,
                     num_years,
+                    'mongodb://%s:%d' % (forecast.configuration.database.host, forecast.configuration.database.port),
+                    forecast.configuration.database.name,
                     out_collection_name,
+                    'mongodb://%s:%d' % (forecast.configuration.database.host, forecast.configuration.database.port),
+                    forecast.configuration.database.name,
                     out_collection_name
                 ))
 

@@ -15,14 +15,15 @@ __author__ = 'Federico Schmidt'
 
 class ForecastLoader:
 
+    weather_series_makers = {
+        'combined': CombinedSeriesMaker,
+        'historic': HistoricalSeriesMaker,
+        'netcdf': NetCDFSeriesMaker
+    }
+
     def __init__(self, jobs_lock, system_config):
         self.jobs_lock = jobs_lock
         self.system_config = system_config
-        self.weather_series_makers = {
-            'combined': CombinedSeriesMaker,
-            'historic': HistoricalSeriesMaker,
-            'netcdf': NetCDFSeriesMaker
-        }
 
     def load_file(self, forecast_file):
         with self.jobs_lock.parallel_job():

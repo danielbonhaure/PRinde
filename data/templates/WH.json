@@ -1,0 +1,261 @@
+{
+    "exname_o": "Salado basin",
+    "local_name": "Wheat",
+    "person_notes": "",
+    "institution": "",
+    "site_name": "GenericLatitude, GenericLongitude",
+    "trt_name": "GenericTreatment1",
+    "trno": "1",
+    "id_field": "Field",
+    "wst_id": "GENERIC1",
+    "flsl": "-99",
+    "flob": "-99",
+    "fl_drntype": "-99",
+    "fldrd": "-99",
+    "fldrs": "-99",
+    "flst": "-99",
+    "sltx": "-99",
+    "sldp": "-99",
+    "soil_id": "SBJUSB0001_1",
+    "fl_name": "-99",
+    "fl_long": "0",
+    "fl_lat": "0",
+    "flele": "0",
+    "farea": "0",
+    "fllwr": "0",
+    "flsla": "0",
+    "flhst": "-99",
+    "fhdur": "-99",
+    "dssat_sequence": {
+        "data": [
+            {
+                "em": "0",
+                "co": "0",
+                "trno": "1",
+                "sq": "1",
+                "trt_name": "GenericTreatment1",
+                "seqid": "1",
+                "sm": "1",
+                "op": "0",
+                "mf": "0",
+                "mh": "0"
+            }
+        ]
+    },
+    "soil": {
+        "soil_id": "SBJUSB0001",
+        "soilAnalysis": [
+        ],
+        "sa": "1",
+        "sadat": "19710101"
+    },
+    "initial_conditions": {
+        "icpcr": "SB",
+        "icdat": "-99",
+        "icrt": "100",
+        "icnd": "0",
+        "icrz#": "1",
+        "icrze": "1",
+        "icwt": "180",
+        "icrag": "2000",
+        "icrn": "0.8",
+        "icrp": "0",
+        "icrip": "100",
+        "icrdp": "5",
+        "ic_name": "Cond. Name",
+        "frac_full": "1",
+        "soilLayer": [
+            {
+                "icbl": "15",
+                "icnh4": "8",
+                "icno3": "14"
+            }
+        ]
+    },
+    "management": {
+        "events": [
+            {
+                "cul_id": "IN0007",
+                "crid": "WH",
+                "cul_name": "Variable",
+                "event": "planting",
+                "seqid": "1",
+                "date": "19790101",
+                "plpop": "250",
+                "plpoe": "250",
+                "plma": "S",
+                "plds": "R",
+                "plrs": "17.5",
+                "plrd": "0",
+                "pldp": "5",
+                "plmwt": "-99",
+                "page": "-99",
+                "plenv": "-99",
+                "plph": "-99",
+                "plspl": "0"
+            },
+            {
+                "fedep": "15",
+                "feamn": "0",
+                "feacd": "AP002",
+                "fe_name": "high",
+                "fecd": "FE005",
+                "seqid": "1",
+                "date": "1",
+                "event": "fertilizer"
+            },
+            {
+                "fedep": "10",
+                "feamn": "0",
+                "feacd": "AP002",
+                "fe_name": "high",
+                "fecd": "FE001",
+                "seqid": "1",
+                "date": "1",
+                "event": "fertilizer"
+            },
+            {
+                "seqid": "1",
+                "ireff": "1.00",
+                "irmdp": "30",
+                "irthr": "50",
+                "irept": "100",
+                "irstg": "GS007",
+                "iame": "IR001",
+                "iamt": "10",
+                "date": "19790102",
+                "irop": "IR001",
+                "irval": "10",
+                "event": "irrigation"
+            },
+            {
+                "seqid": "1",
+                "ha_name": "SB",
+                "date": "yyyy1231",
+                "event": "harvest"
+            }
+        ]
+    },
+    "dssat_simulation_control": {
+        "data": [
+            {
+                "sm": "1",
+                "general": {
+                    "nyers": "1",
+                    "nreps": "1",
+                    "start": "P",
+                    "sdday": "121",
+                    "sdyer": "79",
+                    "rseed": "2150",
+                    "sname": "",
+                    "smodel": "CSCER"
+                },
+                "options": {
+                    "water": "Y",
+                    "nitro": "Y",
+                    "symbi": "Y",
+                    "phosp": "N",
+                    "potas": "N",
+                    "dises": "N",
+                    "chem": "N",
+                    "till": "N",
+                    "co2": "D"
+                },
+                "methods": {
+                    "wther": "M",
+                    "incon": "M",
+                    "light": "E",
+                    "evapo": "R",
+                    "infil": "S",
+                    "photo": "C",
+                    "hydro": "R",
+                    "nswit": "1",
+                    "mesom": "G",
+                    "mesev": "S",
+                    "mesol": "1"
+                },
+                "management": {
+                    "plant": "R",
+                    "irrig": "R",
+                    "ferti": "D",
+                    "resid": "N",
+                    "harvs": "M"
+                },
+                "outputs": {
+                    "fname": "N",
+                    "ovvew": "N",
+                    "sumry": "Y",
+                    "fropt": "1",
+                    "grout": "Y",
+                    "caout": "N",
+                    "waout": "Y",
+                    "niout": "N",
+                    "miout": "N",
+                    "diout": "N",
+                    "vbose": "N",
+                    "chout": "N",
+                    "opout": "N"
+                },
+                "planting": {
+                    "pfday": "113",
+                    "plday": "173",
+                    "pfyer": "79",
+                    "plyer": "79",
+                    "ph2ol": "10",
+                    "ph2ou": "100",
+                    "ph2od": "100",
+                    "pstmx": "50",
+                    "pstmn": "0"
+                },
+                "irrigation": {
+                    "imdep": "30",
+                    "ithrl": "50",
+                    "ithru": "100",
+                    "iroff": "GS000",
+                    "imeth": "IR001",
+                    "iramt": "10",
+                    "ireff": "1"
+                },
+                "nitrogen": {
+                    "nmdep": "30",
+                    "nmthr": "50",
+                    "namnt": "25",
+                    "ncode": "FE001",
+                    "naoff": "GS000"
+                },
+                "residues": {
+                    "ripcn": "100",
+                    "rtime": "1",
+                    "ridep": "20"
+                },
+                "harvests": {
+                    "hfrst": "0",
+                    "hlday": "0",
+                    "hlyer": "0",
+                    "hpcnp": "100",
+                    "hpcnr": "0"
+                }
+            }
+        ]
+    },
+    "dssat_environment_modification": {
+        "data": [
+            {
+                "em": "1",
+                "data": {
+                    "erad": "A   0",
+                    "ewind": "A   0",
+                    "emin": "A 0.7",
+                    "odday": "001",
+                    "emax": "A 0.7",
+                    "erain": "A0.83",
+                    "eday": "A   0",
+                    "eco2": "R 418",
+                    "envnam": "EnvMod",
+                    "odyer": "79",
+                    "edew": "A   0"
+                }
+            }
+        ]
+    }
+}

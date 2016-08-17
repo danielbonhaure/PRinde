@@ -5,6 +5,7 @@ __author__ = 'Federico Schmidt'
 
 import threading
 import os.path
+# Do not remove this import, prevents a bug in strptime when using it in parallel.
 import _strptime
 from datetime import datetime, timedelta
 from netCDF4 import Dataset
