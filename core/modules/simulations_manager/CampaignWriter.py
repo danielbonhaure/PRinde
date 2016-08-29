@@ -60,9 +60,12 @@ class CampaignWriter:
         # scen_names = sorted(forecast.simulations.values()[0][0].weather_station['scen_names'][0:n_scens])
         # scen_names = str(scen_names).replace(' ', '')
 
-
+        dssat_executable = 'DSCSM046'
+        if 'dssat_executable' in forecast.configuration:
+            dssat_executable = forecast.configuration.dssat_executable
 
         params_file = os.path.join('.', 'data', 'templates', 'params_template')
+
         with open(params_file, 'r') as pfile:
             params = pfile.read()
 
@@ -80,7 +83,8 @@ class CampaignWriter:
                     out_collection_name,
                     'mongodb://%s:%d' % (forecast.configuration.database.host, forecast.configuration.database.port),
                     forecast.configuration.database.name,
-                    out_collection_name
+                    out_collection_name,
+                    dssat_executable
                 ))
 
         with open(os.path.join('.', 'data', 'templates', 'run_psims.sh')) as sh_template:

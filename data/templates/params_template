@@ -13,7 +13,7 @@ weather              $root/campaigns/run/wth
 refdata              $root/data/dssat_files
 tappcamp             "camp2json.py -c campaign.nc4 -e exp_template.json -o experiment.json"
 tappinp              "jsons2dssat.py -e experiment.json -s soil.json -x X1234567.EXP -S SOIL.SOL"
-executable           "DSCSM046 A X1234567.EXP"
+executable           "%s A X1234567.EXP"
 tappwth              "cp" # cp = copy already created weather files (requires knowing the pSIMS weather structure beforehand)
 # outtypes             .WTH,.EXP,.SOL,.OUT,.json
 PATH                 $PATH:"$root/tapps/pdssat/":"$root/tapps/common/":"$root/tapps/pdssat/daily"
