@@ -1,9 +1,7 @@
 from core.lib.jobs.base import BaseJob
 from core.lib.jobs.monitor import ProgressMonitor, JOB_STATUS_WAITING, JOB_STATUS_RUNNING
 from core.modules.config.priority import UPDATE_DB_DATA
-import json, logging
-
-from core.modules.simulations_manager.soil.SoilDAO import soils_dict
+from core.modules.simulations_manager.soil.SoilDAO import SoilDAO, load_soils, soils_dict
 
 __author__ = 'Daniel Bonhaure'
 
@@ -16,6 +14,10 @@ class SoilsUpdater(BaseJob):
         self.db = system_config.database['yield_db']
 
     def run(self):
+        # Reload Soils
+        soils_dict.clear()
+        load_soils()
+
         self.progress_monitor.start_value = 0
         self.progress_monitor.end_value = len(soils_dict)
         self.progress_monitor.update_progress(job_status=JOB_STATUS_WAITING)
@@ -25,18 +27,18 @@ class SoilsUpdater(BaseJob):
             # Lock acquired, notify observers.
             self.progress_monitor.update_progress(job_status=JOB_STATUS_RUNNING)
 
-            for pm_actual_value, (soil_name, soil_file_name) in enumerate(soils_dict.iteritems(),1):
-                with open(soil_file_name, mode='r') as soil_file:
-                    soil_json = json.load(soil_file, encoding='latin-1')['soils'][0]
-                    soil_id = soil_json['soil_id']
-                    soil_layers = soil_json['soilLayer']
-                    soil_metrics = self.calculate_metrics(soil_layers)
-                    # Update (or insert) soils.
-                    self.db['soils'].update_one({'_id':soil_id}, {'$set':{'metrics': soil_metrics}}, upsert=True)
-                    # Update progress information.
-                    self.progress_monitor.update_progress(new_value=pm_actual_value)
+            for pm_actual_value, (soil_name, soil_file_name) in enumerate(soils_dict.iteritems(), 1):
+                soil_json = SoilDAO.get_soil(soil_name)['soils'][0]
+                soil_id = soil_json['soil_id']
+                soil_layers = soil_json['soilLayer']
+                soil_metrics = self.calculate_metrics(soil_layers)
+                # Update (or insert) soils.
+                self.db['soils'].update_one({'_id':soil_id}, {'$set':{'metrics': soil_metrics}}, upsert=True)
+                # Update progress information.
+                self.progress_monitor.update_progress(new_value=pm_actual_value)
 
-    def calculate_metrics(self, soil_layers):
+    @staticmethod
+    def calculate_metrics(soil_layers):
         prev_layer_depth = 0
         wilting_point = 0
         field_capacity = 0
