@@ -25,6 +25,7 @@ from core.lib.jobs.scheduler import MonitoringScheduler
 from core.lib.logging.stream import WebStream
 from core.modules.statistics.StatsCenter import StatsCenter
 from frontend.web import WebServer
+from core.modules.data_updater.SoilsUpdater import SoilsUpdater
 
 __author__ = 'Federico Schmidt'
 
@@ -49,6 +50,7 @@ class Main:
         self.forecast_manager = None
         self.weather_updater = WeatherUpdater(self.system_config)
         self.db_sync = YieldDatabaseSync(self.system_config)
+        self.soils_updater = SoilsUpdater(self.system_config)
 
     def bootstrap(self):
         boot_system(self.system_config)
@@ -119,6 +121,9 @@ class Main:
         # Schedule the synchronization of yield databases (between backend and frontend).
         # This is actually performed only if such database is defined inside the config/database.yaml file.
         self.scheduler.add_job(self.db_sync, trigger='interval', days=1, name='Synchronize yield databases')
+
+        # Schedule the update of soils every 120 days.
+        self.scheduler.add_job(self.soils_updater, trigger='interval', days=120, name='Update soils metrics')
 
         self.forecast_manager.start()
         self.system_config.logger.info("Forecast manager started.")

@@ -75,6 +75,13 @@ class YieldDatabaseSync(BaseJob):
                                                   source_db=source_db,
                                                   target_db=target_db)
 
+                self.progress_monitor.update_progress(new_value=4)
+
+                # Sync new soils.
+                self.__insert_missing_documents__(collection_name='soils',
+                                                  source_db=source_db,
+                                                  target_db=target_db)
+
     def __insert_missing_documents__(self, collection_name, source_db, target_db, id_field='_id'):
         """
         Finds documents inside the given collection that are present in the source database but not in the target
