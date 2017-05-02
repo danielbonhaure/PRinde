@@ -38,6 +38,8 @@ get_password = function(username, directory=NULL, ext='.pwd') {
     # Si podemos acceder al archivo, lo leemos entero y lo devolvemos.
     if(can_read[[file]] == 0) {
         return(readLines(file))
+    } else {
+        warning(sprintf("Couldn't find password file for user \"%s\".", username))
     }
     # Si no se puede encontrar o leer el archivo, devolvemos un string vacío que va
     # a dar error cuando se intente realizar la conexión.

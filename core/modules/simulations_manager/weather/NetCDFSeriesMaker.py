@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 from netCDF4 import Dataset
 from core.modules.simulations_manager.weather.WeatherSeriesMaker import WeatherSeriesMaker
 from core.lib.io.file import create_folder_with_permissions
-
+import numpy as np
 
 class NetCDFSeriesMaker(WeatherSeriesMaker):
 
@@ -62,7 +62,7 @@ class NetCDFSeriesMaker(WeatherSeriesMaker):
 
             ref_date = datetime.strptime(nc.variables[varnames['time']].units, 'Days since %Y-%m-%d')
 
-            fecha = [ref_date + timedelta(days=d) for d in nc.variables[varnames['time']]]
+            fecha = [ref_date + timedelta(days=d.item()) for d in nc.variables[varnames['time']]]
 
             scenarios = [0]
             # Creating a scenario dimension in the NetCDF is optional.
@@ -85,6 +85,8 @@ class NetCDFSeriesMaker(WeatherSeriesMaker):
                     access_t = self.get_access_tuple(nc.variables[varnames[climate_variable]].dimensions,
                                                      varnames, x_idx, y_idx, scen_index)
                     clim[climate_variable] = nc.variables[varnames[climate_variable]][access_t]
+
+                clim['srad'] = np.maximum(clim['srad'], 1).tolist()
 
                 rows = zip(fecha, clim['tx'], clim['tn'], clim['prcp'], clim['srad'])
                 colnames = [tuple(['fecha', 'tmax', 'tmin', 'prcp', 'rad'])]

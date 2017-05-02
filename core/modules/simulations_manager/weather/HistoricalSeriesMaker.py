@@ -17,6 +17,16 @@ class HistoricalSeriesMaker(DatabaseWeatherSeries):
         # Force the forecast reference date to be 1950: this weather series creator exports all series with dates
         # starting in 1950. See core.lib.SQL.Base Functions.sql > pr_serie_agraria(omm_id int, year_agrario int)
         forecast.configuration.reference_year = 1950
+
+        planting_after_new_year = [d.month < forecast.campaign_first_month for d in forecast.planting_dates()]
+        if all(planting_after_new_year):
+            forecast.configuration.reference_year = 1951
+
+        if any(planting_after_new_year) and any([not i for i in planting_after_new_year]):
+            raise RuntimeError('Forecast "%s" contains planting dates that happen both before and after the new year. '
+                               'This is currently not supported since pSIMS needs a unique reference year configured. '
+                               'Plase consider splitting the conflicting locations in two forecasts.' % forecast.name)
+
         return DatabaseWeatherSeries.create_series(self, location, forecast)
 
     def create_from_db(self, location, forecast):

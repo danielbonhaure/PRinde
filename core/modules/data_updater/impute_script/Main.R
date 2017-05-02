@@ -37,8 +37,11 @@ opt = parse_args(OptionParser(option_list=option_list))
 # opt$stations <- '87649,87270,87688,87497,87467,87534,87453,87374,87349,87544,87548,87645,87550,87637'
 # opt$stations <- '87374,87349,87544,87548,87645,87550,87637'
 # opt$stations <- '9987001'
-# opt$host <- '192.168.1.151'
+# opt$host <- '127.0.0.1'
+# opt$port <- 5433
 # opt$database <- 'crcssa'
+# opt$user <- 'postgres'
+# opt$password <- 'rinde'
 # opt$parallelism <- 4
 ###########################
 
@@ -53,11 +56,22 @@ estacionesID <- stations
 # Creamos la conexión con la base de datos.
 conexion <- pg_connect(user=opt$user, host=opt$host, dbname=opt$database, port=opt$port, password=opt$password)
 
-
+srad_parameters <- list(
+    'PY' = list(
+        'bc' = c(A = 0.714, B = 0.007, C = 2.26),
+        'svk' = c(A = 0.095, B = 0.345, C = -1.04),
+        'ap' = c(A = 0.523, B = 0.232)
+    ),
+    'AR' = list(
+        'ap' = c(A = 0.58, B = 0.2),
+        'bc' = c(A = 0.69, B = 0.02, C = 2.12),
+        'svk' = c(A = 0.06, B = 0.47, C = 0.8)
+    )
+)
 
 tryCatch({
     # Obtenemos los datos de las estaciones.
-    rs.estacion <- dbSendQuery(conexion, paste0("SELECT * FROM estacion e WHERE e.omm_id IN (", paste(estacionesID, collapse=','), ')'))
+    rs.estacion <- dbSendQuery(conexion, paste0("SELECT * FROM estacion e LEFT JOIN institucion i ON e.institucion_id = i.id WHERE e.omm_id IN (", paste(estacionesID, collapse=','), ')'))
     estaciones <- fetch(rs.estacion, n=-1)
 
     stopifnot(nrow(estaciones) > 0)
@@ -82,8 +96,6 @@ tryCatch({
     wrong_temps <- which(registrosDiarios$tmax <= registrosDiarios$tmin)
     # Make invalid temperatures NA so the impute methods recalculate them.
     registrosDiarios[wrong_temps, c('tmax', 'tmin')] <- NA
-
-
 
     for(estacion in estacionesID) {
         # Creamos una transacción por cada estación.
@@ -160,9 +172,17 @@ tryCatch({
             missing.rad.dates.query <- sprintf(queries$missing_rad_dates, estacion)
             missing_dates <- as.Date(fetch(dbSendQuery(conexion, missing.rad.dates.query), n=-1, stringsAsFactors=FALSE)$fecha)
 
+            codigo_pais <- toupper(estaciones[estaciones$omm_id == estacion, 'pais_id'])
+
+            if(!codigo_pais %in% names(srad_parameters)) codigo_pais <- 'AR'
+
             records <- datosEstacion %>% filter(fecha %in% missing_dates)
 
-            estimado <- estimarRadiacion(estaciones=estaciones[estaciones$omm_id == estacion, ], registrosDiarios=records)
+            estimado <- estimarRadiacion(estaciones=estaciones[estaciones$omm_id == estacion, ],
+                                         registrosDiarios=records,
+                                         ap.cal = srad_parameters[[codigo_pais]]$ap,
+                                         bc.cal = srad_parameters[[codigo_pais]]$bc,
+                                         svk.cal = srad_parameters[[codigo_pais]]$svk)
 
             if(estimado$not_estimated > 0) {
                 error_details <- paste0("Failed to estimate ", estimado$not_estimated, " radiation values for station ", estacion, ". Rolling back it's data.")

@@ -41,6 +41,17 @@ class CampaignWriter:
             # Get the reference year from the campaign start date (if such date is actually defined).
             ref_year = forecast.campaign_start_date
 
+            planting_after_new_year = [d.month < forecast.campaign_first_month for d in forecast.planting_dates()]
+
+            if any(planting_after_new_year) and any([not i for i in planting_after_new_year]):
+                raise RuntimeError('Forecast "%s" contains planting dates that happen both before and after the'
+                                   ' new year. This is currently not supported since pSIMS needs a unique reference'
+                                   'year configured. Plase consider splitting the conflicting locations in two '
+                                   'forecasts.' % forecast.name)
+
+            if all(planting_after_new_year):
+                ref_year = forecast.campaign_end_date
+
             if ref_year is None:
                     raise RuntimeError("Missing reference year in forecast.configuration and we can't get it from "
                                        "the campaign start date since the forecast_date is None.")

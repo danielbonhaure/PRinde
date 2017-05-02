@@ -15,9 +15,9 @@ queries$daily_records <- paste("SELECT erd.omm_id, erd.fecha, coalesce(erdi.tmax
                                "ORDER BY omm_id, erd.fecha")
 
 queries$missing_radiation_count <- paste("SELECT erd.omm_id, COUNT(erd.fecha) FROM estacion_registro_diario erd",
-                                          "LEFT JOIN estacion_radiacion_diaria erad ON erd.omm_id = erad.omm_id AND erd.fecha = erad.fecha",
-                                          "WHERE erd.omm_id = ANY(array[%s]) AND erad.fecha ISNULL",
-                                          "GROUP BY erd.omm_id")
+                                         "LEFT JOIN estacion_radiacion_diaria erad ON erd.omm_id = erad.omm_id AND erd.fecha = erad.fecha",
+                                         "WHERE erd.omm_id = ANY(array[%s]) AND erad.fecha ISNULL",
+                                         "GROUP BY erd.omm_id")
 
 queries$neighbors_data <- paste("SELECT e.omm_id, e.lat_dec, e.lon_dec FROM estacion_vecino ev",
                                 "LEFT JOIN estacion e ON e.omm_id = ev.omm_id",
@@ -32,5 +32,5 @@ queries$insert_imputed <- paste0("INSERT INTO estacion_registro_diario_imputado(
 queries$insert_radiation <- "INSERT INTO estacion_radiacion_diaria(omm_id, fecha, rad) VALUES "
 
 queries$missing_rad_dates <- paste("SELECT erd.fecha FROM estacion_registro_diario erd",
-                                    "LEFT JOIN estacion_radiacion_diaria erad ON erd.omm_id = erad.omm_id AND erd.fecha = erad.fecha",
-                                    "WHERE erd.omm_id = %s AND erad.fecha ISNULL")
+                                   "LEFT JOIN estacion_radiacion_diaria erad ON erd.omm_id = erad.omm_id AND erd.fecha = erad.fecha",
+                                   "WHERE erd.omm_id = %s AND erad.fecha ISNULL")

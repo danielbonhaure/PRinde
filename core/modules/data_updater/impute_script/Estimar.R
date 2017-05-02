@@ -29,13 +29,18 @@ estimarRadiacion <- function(estaciones, registrosDiarios, ap.cal=NULL, bc.cal=N
 
         registros_estacion <- registrosDiarios[registros_idx, ]
         # Determinamos los índices de los registros que se pueden calcular por cada método.
-        bcIndexes <- which(x=(!is.na(registrosDiarios[registros_idx, "tmax"]) & !is.na(registrosDiarios[registros_idx, "tmin"])))
+        bcIndexes <- which(x=(!is.na(registrosDiarios[registros_idx, "tmax"]) &
+                                  !is.na(registrosDiarios[registros_idx, "tmin"])))
         bcIndexes <- registros_idx[bcIndexes]
 
-        svkIndexes <- which(x=(!is.na(registrosDiarios[bcIndexes, "nub"])))
+        svkIndexes <- which(x=(!is.na(registrosDiarios[bcIndexes, "nub"]) &
+                                   registrosDiarios[bcIndexes, "nub"] <= 8  &
+                                   registrosDiarios[bcIndexes, "nub"] >= 0))
         svkIndexes <- bcIndexes[svkIndexes]
 
-        apIndexes <- which(x=(!is.na(registrosDiarios[registros_idx, "helio"])))
+        apIndexes <- which(x=(!is.na(registrosDiarios[registros_idx, "helio"]) &
+                                  registrosDiarios[registros_idx, "helio"] > 0 &
+                                  registrosDiarios[registros_idx, "helio"] < registrosDiarios[registros_idx, "daylength"]))
         apIndexes <- registros_idx[apIndexes]
 
         # Filtramos los índices para calcular con los métodos de más precisión (AP > SVK > BC).

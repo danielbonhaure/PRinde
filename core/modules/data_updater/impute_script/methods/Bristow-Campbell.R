@@ -36,9 +36,9 @@ calibrate.bristowcampbell <- function(tmax, tmin, extrat, solar.rad, tmin.next =
     data <- .df_bristowcampbell(tmax, tmin, tmin.next, extrat, solar.rad)
 
     # Calibramos el modelo.
-    BCcal <- robustbase::nlrob((solar.rad/extrat) ~ A * (1 - exp((-B * (dTemp^0.8)))), data,  start=list(A=0.85, B=0.05),
+    BCcal <- robustbase::nlrob((solar.rad/extrat) ~ A * (1 - exp((-B * (dTemp^C)))), data,  start=list(A=0.69, B=0.02, C = 2),
                  control = list(maxiter = 500), na.action=na.exclude)
-    return(c(coef(BCcal), C=0.8))
+    return(c(coef(BCcal)))
 }
 
 
@@ -53,6 +53,7 @@ calibrate.bristowcampbell.xts <- function(xtsdata, days = NULL, fieldnames=c('tm
     Tmax <- data[, fieldnames[1]]
     Tmin <- data[, fieldnames[2]]
     rad <- data[, fieldnames[4]]
+    extraT <- data[, fieldnames[3]]
     tmin.next <- data[, 'tmin.next']
 
     return(calibrate.bristowcampbell(Tmax, Tmin, extraT, rad, tmin.next))

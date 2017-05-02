@@ -3,9 +3,15 @@ CREATE EXTENSION IF NOT EXISTS earthdistance;
 DROP FUNCTION IF EXISTS pr_create_campaigns(int, varchar, varchar, varchar, varchar);
 DROP FUNCTION IF EXISTS pr_crear_serie(int, date, date, date, int);
 DROP FUNCTION IF EXISTS pr_año_agrario(date);
+DROP FUNCTION IF EXISTS pr_año_agrario(date, int);
 DROP FUNCTION IF EXISTS is_leap(int);
+DROP FUNCTION IF EXISTS last_day(date);
+DROP FUNCTION IF EXISTS pr_campañas_completas(int);
+DROP FUNCTION IF EXISTS pr_campañas_completas(int, int);
 DROP FUNCTION IF EXISTS pr_campaigns_acum_rainfall(int);
+DROP FUNCTION IF EXISTS pr_campaigns_acum_rainfall(int, int);
 DROP FUNCTION IF EXISTS pr_campaigns_rainfall(int);
+DROP FUNCTION IF EXISTS pr_campaigns_rainfall(int, int);
 DROP FUNCTION IF EXISTS pr_historic_series(int, varchar);
 DROP FUNCTION IF EXISTS pr_serie_agraria(int, int);
 
@@ -15,18 +21,25 @@ RETURNS BOOLEAN AS $$
 	SELECT ($1 % 4 = 0) AND (($1 % 100 <> 0) OR ($1 % 400 = 0))
 $$ LANGUAGE sql;
 
-CREATE OR REPLACE FUNCTION pr_año_agrario(fecha date)
+
+CREATE OR REPLACE FUNCTION last_day(date)
+RETURNS date AS $$
+    SELECT (date_trunc('MONTH', $1) + '1 MONTH - 1 day'::interval)::date;
+$$ LANGUAGE sql;
+
+CREATE OR REPLACE FUNCTION pr_año_agrario(fecha date, mes_fin_de_campaña int default 5)
 RETURNS DOUBLE PRECISION AS $$
-    SELECT CASE WHEN(EXTRACT(MONTH FROM $1) < 5)
+    SELECT CASE WHEN(EXTRACT(MONTH FROM $1) < mes_fin_de_campaña)
                       THEN EXTRACT(YEAR FROM $1)-1
                 ELSE EXTRACT(YEAR FROM $1)
            END
 $$ LANGUAGE sql;
 
-CREATE OR REPLACE FUNCTION pr_campañas_completas(omm_id int)
+
+CREATE OR REPLACE FUNCTION pr_campañas_completas(omm_id int, mes_fin_de_campaña int default 5)
 RETURNS TABLE (pr_year INT) AS $$
     WITH count_agrario AS (
-        SELECT DISTINCT pr_año_agrario(fecha)::int AS pr_year, COUNT(1) AS count
+        SELECT DISTINCT pr_año_agrario(fecha, mes_fin_de_campaña)::int AS pr_year, COUNT(1) AS count
             FROM estacion_registro_diario erd
             WHERE erd.omm_id = $1
             GROUP BY pr_year
@@ -34,24 +47,28 @@ RETURNS TABLE (pr_year INT) AS $$
     SELECT c2.pr_year FROM count_agrario c2
     LEFT JOIN count_agrario c1 ON c2.pr_year-1 = c1.pr_year
     LEFT JOIN count_agrario c3 ON c2.pr_year+1 = c3.pr_year
-    WHERE c2.count >= 365 AND c1.count >= 60 AND c3.count >= 200
+    WHERE c2.count >= 365 AND c1.count >= 60 AND c3.count >= 60
     ORDER BY 1
 $$ LANGUAGE sql;
 
-CREATE OR REPLACE FUNCTION pr_campaigns_acum_rainfall(omm_id INT)
+
+CREATE OR REPLACE FUNCTION pr_campaigns_acum_rainfall(omm_id INT, mes_fin_de_campaña int default 5)
 RETURNS TABLE(fecha DATE, campaign INT, sum DOUBLE PRECISION)
 AS $$
-    SELECT erd.fecha, pr_año_agrario(erd.fecha)::int, SUM(erd.prcp) OVER (PARTITION BY pr_año_agrario(erd.fecha) ORDER BY erd.fecha)
+    SELECT erd.fecha,
+        pr_año_agrario(erd.fecha, mes_fin_de_campaña)::int,
+        SUM(erd.prcp) OVER (PARTITION BY pr_año_agrario(erd.fecha, mes_fin_de_campaña) ORDER BY erd.fecha)
     FROM estacion_registro_diario_completo erd
-    WHERE erd.omm_id IN ($1) AND pr_año_agrario(erd.fecha) IN (SELECT pr_campañas_completas($1))
+    WHERE erd.omm_id IN ($1) AND pr_año_agrario(erd.fecha) IN (SELECT pr_campañas_completas($1, $2))
 $$ LANGUAGE SQL;
 
-CREATE OR REPLACE FUNCTION pr_campaigns_rainfall(omm_id INT)
+
+CREATE OR REPLACE FUNCTION pr_campaigns_rainfall(omm_id INT, mes_fin_de_campaña int default 5)
 RETURNS TABLE(fecha DATE, campaign INT, sum DOUBLE PRECISION)
 AS $$
-    SELECT erd.fecha, pr_año_agrario(erd.fecha)::int, erd.prcp
+    SELECT erd.fecha, pr_año_agrario(erd.fecha, mes_fin_de_campaña)::int, erd.prcp
     FROM estacion_registro_diario_completo erd
-    WHERE erd.omm_id IN ($1) AND pr_año_agrario(erd.fecha) IN (SELECT pr_campañas_completas($1))
+    WHERE erd.omm_id IN ($1) AND pr_año_agrario(erd.fecha, mes_fin_de_campaña) IN (SELECT pr_campañas_completas($1, $2))
 $$ LANGUAGE SQL;
 
 
@@ -100,106 +117,7 @@ AS $$
 $$ LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION pr_create_campaigns(omm_id integer, camp_start varchar, curr_date varchar,
-                                               camp_end varchar, output_path varchar)
-RETURNS VOID
-AS $$
-    DECLARE
-        id_estacion ALIAS FOR $1;
-        campaign_start ALIAS FOR $2;
-        curr_date ALIAS FOR $3;
-        campaign_end ALIAS FOR $4;
-        output_folder ALIAS FOR $5;
-        
-        current_year INTEGER;
-        curr_monthday VARCHAR;
-        
-        estacion RECORD;
-        path VARCHAR;
-        command VARCHAR;
-
-        loop_year RECORD;
-        data_estacion RECORD;
-
-    BEGIN
-        -- Convertimos las fechas de los parámetros a Dates de SQL.
-        curr_date := curr_date::date;
-        campaign_start := campaign_start::date;
-        campaign_end := campaign_end::date;
-
-    
-        IF ( campaign_start >= campaign_end ) THEN
-                RAISE EXCEPTION 'Data end date should be greater than data start date.';
-        END IF;
-
-        IF ( NOT curr_date BETWEEN campaign_start AND campaign_end ) THEN
-                RAISE EXCEPTION 'Current date isn''t between data start date and data end date.';
-        END IF;
-
-        -- Extraemos el año de la fecha que se pasa como actual y el mes-día.
-        current_year := EXTRACT(YEAR FROM curr_date::date);
-        curr_monthday := TO_CHAR(curr_date::date, 'MM-DD');
-
-        -- Escribimos un archivo con la información de la estación.
-        path := output_folder || '/_' || omm_id || '.csv';
-
-        command := 'COPY ( SELECT * FROM estacion WHERE omm_id = ' || id_estacion || ') TO ''' || path || ''' HEADER CSV NULL '''' DELIMITER E''\t''';
-        EXECUTE command;
-
-        -- Escribimos un archivo por cada serie climática combinada.
-        FOR loop_year IN (SELECT pr_year FROM pr_campañas_completas(id_estacion))
-        LOOP
-            -- Salteamos el año actual.
-            -- CONTINUE WHEN loop_year.pr_year >= current_year;
-
-            path := output_folder || '/' || id_estacion  || ' - ' || loop_year.pr_year || '.csv';
-
-            command := 'COPY ( SELECT * FROM pr_crear_serie( ' || id_estacion || ', ''' || campaign_start || '''::date, ''' ||
-                                 curr_date || '''::date, ''' || campaign_end || '''::date, ' || loop_year.pr_year || ' ) ) ' ||
-                                 'TO ''' || path || ''' HEADER CSV NULL '''' DELIMITER E''\t''';
-
-            EXECUTE command;
-        END LOOP;
-    END
-$$ LANGUAGE plpgsql;
-
-
-CREATE OR REPLACE FUNCTION pr_historic_series(omm_id integer, output_path varchar)
-RETURNS VOID
-AS $$
-    DECLARE
-        id_estacion ALIAS FOR $1;
-        output_folder ALIAS FOR $2;
-
-        estacion RECORD;
-        path VARCHAR;
-        command VARCHAR;
-
-        loop_year RECORD;
-        data_estacion RECORD;
-
-    BEGIN
-        -- Escribimos un archivo con la información de la estación.
-        path := output_folder || '/_' || omm_id || '.csv';
-
-        command := 'COPY ( SELECT * FROM estacion WHERE omm_id = ' || id_estacion || ') TO ''' || path ||
-                   ''' HEADER CSV NULL '''' DELIMITER E''\t''';
-        EXECUTE command;
-
-        -- Escribimos un archivo por cada año agrario completo.
-        FOR loop_year IN (SELECT pr_year FROM pr_campañas_completas(id_estacion))
-        LOOP
-            path := output_folder || '/' || id_estacion  || ' - ' || loop_year.pr_year|| '.csv';
-
-            command := 'COPY ( SELECT * FROM pr_serie_agraria( ' || id_estacion || ', ' || loop_year.pr_year || ' ) ) ' ||
-                                 'TO ''' || path || ''' HEADER CSV NULL '''' DELIMITER E''\t''';
-
-            EXECUTE command;
-        END LOOP;
-    END
-$$ LANGUAGE plpgsql;
-
-CREATE OR REPLACE FUNCTION pr_serie_agraria(omm_id int, year_agrario int)
+CREATE OR REPLACE FUNCTION pr_serie_agraria(omm_id int, year_agrario int, mes_fin_de_campaña int default 5)
 RETURNS TABLE (fecha date, fecha_original date, tmax double precision, tmin double precision, prcp double precision, rad double precision)
 AS $$
     DECLARE
@@ -211,8 +129,8 @@ AS $$
         fecha_inicio_serie DATE;
         fecha_fin_serie DATE;
     BEGIN
-        fecha_inicio := (año_agrario || '-03-01')::date;
-        fecha_fin := (año_agrario || '-12-31')::date + '200 day'::interval;
+        fecha_inicio := (format('%s-%s-01', año_agrario, to_char(mes_fin_de_campaña, 'fm00')))::date - '60 day'::interval;
+        fecha_fin := last_day(format('%s-%s-01', año_agrario+1, to_char(mes_fin_de_campaña, 'fm00'))::date) + '60 day'::interval;
 
         fecha_inicio_serie := ('1950' || TO_CHAR(fecha_inicio, '-MM-DD'))::date;
         fecha_fin_serie := fecha_inicio_serie + '630 day'::interval;

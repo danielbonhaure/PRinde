@@ -1,5 +1,5 @@
 import copy
-from datetime import datetime
+from datetime import datetime, timedelta
 from xxhash import xxh64
 
 from core.lib.io.file import filename_without_ext
@@ -22,6 +22,7 @@ class Forecast(DotDict):
         # Alias
         self.paths = self.configuration.paths
         self.simulations = simulations
+        self.campaign_first_month = self.configuration.get('campaign_first_month', 5)
 
         hasher = xxh64()
 
@@ -83,9 +84,9 @@ class Forecast(DotDict):
             return None
         f_date = datetime.strptime(f_date, '%Y-%m-%d')
 
-        if f_date.month < 5:
-            return f_date.replace(day=1, month=1, year=f_date.year - 1)
-        return f_date.replace(day=1, month=1)
+        if f_date.month < self.campaign_first_month:
+            return f_date.replace(day=1, month=self.campaign_first_month, year=f_date.year - 1)
+        return f_date.replace(day=1, month=self.campaign_first_month)
 
     @property
     def campaign_end_date(self):
@@ -98,9 +99,9 @@ class Forecast(DotDict):
             return None
         f_date = datetime.strptime(self.forecast_date, '%Y-%m-%d')
 
-        if f_date.month < 5:
-            return f_date.replace(day=31, month=12)
-        return f_date.replace(day=31, month=12, year=f_date.year + 1)
+        if f_date.month < self.campaign_first_month:
+            return f_date.replace(day=1, month=self.campaign_first_month) - timedelta(days=1)
+        return f_date.replace(day=1, month=self.campaign_first_month, year=f_date.year + 1) - timedelta(days=1)
 
     @property
     def campaign_name(self):
@@ -187,3 +188,15 @@ class Forecast(DotDict):
 
     def public_file_name(self, forecasts_paths):
         return self.file_name.replace(forecasts_paths, '')[1:]
+
+    def planting_dates(self):
+        dates = []
+        for location, simulations in self.simulations.iteritems():
+            for simulation in simulations:
+                d = simulation.get('management', {}).get('date_1', None)
+                if d is None:
+                    continue
+                d = datetime.strptime('2000'+d[4:], '%Y%m%d')
+                if d not in dates:
+                    dates.append(d)
+        return dates
