@@ -251,6 +251,9 @@ class WeatherUpdater:
         if not progress_monitor:
             progress_monitor = NullMonitor()
 
+        # DROP INDEX IF EXISTS erdi_index;
+        # REFRESH MATERIALIZED VIEW estacion_registro_diario_completo;
+        # CREATE INDEX erdi_index ON estacion_registro_diario_completo (omm_id, fecha);
         progress_monitor.end_value = 3
         progress_monitor.job_started()
         cursor = self.system_config.database['weather_db'].cursor()

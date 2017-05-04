@@ -1,0 +1,95 @@
+name: 'Rinde de Maíz Temprano en Paraguay'
+
+forecast_date: ['2016-01-30']
+
+crop_type: 'MZ-E'
+crop_template: 'MZ-PY.json'
+
+configuration:
+    campaign_first_month: 9
+    # Weather series type: combined, historic or artificial.
+    weather_series: 'combined'
+
+# Locations to be simulated, coordinates and OMM ID of the associated weather station
+locations:
+    capitan_meza: {
+        name: "Capitán Meza",
+        coord_x: '-55.332',
+        coord_y: '-26.834',
+        weather_station: 86285
+    }
+# ----------------------------------------------------------------------------------------------------------------------
+
+site_characteristics:
+
+    capitan_meza:
+        soil_1: {
+            id: "MAItapO001",                    # Soil id as it appears in the DSSAT soil file (ID_SOIL)
+            series: "Itapua",                    # Soil series
+            scs_family: "Kandiudalfic Eutrodox", # Taxonomic classification (USDA-Soil Taxonomy)
+            prop: 0.5,                           # Proportion of area occupied by the soil in the location/cartographic unit to be simulated
+            n_horizons: 5                        # Number of horizons of the soil
+        }
+        soil_2: {
+            id: "MAItapU001",
+            series: "Itapua",
+            scs_family: "Rhodic Paleudult",
+            prop: 0.5,
+            n_horizons: 5
+        }
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+initial_conditions:
+    capitan_meza:
+        soil_1:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3]
+            no3_ppm_hrzn: [11.5, 5.3, 2.1, 0.8, 0.1]  # N inicial (a la siembra)
+
+        soil_2:
+            frac_soil_water_hrzn:
+                high: [1.0, 1.0, 1.0, 1.0, 1.0]
+                low: [0.2, 0.2, 0.2, 0.2, 0.2]
+                mid: [0.5, 0.5, 0.5, 0.5, 0.5]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3]
+            no3_ppm_hrzn: [13.6, 6.3, 2.6, 1.0, 0.2]  # N inicial (a la siembra)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+agronomic_management:
+
+    capitan_meza:
+        soil_1:
+            mgmt_1: {
+                mgmt_name: "5 Ene - 110N - 5.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy0105",
+                plant_population: 5.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,              # 110 (N objetivo) - N inicial
+                irrig_date: "yyyy0105"
+            }
+
+        soil_2:
+            mgmt_1: {
+                mgmt_name: "5 Ene - 110N - 5.5pl",
+                cultivar_id: "UAIC10",
+                planting_date: "yyyy0105",
+                plant_population: 5.5,
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 60,              # 110 (N objetivo) - N inicial
+                irrig_date: "yyyy0105"
+            }
+
+# -----------------------------------------------------------------------------------------------------------------------------------------
+
+results:
+    cycle: ["HWAM", "MDAT", "ADAT", "PDAT"]
+    daily: ["WSGD", "SWTD", "SWXD", "ETAC", "EOAC"]
