@@ -282,7 +282,7 @@ class WeatherUpdater:
             for index, omm_id in enumerate(omm_ids):
                 wth_db = self.system_config.database['weather_db']
                 cursor = wth_db.cursor()
-                cursor.execute('SELECT campaign, sum FROM pr_campaigns_acum_rainfall(%s)', (omm_id,))
+                cursor.execute('SELECT campaign, sum FROM pr_campaigns_acum_rainfall(%s,%s)', (omm_id,self.system_config.campaign_first_month))
 
                 np_prcp_sums = WeatherUpdater.parse_rainfalls(cursor)
 
