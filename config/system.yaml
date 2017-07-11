@@ -1,5 +1,6 @@
 grid_resolution: 30 # Lat/lon grid resolution in arcminutes.
 max_parallelism: 4
+campaign_first_month: 5
 
 paths:
     psims: '/media/ramdisk/psims-schmidtfederico'
