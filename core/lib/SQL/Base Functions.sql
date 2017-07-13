@@ -59,7 +59,7 @@ AS $$
         pr_año_agrario(erd.fecha, mes_fin_de_campaña)::int,
         SUM(erd.prcp) OVER (PARTITION BY pr_año_agrario(erd.fecha, mes_fin_de_campaña) ORDER BY erd.fecha)
     FROM estacion_registro_diario_completo erd
-    WHERE erd.omm_id IN ($1) AND pr_año_agrario(erd.fecha) IN (SELECT pr_campañas_completas($1, $2))
+    WHERE erd.omm_id IN ($1) AND pr_año_agrario(erd.fecha, mes_fin_de_campaña) IN (SELECT pr_campañas_completas($1, $2))
 $$ LANGUAGE SQL;
 
 
