@@ -1,3 +1,4 @@
+import time
 import re
 from datetime import datetime
 import shlex
@@ -129,5 +130,8 @@ class RunpSIMS:
             print(err.message)
         finally:
             epoll.unregister(p.stdout.fileno())
+
+        while p.poll() is None:
+            time.sleep(1)
 
         return p.poll()
