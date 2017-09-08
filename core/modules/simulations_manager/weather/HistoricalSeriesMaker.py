@@ -12,6 +12,7 @@ class HistoricalSeriesMaker(DatabaseWeatherSeries):
         if not weather_writer:
             weather_writer = DSSATWthWriter
         super(HistoricalSeriesMaker, self).__init__(system_config, max_parallelism, weather_writer)
+        self.campaign_first_month = system_config.campaign_first_month
 
     def create_series(self, location, forecast, extract_rainfall=True):
         # Force the forecast reference date to be 1950: this weather series creator exports all series with dates
@@ -35,11 +36,12 @@ class HistoricalSeriesMaker(DatabaseWeatherSeries):
         wth_db_connection = self.system_config.database['weather_db']
         cursor = wth_db_connection.cursor()
 
-        cursor.execute('SELECT pr_campañas_completas(%s)', (omm_id,))
+        cursor.execute('SELECT pr_campañas_completas(%s, %s)', (omm_id, self.campaign_first_month))
         full_campaigns = cursor.fetchall()
 
         for campaign in full_campaigns:
             campaign_year = campaign[0]
-            cursor.execute("SELECT * FROM pr_serie_agraria(%s, %s)", (omm_id, campaign_year))
+            cursor.execute("SELECT * FROM pr_serie_agraria(%s, %s, %s)",
+                           (omm_id, campaign_year, self.campaign_first_month))
             colnames = [tuple([desc[0] for desc in cursor.description])]
             yield (campaign_year, itertools.chain(colnames, cursor))

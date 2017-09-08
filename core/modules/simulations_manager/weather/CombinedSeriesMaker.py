@@ -15,6 +15,7 @@ class CombinedSeriesMaker(DatabaseWeatherSeries):
         if not weather_writer:
             weather_writer = DSSATWthWriter
         super(CombinedSeriesMaker, self).__init__(system_config, max_parallelism, weather_writer)
+        self.campaign_first_month = system_config.campaign_first_month
 
     def create_from_db(self, location, forecast):
         forecast_date = forecast.forecast_date
@@ -27,7 +28,7 @@ class CombinedSeriesMaker(DatabaseWeatherSeries):
         wth_db_connection = self.system_config.database['weather_db']
         cursor = wth_db_connection.cursor()
 
-        cursor.execute('SELECT pr_campañas_completas(%s)', (omm_id,))
+        cursor.execute('SELECT pr_campañas_completas(%s, %s)', (omm_id, self.campaign_first_month))
         full_campaigns = cursor.fetchall()
 
         for campaign in full_campaigns:
