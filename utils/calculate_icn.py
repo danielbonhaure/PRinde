@@ -42,13 +42,11 @@ def calculate_nitrogen(soil_file, n_kg_nitrogen, error_margin):
 
     horizons_coeff = (np.array(horizons_depth) * 100) * np.array(horizons_density) / 1000
 
-
     def sum_distributed_nitrogen(first_layer_ppm, n_horizons, nitrogen_coefficients):
         layers_ppm = [first_layer_ppm]
         for n_layer in range(1, n_horizons+1):
             layers_ppm.append(layers_ppm[n_layer-1]/2)
         return np.sum(np.array(layers_ppm) * np.array(nitrogen_coefficients[0:n_horizons+1]))
-
 
     def make_target_function(n_horizons, nitrogen_coefficients, target_nitrogen, error_margin):
         def f(first_layer_ppm):
@@ -58,7 +56,6 @@ def calculate_nitrogen(soil_file, n_kg_nitrogen, error_margin):
                 nitrogen_error = 0
             return nitrogen_error
         return f
-
 
     def bisection(f, lower, higher, tolerance=1.):
         assert not (f(lower) * f(higher) > 0)

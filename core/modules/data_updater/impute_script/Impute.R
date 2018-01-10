@@ -64,6 +64,8 @@ impute_idw <- function(datosEstacion, variable, estaciones, missingIndexes, regi
         # Filtrar valores NA.
         neighborData <- neighborData[ !is.na(neighborData@data[, variable]), ]
 
+        if(nrow(neighborData) == 0) return(NA);
+
         impute <- idw(idwFormula, neighborData, idp=2, idw.grid, debug.level=0)
         impute$var1.pred
     })
