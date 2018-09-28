@@ -54,6 +54,7 @@ then
     unzip crcsas.zip
     psql --host localhost --username=postgres --dbname=crcsas -W --quiet -f "./crc.backup.sql"
     psql --host localhost --username=postgres --dbname=crcsas -W --quiet -f "./core/lib/SQL/Base Functions.sql"
+    psql --host localhost --username=postgres --dbname=crcsas -W --quiet -f "./core/modules/data_updater/impute_script/Schema.sql"
     rm crc.backup.sql
 else
     echo WARNING: the database was not restored
