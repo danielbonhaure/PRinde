@@ -224,7 +224,7 @@ class CampaignWriter:
 
         netcdf_variables = {}
 
-        loc_count = len(simulation_list.values())
+        loc_count = len(list(simulation_list.values()))
 
         max_simulation_count = sim_stats['max_simulation_count']
         max_soil_layer_count = sim_stats['max_soil_layer_count']
@@ -244,12 +244,12 @@ class CampaignWriter:
             dim_var[:] = dim_var_contents[dim_idx][0:dim_sizes[dim_idx]]
 
         wst_id = output_file.createVariable(varname='wst_id', datatype='u2', dimensions=('scen',), fill_value=-99)
-        wst_id[:] = range(0, n_scenarios)
+        wst_id[:] = list(range(0, n_scenarios))
 
-        for loc_simulations in simulation_list.values():
+        for loc_simulations in list(simulation_list.values()):
             for sim in loc_simulations:
 
-                for var, content in sim['initial_conditions'].iteritems():
+                for var, content in sim['initial_conditions'].items():
                     if var not in netcdf_variables:
                         datatype = 'f4'
                         if var == 'icbl':
@@ -262,7 +262,7 @@ class CampaignWriter:
                         netcdf_var = netcdf_variables[var]
                     netcdf_var[sim.lat_idx, sim.lon_idx, 0:len(content)] = content
 
-                for var, content in sim['management'].iteritems():
+                for var, content in sim['management'].items():
                     if var == 'mgmt_name':
                         continue
 

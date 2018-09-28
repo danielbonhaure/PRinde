@@ -54,9 +54,15 @@ class RunImputation(BaseJob):
                                                                            wth_db_config['user'])
         command += '--password "%s" ' % wth_db_config['password']
 
+        # descomentar para ver comando ejecutado para imputar datos faltantes
+        # print(command)
+
         command = shlex.split(command)
 
-        p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, preexec_fn=os.setsid)
+        # old_perm = os.stat('/usr/local/lib/R/site-library').st_mode
+        # os.chmod('/usr/local/lib/R/site-library', 0o777)
+        p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, preexec_fn=os.setsid, encoding='utf8')
+        # os.chmod('/usr/local/lib/R/site-library', old_perm)
 
         stdout_lines = []
 
@@ -102,8 +108,8 @@ class RunImputation(BaseJob):
                         if fileno == p.stdout.fileno():
                             raise RuntimeError("Program ended.")
 
-        except RuntimeError, err:
-            print(err.message)
+        except RuntimeError as err:
+            print(str(err).strip())
         finally:
             epoll.unregister(p.stdout.fileno())
 

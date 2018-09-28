@@ -9,17 +9,17 @@ import os, glob, getpass
 def read_connection_parameters():
     conn = collection_utils.namedtuple('Connection', ['db_name', 'user'])
 
-    conn.db_name = raw_input("Ingrese el nombre de la Base de Datos [crcssa]: ")
+    conn.db_name = input("Ingrese el nombre de la Base de Datos [crcssa]: ")
     if not conn.db_name:
         conn.db_name = "crcssa"
 
-    conn.user = raw_input("Ingrese el usuario de la Base de Datos [postgres.pwd]: ")
+    conn.user = input("Ingrese el usuario de la Base de Datos [postgres.pwd]: ")
     if not conn.user:
         conn.user = "postgres.pwd"
 
     pwd = getpass.getpass("Ingrese la contraseña para el usuario '%s': " % conn.user)
     if not pwd:
-        print 'La contraseña no puede ser vacía.'
+        print('La contraseña no puede ser vacía.')
         exit(1)
 
     # Escribimos en la variable de entorno la contraseña de postgres.pwd para evitar pasarla en plaintext al proceso.
@@ -42,16 +42,16 @@ def run_script(postgresql, user, db_name, script_path, port=5432, script_paramet
     try:
         # Intentamos ejecutar el comando.
         output = subprocess.check_output(cmd, shell=True, env=os.environ)
-        print " [OK]"
+        print(" [OK]")
     except:
         # De ocurrir una excepción quiere decir que no se pudo ejecutar correctamente el comando.
-        print "No se pudo ejecutar el comando correctamente."
+        print("No se pudo ejecutar el comando correctamente.")
         raise RuntimeError("Couldn't execute the command: \"%s\"" % cmd)
 
 
 def find():
     if(os.name == 'nt'):
-        print "Buscando instalación de PostgreSQL..."
+        print("Buscando instalación de PostgreSQL...")
         program_files = "C:/Program Files"
         program_files_x86 = "C:/Program Files (x86)"
 
@@ -63,18 +63,18 @@ def find():
         if len(search) == 1:
             return os.path.abspath(search[0])
         elif len(search) > 1:
-            print "¿Qué instalación le gustaría usar?:"
+            print("¿Qué instalación le gustaría usar?:")
             for index, row in enumerate(search):
-                print '\t * %s: %s' % (index+1, os.path.normpath(row))
+                print('\t * %s: %s' % (index+1, os.path.normpath(row)))
 
-            index = raw_input('Ingrese el índice de la instalación [1]: ')
+            index = input('Ingrese el índice de la instalación [1]: ')
             if not index:
                 index = 1
             else:
                 index = int(index)
 
             if index > len(search) or index < 1:
-                print 'El índice no ingresado no es válido.'
+                print('El índice ingresado no es válido.')
                 exit(1)
             else:
                 return os.path.abspath(search[index - 1])
@@ -84,4 +84,4 @@ def find():
 
 def search_filename(file_name, path, depth="*/*/*/*"):
     search = glob.glob(os.path.join(path, depth))
-    return filter(lambda f: (os.path.isfile(f) and os.path.basename(f) == file_name), search)
+    return [f for f in search if (os.path.isfile(f) and os.path.basename(f) == file_name)]

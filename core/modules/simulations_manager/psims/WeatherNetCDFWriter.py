@@ -140,7 +140,7 @@ class WeatherNetCDFWriter:
             del csv_content['time']
 
             # Loop through each variable in the CSV header.
-            for var_name in csv_content.keys():
+            for var_name in list(csv_content.keys()):
                 if var_name not in expected_variables:
                     continue
 

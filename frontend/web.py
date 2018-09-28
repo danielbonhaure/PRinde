@@ -1,7 +1,7 @@
 import os
 from apscheduler.triggers.interval import IntervalTrigger
-from flask import Flask, request, Response, jsonify
-from flask.ext.socketio import SocketIO
+from flask import Flask, Response
+from flask_socketio import SocketIO, emit, join_room
 from datetime import datetime
 from core.lib.jobs.monitor import ProgressObserver, SUBJOB_UPDATED, JOB_ENDED
 from core.modules.statistics.StatsCenter import StatEventListener
@@ -34,9 +34,9 @@ class WebServer(StatEventListener, ProgressObserver):
         self.app.add_url_rule('/<path:path>', 'index', self.index)
 
         # Configure socket-io end points.
-        self.socketio._on_message('connected', self.connected, namespace='/observers')
-        self.socketio._on_message('get_tasks', self.get_tasks, namespace='/observers')
-        self.socketio._on_message('get_job_details', self.get_job_details, namespace='/observers')
+        self.socketio.on_event('connected', self.connected, namespace='/observers')
+        self.socketio.on_event('get_tasks', self.get_tasks, namespace='/observers')
+        self.socketio.on_event('get_job_details', self.get_job_details, namespace='/observers')
 
         self.system_log = []
 
@@ -50,17 +50,17 @@ class WebServer(StatEventListener, ProgressObserver):
         """
         Emits only to the caller (via web sockets) the recen system logs.
         """
-        request.namespace.emit('logs', self.system_log)
+        emit('logs', self.system_log)
 
     def get_tasks(self):
         """
         Emits only to the caller (via web sockets) the pending and finished job queues.
         """
-        request.namespace.emit('tasks', {
+        emit('tasks', {
             'job_queue': self.stats.tasks,
             'finished_tasks': self.stats.finished_tasks
         })
-        request.namespace.emit('active_tasks', self.stats.running_tasks)
+        emit('active_tasks', self.stats.running_tasks)
 
     def get_job_details(self, job_id):
         """
@@ -70,14 +70,14 @@ class WebServer(StatEventListener, ProgressObserver):
         """
         if job_id in self.stats.running_tasks:
             # Join this client to the job_id room.
-            request.namespace.join_room(str(job_id))
-            request.namespace.emit('job_details', self.stats.running_tasks[job_id])
+            join_room(str(job_id))
+            emit('job_details', self.stats.running_tasks[job_id])
         elif job_id in self.stats.tasks:
-            request.namespace.emit('job_details', self.stats.tasks[job_id])
+            emit('job_details', self.stats.tasks[job_id])
         elif job_id in self.stats.finished_tasks:
-            request.namespace.emit('job_details', self.stats.finished_tasks[job_id])
+            emit('job_details', self.stats.finished_tasks[job_id])
         else:
-            request.namespace.emit('job_details', None)
+            emit('job_details', None)
 
     def get_config(self):
         return Response(response=self.system_config.public_view(),
@@ -100,7 +100,7 @@ class WebServer(StatEventListener, ProgressObserver):
         specification file in the system.
         """
         forecasts = []
-        for forecast_list in self.system_config.forecasts.values():
+        for forecast_list in list(self.system_config.forecasts.values()):
             forecasts.extend([f.public_view(self.system_config.forecasts_path) for f in forecast_list])
         return Response(response='[%s]' % ','.join(forecasts),
                         status=200,

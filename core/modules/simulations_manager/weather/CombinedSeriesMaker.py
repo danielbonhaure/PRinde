@@ -15,7 +15,7 @@ class CombinedSeriesMaker(DatabaseWeatherSeries):
         if not weather_writer:
             weather_writer = DSSATWthWriter
         super(CombinedSeriesMaker, self).__init__(system_config, max_parallelism, weather_writer)
-        self.campaign_first_month = system_config.campaign_first_month
+        self.campaign_first_month = system_config.get('campaign_first_month', 5)
 
     def create_from_db(self, location, forecast):
         forecast_date = forecast.forecast_date

@@ -30,7 +30,7 @@ class ForecastManager:
         self.scheduled_reference_simulations_ids = set()
 
     def start(self):
-        for file_name, forecast_list in self.system_config.forecasts.iteritems():
+        for file_name, forecast_list in self.system_config.forecasts.items():
             for forecast in forecast_list:
                 self.schedule_forecast(forecast)
 
@@ -137,11 +137,10 @@ class ForecastManager:
 
                 folder_name = "%s" % (datetime.now().isoformat())
                 folder_name = folder_name.replace('"', '').replace('\'', '').replace(' ', '_')
-                forecast.folder_name = folder_name.encode('unicode-escape')
+                forecast.folder_name = folder_name
 
                 # Add folder name to rundir and create it.
-                forecast.paths.rundir = os.path.abspath(os.path.join(forecast.paths.rundir,
-                                                                     folder_name)).encode('unicode-escape')
+                forecast.paths.rundir = os.path.abspath(os.path.join(forecast.paths.rundir, folder_name))
                 create_folder_with_permissions(forecast.paths.rundir)
 
                 # Create a folder for the weather grid inside that rundir.
@@ -153,10 +152,8 @@ class ForecastManager:
                 create_folder_with_permissions(forecast.paths.soil_grid_path)
 
                 # Create the folder where we'll read the CSV files created by the database.
-                forecast.paths.wth_csv_read = os.path.join(forecast.paths.wth_csv_read,
-                                                           folder_name).encode('unicode-escape')
-                forecast.paths.wth_csv_export = os.path.join(forecast.paths.wth_csv_export,
-                                                             folder_name).encode('unicode-escape')
+                forecast.paths.wth_csv_read = os.path.join(forecast.paths.wth_csv_read, folder_name)
+                forecast.paths.wth_csv_export = os.path.join(forecast.paths.wth_csv_export, folder_name)
                 create_folder_with_permissions(forecast.paths.wth_csv_read)
 
                 active_threads = dict()
@@ -170,7 +167,7 @@ class ForecastManager:
                 else:
                     run_date = datetime.strptime(forecast.forecast_date, '%Y-%m-%d').date()
 
-                for loc_key, location in forecast['locations'].iteritems():
+                for loc_key, location in forecast['locations'].items():
                     omm_id = location['weather_station']
 
                     # Upsert location.
@@ -225,11 +222,11 @@ class ForecastManager:
                 joined_threads_count = 0
 
                 # Start all weather maker threads.
-                for t in active_threads.values():
+                for t in list(active_threads.values()):
                     t.start()
 
                 # Wait for the weather grid to be populated.
-                for t in active_threads.values():
+                for t in list(active_threads.values()):
                     t.join()
                     joined_threads_count += 1
                     weather_series_monitor.update_progress(joined_threads_count)
@@ -256,7 +253,7 @@ class ForecastManager:
                 reference_ids = []
 
                 # Flatten simulations and update location info (with id's and computed weather stations).
-                for loc_key, loc_simulations in forecast.simulations.iteritems():
+                for loc_key, loc_simulations in forecast.simulations.items():
                     for sim in loc_simulations:
                         sim.location = forecast.locations[loc_key]
                         sim.weather_station = forecast.weather_stations[sim.location.weather_station]
@@ -291,7 +288,7 @@ class ForecastManager:
 
                         rm_locs = []
 
-                        for loc_key, loc_simulations in ref_forecast.simulations.iteritems():
+                        for loc_key, loc_simulations in ref_forecast.simulations.items():
                             # Filter reference simulations.
                             loc_simulations[:] = [x for x in loc_simulations if x.reference_id in diff]
 
@@ -321,9 +318,7 @@ class ForecastManager:
                 if forecast_id:
                     db.forecasts.update_one(
                         {"_id": forecast_id},
-                        {"$pushAll": {
-                            "simulations": simulations_ids
-                        }}
+                        {"$push": {"simulations": {"$each": simulations_ids}}}
                     )
 
                 # Ejecutar simulaciones.

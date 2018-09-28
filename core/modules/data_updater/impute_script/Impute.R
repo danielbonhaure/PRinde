@@ -1,10 +1,10 @@
 
 impute_mf <- function(datosEstacion, variable, estaciones, missingIndexes, registrosVecinos, vecinos.data, max_parallelism=1) {
-    impData <- as.tbl(datosEstacion[-missingIndexes,]) %>%
-        sample_n(0.5 * nrow(datosEstacion)) %>%
-        bind_rows(as.tbl(datosEstacion[missingIndexes,])) %>%
-        arrange(fecha)
-    impData <- impData %>% select(one_of('omm_id', 'fecha', 'tmax', 'tmin', 'prcp', 'helio', 'nub'))
+    impData <- dplyr::as.tbl(datosEstacion[-missingIndexes,]) %>%
+        dplyr::sample_n(0.5 * nrow(datosEstacion)) %>%
+        dplyr::bind_rows(dplyr::as.tbl(datosEstacion[missingIndexes,])) %>%
+        dplyr::arrange(fecha)
+    impData <- impData %>% dplyr::select(dplyr::one_of('omm_id', 'fecha', 'tmax', 'tmin', 'prcp', 'helio', 'nub'))
     missingIndexesSubset <- which(is.na(impData[, variable]))
 
     used_neighbors <- 0
@@ -22,23 +22,23 @@ impute_mf <- function(datosEstacion, variable, estaciones, missingIndexes, regis
 
         impData <- impData %>% dplyr::left_join(
             datosVecino %>%
-                select(one_of(c(variable, "fecha"))) %>%
-                rename_(.dots=setNames(c(variable), paste0(vecino, '.', variable))),
+                dplyr::select(dplyr::one_of(c(variable, "fecha"))) %>%
+                dplyr::rename_(.dots=setNames(c(variable), paste0(vecino, '.', variable))),
             by='fecha')
     }
-    impData <- impData %>% select(-one_of('omm_id', 'fecha'))
+    impData <- impData %>% dplyr::select(-dplyr::one_of('omm_id', 'fecha'))
     impData <- as.data.frame(impData)
 
     if(max_parallelism > 1) {
         if(require(doMC)) {
             registerDoMC(min(ncol(impData) - 2, max_parallelism))
-            impData <- missForest(impData, ntree=100, parallelize='forests')$ximp
+            impData <- missForest::missForest(impData, ntree=100, parallelize='forests')$ximp
         } else {
-            impData <- missForest(impData, ntree=100)$ximp
+            impData <- missForest::missForest(impData, ntree=100)$ximp
         }
     } else {
         # Repeat this code because R doesn't behave too well with "and" conditions when evaluating if's.
-        impData <- missForest(impData, ntree=100)$ximp
+        impData <- missForest::missForest(impData, ntree=100)$ximp
     }
 
 
@@ -49,7 +49,7 @@ impute_mf <- function(datosEstacion, variable, estaciones, missingIndexes, regis
 
 impute_idw <- function(datosEstacion, variable, estaciones, missingIndexes, registrosVecinos, vecinos.data, max_parallelism=1) {
     idw.grid <- estaciones[estaciones$omm_id == estacion, c('x', 'y')]
-    coordinates(idw.grid) <- ~x+y
+    sp::coordinates(idw.grid) <- ~x+y
 
     idwFormula <- formula(x=paste0(variable, "~1"))
 
@@ -59,14 +59,13 @@ impute_idw <- function(datosEstacion, variable, estaciones, missingIndexes, regi
 
         if(nrow(neighborData) == 0) return(NA);
 
-
-        coordinates(neighborData) <- ~x+y
+        sp::coordinates(neighborData) <- ~x+y
         # Filtrar valores NA.
         neighborData <- neighborData[ !is.na(neighborData@data[, variable]), ]
 
         if(nrow(neighborData) == 0) return(NA);
 
-        impute <- idw(idwFormula, neighborData, idp=2, idw.grid, debug.level=0)
+        impute <- gstat::idw(idwFormula, neighborData, idp=2, idw.grid, debug.level=0)
         impute$var1.pred
     })
 

@@ -53,7 +53,7 @@ class RunpSIMS:
     def __run__(self, sh_script, forecast_name, sim_count, progress_monitor, verbose):
         command = shlex.split('sh "%s"' % sh_script)
 
-        p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, preexec_fn=os.setsid)
+        p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, preexec_fn=os.setsid, encoding='utf8')
 
         stdout_lines = []
 
@@ -126,8 +126,8 @@ class RunpSIMS:
                         if fileno == p.stdout.fileno():
                             raise RuntimeError("Program ended.")
 
-        except RuntimeError, err:
-            print(err.message)
+        except RuntimeError as err:
+            print(str(err).strip())
         finally:
             epoll.unregister(p.stdout.fileno())
 

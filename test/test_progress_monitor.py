@@ -62,13 +62,13 @@ class TestProgressMonitor(unittest.TestCase):
         parent_job.progress_monitor.add_listener(self)
         parent_job.progress_monitor.add_subjob(child_job.progress_monitor)
 
-        sub_jobs_ids = parent_job.progress_monitor.sub_jobs.keys()
+        sub_jobs_ids = list(parent_job.progress_monitor.sub_jobs.keys())
         self.assertEqual(len(sub_jobs_ids), 1)
         self.assertEqual(sub_jobs_ids[0], child_job.id)
 
         child_job.start()
 
-        sub_jobs_ids = parent_job.progress_monitor.sub_jobs.keys()
+        sub_jobs_ids = list(parent_job.progress_monitor.sub_jobs.keys())
         self.assertEqual(len(sub_jobs_ids), 0)
 
     def progress_changed(self, event):

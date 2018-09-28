@@ -88,7 +88,7 @@ class NetCDFSeriesMaker(WeatherSeriesMaker):
 
                 clim['srad'] = np.maximum(clim['srad'], 1).tolist()
 
-                rows = zip(fecha, clim['tx'], clim['tn'], clim['prcp'], clim['srad'])
+                rows = list(zip(fecha, clim['tx'], clim['tn'], clim['prcp'], clim['srad']))
                 colnames = [tuple(['fecha', 'tmax', 'tmin', 'prcp', 'rad'])]
                 scen_weather = itertools.chain(colnames, rows)
 

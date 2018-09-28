@@ -113,7 +113,7 @@ class SystemConfiguration(DotDict):
         config_object['database_config'] = DotDict()
         config_object['database'] = DotDict()
 
-        for db_conn, properties in db_config.items():
+        for db_conn, properties in list(db_config.items()):
             if 'type' not in properties:
                 raise RuntimeError('Missing database type for database connection "%s".' % db_conn)
 
@@ -189,8 +189,8 @@ class SystemConfiguration(DotDict):
                 # If load succeeded, update this class with the new config.
                 self.update(config_clone)
                 SystemConfiguration.load_forecasts(config_object=self, forecast_list=new_forecasts_files)
-            except Exception, ex:
-                raise RuntimeError('Configuration not updated. An exception was raised: %s' % ex)
+            except Exception as ex:
+                raise RuntimeError('Configuration not updated. An exception was raised: %s' % str(ex).strip())
 
     def public_view(self):
         view = DotDict(copy.copy(self.__dict__))

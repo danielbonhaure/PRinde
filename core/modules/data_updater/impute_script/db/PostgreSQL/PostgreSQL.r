@@ -3,29 +3,10 @@ suppressPackageStartupMessages(if(!require('DBI')) { install.packages('DBI'); re
 # Requiere instalar libpq-dev en el SO host.
 suppressPackageStartupMessages(if(!require('RPostgreSQL')) { install.packages('RPostgreSQL'); require('RPostgreSQL') })
 
-drv <- dbDriver("PostgreSQL")
-
-# Función que permite conectarnos a una base de datos PostgreSQL.
-# Incluye por default muchos de los parámetros que suelen usarse para conectarse (user, port y host).
-# Si no se especifica contraseña se busca un archivo en el mismo PATH que este Script con el nombre
-# del usuario especificado y la extensión '.pwd'.
-pg_connect <- function(user='postgres', dbname, host='localhost', password=NULL, port=5432){
-    if(is.null(password)){
-        password = get_password(user)
-    }
-    connection = dbConnect(drv, port=port, user=user, dbname=dbname, host=host, password=password)
-    return(connection)
-}
-
-# Desconecta una conexión ya creada.
-pg_disconnect <- function(connection){
-    dbDisconnect(conn=connection)
-}
-
 # Obtiene la contraseña de un usuario buscando dentro del directorio especificado un archivo
 # con el nombre del usuario y la extensión '.pwd'.
 # Si no se especifica directorio, se toma el directorio de este Script.
-get_password = function(username, directory=NULL, ext='.pwd') {
+get_password <- function(username, directory=NULL, ext='.pwd') {
     # Si no nos pasaron un directorio, concatenamos el Working Directory (wd)
     # con el path relativo a este Script.
     if(is.null(directory)) {
@@ -44,4 +25,23 @@ get_password = function(username, directory=NULL, ext='.pwd') {
     # Si no se puede encontrar o leer el archivo, devolvemos un string vacío que va
     # a dar error cuando se intente realizar la conexión.
     return("")
+}
+
+drv <- DBI::dbDriver("PostgreSQL")
+
+# Función que permite conectarnos a una base de datos PostgreSQL.
+# Incluye por default muchos de los parámetros que suelen usarse para conectarse (user, port y host).
+# Si no se especifica contraseña se busca un archivo en el mismo PATH que este Script con el nombre
+# del usuario especificado y la extensión '.pwd'.
+pg_connect <- function(user='postgres', dbname, host='localhost', password=NULL, port=5432){
+    if(is.null(password)){
+        password = get_password(user)
+    }
+    connection = DBI::dbConnect(drv, port=port, user=user, dbname=dbname, host=host, password=password)
+    return(connection)
+}
+
+# Desconecta una conexión ya creada.
+pg_disconnect <- function(connection){
+    DBI::dbDisconnect(conn=connection)
 }

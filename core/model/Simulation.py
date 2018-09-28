@@ -30,7 +30,7 @@ class Simulation(DotDict):
             self.name = simulation_yaml['name']
 
         # Check initial condition variables (soil ic data).
-        for soil_ic_var, var_content in simulation_yaml.initial_conditions.iteritems():
+        for soil_ic_var, var_content in simulation_yaml.initial_conditions.items():
             if isinstance(var_content, list):
                 # Check that the amount of values matches the amount of soil horizons.
                 if len(var_content) != simulation_yaml.soil.n_horizons:
@@ -40,12 +40,12 @@ class Simulation(DotDict):
                                        (soil_ic_var, len(var_content), simulation_yaml.soil.n_horizons, self.name))
 
                 # Check that every value inside the array is a valid type.
-                valid_types = map(lambda x: isinstance(x, (int, long, float)), var_content)
+                valid_types = [isinstance(x, (int, float)) for x in var_content]
                 if not all(valid_types):
                     raise RuntimeError("Values inside variable \"%s\" are not valid types (int, long or float)."
                                        % soil_ic_var)
 
-            elif not isinstance(var_content, (int, long, float)):
+            elif not isinstance(var_content, (int, float)):
                 raise RuntimeError("Value for variable \"%s\" is not a valid type (int, long or float).")
 
         # Update the class dict so we can access values with dot notation.

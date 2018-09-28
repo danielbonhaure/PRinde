@@ -28,7 +28,7 @@ class BaseJob(object):
         try:
             self.progress_monitor.job_started()
             ret_val = self.run(*args, **kwargs)
-        except Exception, ex:
+        except Exception as ex:
             logging.getLogger().error('An exception was raised while running Job "%s". Details: %s' %
                                       (self.name, log_format_exception()))
             ret_val = 1

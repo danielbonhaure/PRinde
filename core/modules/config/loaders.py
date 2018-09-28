@@ -56,7 +56,7 @@ class ForecastLoader:
 
             forecast.configuration.weather_maker_class = self.weather_series_makers[weather_series]
 
-            for loc_key in forecast['locations'].keys():
+            for loc_key in list(forecast['locations'].keys()):
                 forecast['locations'][loc_key] = Location(forecast['locations'][loc_key],
                                                           forecast,
                                                           self.system_config)
@@ -68,7 +68,7 @@ class ForecastLoader:
             for f in builder.build():
                 forecasts.append(f)
                 self.system_config.weather_stations_ids.update(
-                    set([loc['weather_station'] for loc in f.locations.values()])
+                    set([loc['weather_station'] for loc in list(f.locations.values())])
                 )
             self.system_config.forecasts[forecast_file] = forecasts
             logging.getLogger().info('Loaded %d forecasts from file "%s".' % (len(forecasts), forecast_file))

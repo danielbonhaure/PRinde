@@ -4,9 +4,7 @@ from core.lib.geo.grid import latlon_to_grid
 __author__ = 'Federico Schmidt'
 
 
-class WeatherSeriesMaker:
-    __metaclass__ = abc.ABCMeta
-
+class WeatherSeriesMaker(metaclass=abc.ABCMeta):
     def __init__(self, system_config, max_paralellism):
         self.system_config = system_config
 
@@ -29,7 +27,7 @@ class WeatherSeriesMaker:
 
     @staticmethod
     def expand_station_info(station_info, forecast_grid_resolution=30):
-        keys = station_info.keys()
+        keys = list(station_info.keys())
 
         if 'grid_row' not in keys or 'grid_column' not in keys:
             cell = latlon_to_grid(lat_dec=float(station_info.get('coord_y')),

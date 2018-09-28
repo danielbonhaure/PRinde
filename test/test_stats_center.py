@@ -27,4 +27,4 @@ class TestStatsCenter(unittest.TestCase):
 
         self.scheduler.add_job(a_job, 'A job', trigger='interval', seconds=3)
         # time.sleep(1)
-        self.assertEqual(len(self.stats.tasks.keys()), 1)
+        self.assertEqual(len(list(self.stats.tasks.keys())), 1)

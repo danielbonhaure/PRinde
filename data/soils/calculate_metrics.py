@@ -57,7 +57,7 @@ def calculate_metrics(soil_layers):
 
 metrics_array = []
 
-for soil_name, soil_file_name in soils_dict.iteritems():
+for soil_name, soil_file_name in soils_dict.items():
     with open(soil_file_name, mode='r') as soil_file:
         soil_json = json.load(soil_file, encoding='latin-1')['soils'][0]
         soil_id = soil_json['soil_id']

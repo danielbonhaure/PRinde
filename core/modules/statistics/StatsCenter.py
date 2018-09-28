@@ -40,7 +40,7 @@ class StatEventListener:
 class StatsCenter(ProgressObserver):
     job_events = (EVENT_JOB_ADDED | EVENT_JOB_ERROR | EVENT_JOB_EXECUTED | EVENT_JOB_MISSED |
                   EVENT_JOB_MODIFIED | EVENT_JOB_REMOVED)
-    scheduler_events = (EVENT_SCHEDULER_START | EVENT_SCHEDULER_SHUTDOWN)
+    scheduler_events = (EVENT_SCHEDULER_STARTED | EVENT_SCHEDULER_SHUTDOWN)
 
     def __init__(self, scheduler):
         self.scheduler = scheduler
@@ -96,7 +96,7 @@ class StatsCenter(ProgressObserver):
             listener.stat_event(None)
 
     def scheduler_event_listener(self, event):
-        if event.code & EVENT_SCHEDULER_START:
+        if event.code & EVENT_SCHEDULER_STARTED:
             self.init_jobs()
         elif event.code & EVENT_SCHEDULER_SHUTDOWN:
             pass
@@ -124,7 +124,7 @@ class StatsCenter(ProgressObserver):
     def event_view(e, now):
         return {
             'retval': e.retval if e.retval else 0,
-            'scheduled_run_time': e.scheduled_run_time,
+            'scheduled_run_time': e.scheduled_run_time.strftime('%Y-%m-%d %H:%M:%S'),
             'end_time': now.strftime('%Y-%m-%d %H:%M:%S')
         }
 

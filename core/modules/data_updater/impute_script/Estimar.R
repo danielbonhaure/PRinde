@@ -22,7 +22,7 @@ estimarRadiacion <- function(estaciones, registrosDiarios, ap.cal=NULL, bc.cal=N
         registros_idx <- which(registrosDiarios$omm_id == estacion$omm_id)
 
         # Calculamos la radiación extraterrestre y el largo del día en horas para cada día.
-        extrat.data <- extrat(i=dayOfYear(registrosDiarios[registros_idx, "fecha"]), lat=radians(estacion$lat_dec))
+        extrat.data <- sirad::extrat(i=sirad::dayOfYear(registrosDiarios[registros_idx, "fecha"]), lat=sirad::radians(estacion$lat_dec))
 
         registrosDiarios[registros_idx, 'extrat'] <- extrat.data$ExtraTerrestrialSolarRadiationDaily
         registrosDiarios[registros_idx, 'daylength'] <- extrat.data$DayLength
@@ -64,7 +64,7 @@ estimarRadiacion <- function(estaciones, registrosDiarios, ap.cal=NULL, bc.cal=N
         }
 
         if(length(bcIndexes) > 0) {
-            bcEstimate <- estimate.bristowcampbell.xts(xtsdata=xts(registrosDiarios[registros_idx,], order.by=registrosDiarios[registros_idx, "fecha"]),
+            bcEstimate <- estimate.bristowcampbell.xts(xtsdata=xts::xts(registrosDiarios[registros_idx,], order.by=registrosDiarios[registros_idx, "fecha"]),
                                                        days= registrosDiarios[bcIndexes, "fecha"],
                                                        bc.coef= bc.cal)
 

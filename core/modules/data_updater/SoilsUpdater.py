@@ -27,7 +27,7 @@ class SoilsUpdater(BaseJob):
             # Lock acquired, notify observers.
             self.progress_monitor.update_progress(job_status=JOB_STATUS_RUNNING)
 
-            for pm_actual_value, (soil_name, soil_file_name) in enumerate(soils_dict.iteritems(), 1):
+            for pm_actual_value, (soil_name, soil_file_name) in enumerate(iter(soils_dict.items()), 1):
                 soil_json = SoilDAO.get_soil(soil_name)['soils'][0]
                 soil_id = soil_json['soil_id']
                 soil_layers = soil_json['soilLayer']

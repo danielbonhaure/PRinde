@@ -36,7 +36,7 @@ class DatabaseUtils:
 
             return conn
         except Exception as e:
-            raise RuntimeError('Failed to create database connection "%s". Reason: "%s".' % (conn_name, e.message))
+            raise RuntimeError('Failed to create database connection "%s". Reason: "%s".' % (conn_name, str(e).strip()))
 
     @staticmethod
     def connect_mongodb(conn_dictionary, config_path='.'):
@@ -71,7 +71,7 @@ class DatabaseUtils:
 
             return client[db_name]
         except Exception as e:
-            raise RuntimeError('Failed to create database connection "%s". Reason: "%s".' % (conn_name, e.message))
+            raise RuntimeError('Failed to create database connection "%s". Reason: "%s".' % (conn_name, str(e).strip()))
 
     @staticmethod
     def __validate_connection_dict__(conn_dictionary):

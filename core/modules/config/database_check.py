@@ -68,7 +68,7 @@ class CheckYieldDB(BaseJob):
             collection_indexed_fields = set()
             expected_indexes = self.collection_indexes[collection.name]
 
-            for idx in collection.index_information().values():
+            for idx in list(collection.index_information().values()):
                 # Append fields to the set.
                 collection_indexed_fields |= {field[0] for field in idx['key']}
 

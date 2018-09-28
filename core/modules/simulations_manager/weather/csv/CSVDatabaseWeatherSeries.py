@@ -74,15 +74,15 @@ class CSVDatabaseWeatherSeries(WeatherSeriesMaker):
     def read_station_info(self, csv_file):
         csv_file = csv.reader(csv_file, delimiter='\t')
 
-        header = csv_file.next()
-        row = csv_file.next()
+        header = next(csv_file)
+        row = next(csv_file)
 
         info = dict()
 
         for index, item in enumerate(header):
             info[item] = row[index]
 
-        keys = info.keys()
+        keys = list(info.keys())
 
         if 'lat_dec' in keys and 'lon_dec' in keys:
             cell = latlon_to_grid(lat_dec=float(info.get('lat_dec')),

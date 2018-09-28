@@ -11,7 +11,7 @@ def group_by(collection, function):
     """
     d = dict()
     if isinstance(collection, dict):
-        collection = collection.iteritems()
+        collection = iter(collection.items())
     for f in collection:
         key = function(f)
 
@@ -32,7 +32,7 @@ class DotDict(MutableMapping):
             original_dict = dict()
         else:
             # Convert nested dictionaries.
-            for key, value in original_dict.iteritems():
+            for key, value in original_dict.items():
                 if isinstance(value, dict):
                     original_dict[key] = DotDict(original_dict[key])
 

@@ -47,8 +47,8 @@ def clean_folder(folder, onlyfiles=False):
                     clean_folder(file_path)
                 else:
                     os.rmdir(file_path)
-        except Exception, e:
-            print e
+        except Exception as e:
+            print(e)
             return False
     return True
 
@@ -69,14 +69,14 @@ def create_folder(folder):
                 os.remove(folder)
                 os.mkdir(folder)
             except IOError:
-                print "No se pudo remover el archivo para crear la carpeta:" + folder + "."
+                print("No se pudo remover el archivo para crear la carpeta:" + folder + ".")
                 return False
     else:
         # Si no existe, la intentamos crear.
         try:
             os.makedirs(folder)
-        except Exception, ex:
-            print "No se pudo crear la carpeta: " + folder + ". Exception: %s" % ex
+        except Exception as ex:
+            print("No se pudo crear la carpeta: " + folder + ". Exception: %s" % str(ex).strip())
     return os.path.exists(folder) and not os.path.isfile(folder)
 
 
@@ -84,7 +84,7 @@ def filename_without_ext(f):
     return os.path.splitext(os.path.basename(f))[0]
 
 
-def create_folder_with_permissions(parent, folder_name=None, permissions=0777):
+def create_folder_with_permissions(parent, folder_name=None, permissions=0o777):
     if not folder_name:
         folder_name = os.path.basename(parent)
         parent = os.path.dirname(parent)

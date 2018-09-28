@@ -12,6 +12,8 @@ getScriptPath <- function(){
 
 setwd(getScriptPath())
 
+# writeLines(paste('getwd(): ', getwd(), collapse = '\n\n'))
+
 source('Install.R')
 source('db/PostgreSQL/PostgreSQL.r')
 source('db/Queries.R')
@@ -23,15 +25,15 @@ exit_status <- 0
 errors <- c()
 
 option_list = list(
-    make_option(c("-s", "--stations"), action="store", default="", type='character', help="Comma separated list of weather stations ids that should be imputed."),
-    make_option(c("-d", "--database"), action="store", default="crc_ssa", type='character', help="Weather database name"),
-    make_option(c("-c", "--host"), action="store", default="localhost", type='character', help="Weather database host"),
-    make_option(c("-u", "--user"), action="store", default="crcssa_user", type='character', help="Weather database user name"),
-    make_option(c("-p", "--port"), action="store", default=5432, type='integer', help="Weather database port"),
-    make_option(c("-w", "--password"), action="store", default=NULL, type='character', help="Weather database password"),
-    make_option(c("-m", "--parallelism"), action="store", default=1, type='integer', help="Max parallel tasks.")
+    optparse::make_option(c("-s", "--stations"), action="store", default="", type='character', help="Comma separated list of weather stations ids that should be imputed."),
+    optparse::make_option(c("-d", "--database"), action="store", default="crcsas", type='character', help="Weather database name"),
+    optparse::make_option(c("-c", "--host"), action="store", default="localhost", type='character', help="Weather database host"),
+    optparse::make_option(c("-u", "--user"), action="store", default="postgres", type='character', help="Weather database user name"),
+    optparse::make_option(c("-p", "--port"), action="store", default=5432, type='integer', help="Weather database port"),
+    optparse::make_option(c("-w", "--password"), action="store", default=NULL, type='character', help="Weather database password"),
+    optparse::make_option(c("-m", "--parallelism"), action="store", default=1, type='integer', help="Max parallel tasks.")
 )
-opt = parse_args(OptionParser(option_list=option_list))
+opt = optparse::parse_args(optparse::OptionParser(option_list=option_list))
 
 ###########################
 # opt$stations <- '87649,87270,87688,87497,87467,87534,87453,87374,87349,87544,87548,87645,87550,87637'
@@ -71,26 +73,26 @@ srad_parameters <- list(
 
 tryCatch({
     # Obtenemos los datos de las estaciones.
-    rs.estacion <- dbSendQuery(conexion, paste0("SELECT * FROM estacion e LEFT JOIN institucion i ON e.institucion_id = i.id WHERE e.omm_id IN (", paste(estacionesID, collapse=','), ')'))
-    estaciones <- fetch(rs.estacion, n=-1)
+    rs.estacion <- RPostgreSQL::dbSendQuery(conexion, paste0("SELECT * FROM estacion e LEFT JOIN institucion i ON e.institucion_id = i.id WHERE e.omm_id IN (", paste(estacionesID, collapse=','), ')'))
+    estaciones <- RPostgreSQL::fetch(rs.estacion, n=-1)
 
     stopifnot(nrow(estaciones) > 0)
 
     # Calculamos las coordenadas en Gauss Kruger de cada estación.
     GK.coords <- Gauss.Kruger.coordinates(estaciones)
     # Agregamos las coordenadas x e y (GK) de cada estación.
-    estaciones <- data.frame(coordinates(GK.coords), estaciones)
+    estaciones <- data.frame(sp::coordinates(GK.coords), estaciones)
 
     # Obtenemos los registros diarios de las estaciones con las que vamos a trabajar.
     omm_ids <- paste(estacionesID, collapse = ',')
 
-    rs.registros.diarios <- dbSendQuery(conexion, sprintf(queries$daily_records, omm_ids, omm_ids))
-    registrosDiarios <- fetch(rs.registros.diarios,n=-1, stringsAsFactors=FALSE)
+    rs.registros.diarios <- RPostgreSQL::dbSendQuery(conexion, sprintf(queries$daily_records, omm_ids, omm_ids))
+    registrosDiarios <- RPostgreSQL::fetch(rs.registros.diarios,n=-1, stringsAsFactors=FALSE)
 
     # Convertimos las fechas de la query en variables Date.
     registrosDiarios$fecha <- as.Date(registrosDiarios$fecha)
 
-    missing.rad <- fetch(dbSendQuery(conexion, sprintf(queries$missing_radiation_count, omm_ids)), n=-1, stringsAsFactors=FALSE)
+    missing.rad <- RPostgreSQL::fetch(RPostgreSQL::dbSendQuery(conexion, sprintf(queries$missing_radiation_count, omm_ids)), n=-1, stringsAsFactors=FALSE)
 
     # Check invalid temperatures to avoid DSSAT errors.
     wrong_temps <- which(registrosDiarios$tmax <= registrosDiarios$tmin)
@@ -99,19 +101,19 @@ tryCatch({
 
     for(estacion in estacionesID) {
         # Creamos una transacción por cada estación.
-        response <- dbGetQuery(conexion, "BEGIN TRANSACTION")
+        response <- RPostgreSQL::dbGetQuery(conexion, "BEGIN TRANSACTION")
 
         datosEstacion <- registrosDiarios[registrosDiarios$omm_id == estacion,]
         indexesToWrite <- c()
 
         # Obtenemos los ID's y las coordenadas de cada estación vecina.
-        vecinos.data <- fetch(dbSendQuery(conexion, sprintf(queries$neighbors_data, estacion)), n=-1, stringsAsFactors=FALSE)
+        vecinos.data <- RPostgreSQL::fetch(RPostgreSQL::dbSendQuery(conexion, sprintf(queries$neighbors_data, estacion)), n=-1, stringsAsFactors=FALSE)
 
         # Calculamos las coordenadas en GK.
         GK.coords <- Gauss.Kruger.coordinates(vecinos.data)
 
         # Agregamos las coordenadas x e y al data frame de vecinos.
-        vecinos.data <- data.frame(coordinates(GK.coords), omm_id=GK.coords@data$omm_id)
+        vecinos.data <- data.frame(sp::coordinates(GK.coords), omm_id=GK.coords@data$omm_id)
 
         # Traer registros de vecinos.
         vecinos.query <- sprintf(queries$neighbors_records, paste(vecinos.data$omm_id, collapse = ','))
@@ -130,9 +132,9 @@ tryCatch({
 
             # Query the DB for neighbor's data. Done only if there are missing values.
             if(is.null(registrosVecinos)) {
-                registrosVecinos <- fetch(dbSendQuery(conexion, vecinos.query), n=-1, stringsAsFactors=FALSE)
+                registrosVecinos <- RPostgreSQL::fetch(RPostgreSQL::dbSendQuery(conexion, vecinos.query), n=-1, stringsAsFactors=FALSE)
                 registrosVecinos$fecha <- as.Date(registrosVecinos$fecha)
-                registrosVecinos <- as.tbl(registrosVecinos) %>% left_join(vecinos.data, by='omm_id')
+                registrosVecinos <- dplyr::as.tbl(registrosVecinos) %>% dplyr::left_join(vecinos.data, by='omm_id')
             }
 
             if (variable == 'prcp') {
@@ -170,7 +172,7 @@ tryCatch({
         if(length(missing.rad.count) > 0) {
             # Update radiation only.
             missing.rad.dates.query <- sprintf(queries$missing_rad_dates, estacion)
-            missing_dates <- as.Date(fetch(dbSendQuery(conexion, missing.rad.dates.query), n=-1, stringsAsFactors=FALSE)$fecha)
+            missing_dates <- as.Date(RPostgreSQL::fetch(RPostgreSQL::dbSendQuery(conexion, missing.rad.dates.query), n=-1, stringsAsFactors=FALSE)$fecha)
 
             codigo_pais <- toupper(estaciones[estaciones$omm_id == estacion, 'pais_id'])
 
@@ -188,10 +190,10 @@ tryCatch({
                 error_details <- paste0("Failed to estimate ", estimado$not_estimated, " radiation values for station ", estacion, ". Rolling back it's data.")
                 errors <<- c(errors, error_details)
                 writeLines(error_details)
-                dbRollback(conexion)
+                RPostgreSQL::dbRollback(conexion)
                 next;
             } else {
-                estimado <- estimado$results %>% select(one_of('omm_id', 'fecha', 'rad'))
+                estimado <- estimado$results %>% dplyr::select(dplyr::one_of('omm_id', 'fecha', 'rad'))
 
                 queryRadFormat <- "(%d, '%s', %.2f)"
 
@@ -210,7 +212,7 @@ tryCatch({
             }
         }
 
-        dbCommit(conexion)
+        RPostgreSQL::dbCommit(conexion)
     }
 }, warning = function(warn){
     errors <<- c(errors, warn)
@@ -224,7 +226,7 @@ tryCatch({
     } else {
         writeLines('> Success.')
     }
-    dbDisconnect(conexion)
+    RPostgreSQL::dbDisconnect(conexion)
 })
 
 quit(status=exit_status)

@@ -20,14 +20,14 @@ class CampaignNetCDFWriter:
         soils = {}
         netcdf_variables = {}
 
-        loc_count = len(simulation_list.values())
+        loc_count = len(list(simulation_list.values()))
 
         simulations_count = []
         soil_layers_count = []
         scenarios_count = []
 
         # Gather information to create dimensions.
-        for loc_key, loc_simulations in simulation_list.iteritems():
+        for loc_key, loc_simulations in simulation_list.items():
             simulations_count.append(len(loc_simulations))
             for sim in loc_simulations:
                 soil_id = sim.soil.id
@@ -71,14 +71,14 @@ class CampaignNetCDFWriter:
             dim_var[:] = dim_var_contents[dim_idx]
 
         wst_id = output_file.createVariable(varname='wst_id', datatype='u2', dimensions=('scen',), fill_value=-99)
-        wst_id[:] = range(0, n_scenarios)
+        wst_id[:] = list(range(0, n_scenarios))
 
         for loc_idx, loc_simulations in enumerate(simulation_list.values()):
             for sim_idx, sim in enumerate(loc_simulations):
                 sim.lat_idx = loc_idx
                 sim.lon_idx = sim_idx
 
-                for var, content in sim['initial_conditions'].iteritems():
+                for var, content in sim['initial_conditions'].items():
                     if var not in netcdf_variables:
                         netcdf_var = output_file.createVariable(varname=var, datatype='f8',
                                                                 dimensions=('lat', 'lon', 'soil_layer'),
@@ -88,7 +88,7 @@ class CampaignNetCDFWriter:
                         netcdf_var = netcdf_variables[var]
                     netcdf_var[sim.lat_idx, sim.lon_idx, 0:len(content)] = content
 
-                for var, content in sim['management'].iteritems():
+                for var, content in sim['management'].items():
                     if var == 'mgmt_name':
                         continue
 

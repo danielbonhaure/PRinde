@@ -1,5 +1,5 @@
 import threading
-import StringIO
+import io
 __author__ = 'federico'
 
 

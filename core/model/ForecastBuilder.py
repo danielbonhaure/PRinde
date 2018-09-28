@@ -51,7 +51,7 @@ class ForecastBuilder:
 
         # Join site_characteristics, initial_conditions and agronomic_managements by location.
         joined_locations = DotDict()
-        for loc_key, values in forecast['locations'].iteritems():
+        for loc_key, values in forecast['locations'].items():
             joined_loc = DotDict()
 
             if loc_key not in forecast.site_characteristics:
@@ -82,12 +82,12 @@ class ForecastBuilder:
             joined_locations[loc_key] = joined_loc
 
         # Create simulations based on complex fields (those that allow more than one value).
-        for loc_key, loc in joined_locations.iteritems():
+        for loc_key, loc in joined_locations.items():
             simulations[loc_key] = []
 
             # Unwind managements.
-            for soil_key, soil in loc.soils.iteritems():
-                for mgmt_key, management in soil.agonomic_management.iteritems():
+            for soil_key, soil in loc.soils.items():
+                for mgmt_key, management in soil.agonomic_management.items():
                     sim = DotDict({
                         'location': copy.deepcopy(loc),
                         'soil': copy.deepcopy(soil),
@@ -124,7 +124,7 @@ class ForecastBuilder:
 
                     # Unwind initial conditions.
                     if isinstance(ic_water_var_content, DotDict):
-                        for ic_name, ic_values in ic_water_var_content.iteritems():
+                        for ic_name, ic_values in ic_water_var_content.items():
                             new_sim = copy.deepcopy(sim)
                             new_sim.initial_conditions[ic_water_var] = ic_values
                             new_sim.name += ' - IC: "%s=%s"' % (ic_water_var, ic_name)
@@ -157,7 +157,7 @@ class ForecastBuilder:
         return forecast_list
 
     def __replace_keys__(self, forecast_dict, alias_dict):
-        for key, value in forecast_dict.iteritems():
+        for key, value in forecast_dict.items():
             if isinstance(value, DotDict):
                 self.__replace_keys__(value, alias_dict)
             if key in alias_dict:

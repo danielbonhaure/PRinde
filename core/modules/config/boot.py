@@ -19,7 +19,7 @@ def run_boot_hook(hook_path):
     except Exception as ex:
         # If an Exception pops up then we halt the system's boot process.
         print_same_line(" [ERROR]\n")
-        raise RuntimeError("An Exception ocurred while running the boot hook: \"" + ex.message + "\".")
+        raise RuntimeError("An Exception ocurred while running the boot hook: \"" + str(ex).strip() + "\".")
     return
 
 

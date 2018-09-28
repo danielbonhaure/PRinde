@@ -1,9 +1,9 @@
 grid_resolution: 30 # Lat/lon grid resolution in arcminutes.
 max_parallelism: 4
-campaign_first_month: 5
+campaign_first_month: 9 # it must be 5 for Argentina and 9 for Paraguay
 
 paths:
-    psims: '/media/ramdisk/psims-schmidtfederico'
+    psims: '/opt/psims'
     # System general configuration file.
     temp_folder : ".tmp" # Should be a relative path, it'll be placed inside the root path.
 
@@ -13,9 +13,9 @@ paths:
     # Directory for the weather DB to write CSV files with climate data.
     # If the database is running on the same node as the system, wth_csv_export == wth_csv_read.
     # Allows database to be at a remote server.
-    wth_csv_export: "/home/usmfpts/Descargas/series_combinadas"
+    wth_csv_export: "/opt/prorindes/series_combinadas"
     # Mount point where database weather files can be read.
-    wth_csv_read: "/home/federico/Desarrollo/PycharmProjects/PRinde/.tmp/wth"
+    wth_csv_read: "/opt/prorindes/.tmp/wth"
 
 weather_update_api:
 #    url: 'http://crcssa.srsoft.com.ar/dbdump.php'

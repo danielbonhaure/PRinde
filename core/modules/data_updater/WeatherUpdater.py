@@ -8,7 +8,7 @@ from core.lib.jobs.monitor import JOB_STATUS_WAITING, JOB_STATUS_RUNNING
 from core.lib.utils.database import DatabaseUtils
 from datetime import datetime, timedelta
 from core.lib.utils.extended_collections import group_by, DotDict
-import cStringIO
+import io
 from core.modules.data_updater.impute import RunImputation
 
 __author__ = 'Federico Schmidt'
@@ -83,7 +83,7 @@ class WeatherUpdater:
                 cursor = wth_db.cursor()
                 cursor.execute('BEGIN TRANSACTION')
 
-                for min_date, omm_ids in request_groups.iteritems():
+                for min_date, omm_ids in request_groups.items():
                     stations_ids = {omm_id[0] for omm_id in omm_ids}
 
                     n_stations_updated += len(stations_ids)
@@ -102,15 +102,18 @@ class WeatherUpdater:
                     if 'text/csv' not in response.headers['content-type']:
                         raise RuntimeError('Wrong response type in update API: %s.' % response.headers['content-type'])
 
-                    update_data = response.content.strip().split('\n')
+                    update_data = response.content.decode('utf8').strip().split('\n')
 
                     progress_monitor.update_progress(new_value=n_stations_updated)
+
+                    # descomentar para forzar la ejecución de la imputación
+                    # stations_updated |= self.weather_stations_ids
 
                     if len(update_data) < 2:
                         continue
 
                     header = update_data[0].split('\t')
-                    update_data = cStringIO.StringIO('\n'.join(update_data[1:]))
+                    update_data = io.StringIO('\n'.join(update_data[1:]))
 
                     # Insert new data into the database.
                     cursor.copy_from(update_data, 'estacion_registro_diario')
@@ -145,7 +148,7 @@ class WeatherUpdater:
                     cursor.execute("ROLLBACK")
                     logging.info('No new weather data found.')
 
-            except Exception, ex:
+            except Exception as ex:
                 logging.error('Failed to update weather data. Reason: %s' % log_format_exception(ex))
 
                 if cursor:
@@ -207,7 +210,7 @@ class WeatherUpdater:
 
             cursor.close()
             logging.getLogger().info('Updated weather series max date.')
-        except Exception, ex:
+        except Exception as ex:
             logging.getLogger().error('Failed to update weather series max date. Reason: %s.',
                                       log_format_exception())
 
@@ -241,7 +244,7 @@ class WeatherUpdater:
                 max_dates[record[0]] = record[1]
 
             cursor.close()
-        except Exception, ex:
+        except Exception as ex:
             logging.getLogger().error('Failed to find weather series max date. Reason: %s.',
                                       log_format_exception())
 

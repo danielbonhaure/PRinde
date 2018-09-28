@@ -44,7 +44,7 @@ class Main:
             self.system_config = SystemConfiguration(root_path)
             forecasts_files = SystemConfiguration.load(self.system_config)
             SystemConfiguration.load_forecasts(self.system_config, forecasts_files)
-        except Exception, ex:
+        except Exception as ex:
             logging.getLogger().error('Failed to load system configuration. Reason: %s.' % log_format_exception(ex))
             sys.exit(1)
 
@@ -138,6 +138,7 @@ class Main:
     def stop(self, *args):
         self.scheduler.shutdown(wait=False)
         raise KeyboardInterrupt
+
 
 main = Main()
 # Start running the system.

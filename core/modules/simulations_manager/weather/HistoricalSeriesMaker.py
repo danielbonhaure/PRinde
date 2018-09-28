@@ -12,7 +12,7 @@ class HistoricalSeriesMaker(DatabaseWeatherSeries):
         if not weather_writer:
             weather_writer = DSSATWthWriter
         super(HistoricalSeriesMaker, self).__init__(system_config, max_parallelism, weather_writer)
-        self.campaign_first_month = system_config.campaign_first_month
+        self.campaign_first_month = system_config.get('campaign_first_month', 5)
 
     def create_series(self, location, forecast, extract_rainfall=True):
         # Force the forecast reference date to be 1950: this weather series creator exports all series with dates

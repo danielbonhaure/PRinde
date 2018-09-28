@@ -27,7 +27,7 @@ class Forecast(DotDict):
         hasher = xxh64()
 
         _sim_ids = []
-        for loc_key, simulations in simulations.iteritems():
+        for loc_key, simulations in simulations.items():
             for sim in simulations:
                 _sim_ids.append(sim.reference_id)
 
@@ -162,7 +162,7 @@ class Forecast(DotDict):
         if 'simulation_count' in view:
             del view['simulation_count']
 
-        for loc_key, loc in self.locations.iteritems():
+        for loc_key, loc in self.locations.items():
             view['locations'].append(loc.id)
 
         return view
@@ -179,7 +179,7 @@ class Forecast(DotDict):
             del view['rainfall']
 
         view['locations'] = []
-        for loc_key, loc in self.locations.iteritems():
+        for loc_key, loc in self.locations.items():
             view['locations'].append(loc['name'])
 
         view['file_name'] = self.public_file_name(forecasts_paths)
@@ -191,7 +191,7 @@ class Forecast(DotDict):
 
     def planting_dates(self):
         dates = []
-        for location, simulations in self.simulations.iteritems():
+        for location, simulations in self.simulations.items():
             for simulation in simulations:
                 d = simulation.get('management', {}).get('date_1', None)
                 if d is None:

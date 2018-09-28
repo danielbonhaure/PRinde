@@ -2,6 +2,7 @@ from datetime import date, datetime
 import os
 import csv
 import numpy as np
+from numpy.compat import asbytes
 from core.modules.simulations_manager.weather.csv.CSVDatabaseWeatherSeries import CSVDatabaseWeatherSeries
 
 __author__ = 'Federico Schmidt'
@@ -92,7 +93,7 @@ class DSSATWthWriter:
                                 dt = datetime.strptime(value, '%Y-%m-%d')
                             csv_content[var_name].append(int(dt.strftime("%Y%m%d")))
                         else:
-                            csv_content[var_name].append(float(value))
+                            csv_content[var_name].append(float(value or 0))
 
         nt = len(csv_content['fecha'])
         tmin, tmax = np.array(csv_content['tmin']), np.array(csv_content['tmax'])
@@ -130,8 +131,8 @@ class DSSATWthWriter:
             raise RuntimeError('Attempted to write a weather file that was already created (%s).\n'
                                'Increase the weather grid resolution to avoid collisions.' % filename)
         # write body
-        with open(filename, 'w') as f:
-            f.write(head)
+        with open(filename, 'wb') as f:
+            f.write(asbytes(head))
             np.savetxt(f, data, fmt=_variables_format, delimiter='')
 
         return csv_content
@@ -149,16 +150,16 @@ class DSSATWthWriter:
 
         if '0' not in rainfall_data:
             # Extract rainfall data until the date of forecast.
-            pre_forecast_time = time_var_content[time_var_content <= forecast_date]
+            pre_forecast_time = time_var_content[time_var_content <= forecast_date] if forecast_date else []
             rain = rain_variable[0:len(pre_forecast_time)]
             rainy_days = np.where(rain > 0)[0]
 
             rainfall_data['0'] = {
-                'dates': pre_forecast_time[rainy_days].tolist(),
-                'values': rain[rainy_days].tolist()
+                'dates': pre_forecast_time[rainy_days].tolist() if forecast_date else [],
+                'values': rain[rainy_days].tolist() if forecast_date else []
             }
 
-        post_forecast_time = time_var_content[time_var_content > forecast_date]
+        post_forecast_time = time_var_content[time_var_content > forecast_date] if forecast_date else time_var_content
         post_forecast_start = len(time_var_content) - len(post_forecast_time)
         rain = rain_variable[post_forecast_start:]
 

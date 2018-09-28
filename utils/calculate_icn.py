@@ -12,7 +12,7 @@ n_kg = {
     'default': 50  # N inicial
 }
 horizon_limit = 60  # Profundidad máxima en la cual distribuir el N inicial.
-forecast_file = '/home/federico/Desarrollo/PycharmProjects/PRinde/config/forecasts/mz-e_forecast_PY.yaml'
+forecast_file = '../config/forecasts/sb_forecast_PY.yaml'
 
 n_err_margin = 0.5
 nh4_ppm_first_half = 0.5
@@ -88,7 +88,7 @@ def calculate_nitrogen(soil_file, n_kg_nitrogen, error_margin):
 soils_initial_values = {}
 
 # for file_name in listdir_fullpath('./salado_soils'):
-for file_name in listdir_fullpath('./py_soils'):
+for file_name in listdir_fullpath('../data/soils/py_soils'):
     if 'json' not in file_name:
         continue
     with open(file_name, mode='r') as f:
@@ -110,11 +110,11 @@ with open(forecast_file) as f:
     forecast = yaml.safe_load(f)
 
 # Join site_characteristics, initial_conditions and agronomic_managements by location.
-for loc_key, values in forecast['initial_conditions'].iteritems():
+for loc_key, values in forecast['initial_conditions'].items():
     if loc_key not in forecast['site_characteristics']:
         raise RuntimeError('Missing location "%s" in site_characteristics.' % loc_key)
 
-    for soil_key, soil_ic in values.iteritems():
+    for soil_key, soil_ic in values.items():
         if soil_key not in forecast['site_characteristics'][loc_key]:
             raise RuntimeError('Missing soil "%s" in site_characteristics[%s].' % (soil_key, loc_key))
 
@@ -122,7 +122,7 @@ for loc_key, values in forecast['initial_conditions'].iteritems():
         if soil_id not in soils_initial_values:
             raise RuntimeError('Soil %s not found.' % soil_id)
 
-        for ic_key in soil_ic.keys():
+        for ic_key in list(soil_ic.keys()):
             if 'nh4' in ic_key:
                 soil_ic[ic_key] = soils_initial_values[soil_id]['icnh4']
             if 'no3' in ic_key:

@@ -45,7 +45,7 @@ class SoilDAO:
         if soil_id in soils_dict:
             try:
                 return json.load(open(soils_dict[soil_id]), encoding='latin-1')
-            except Exception, ex:
+            except Exception as ex:
                 print('@ soil file: "%s.json"' % soil_id)
                 raise ex
         else:
