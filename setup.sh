@@ -11,6 +11,7 @@ sudo apt update
 
 # Install Mongo
 sudo apt install -y mongodb
+echo "db.createCollection('forecasts')" | mongo Rinde
 
 # Install Postgres
 sudo apt install -y postgresql postgresql-contrib
@@ -35,10 +36,10 @@ sudo -H pip3 install Flask-SocketIO
 sudo -H pip3 install xxhash
 
 # Install RScript
-sudo apt install r-base
+sudo apt install -y r-base
 sudo chmod o+w /usr/local/lib/R/site-library  # To be able to install R libraries from a R script
 sudo apt install -y libproj-dev libgdal-dev   # Dependency of 'rgdal', a R library
-sudo apt install -y libcurl-openssl-dev       # Dependency of 'lazyeval', a R library
+sudo apt install -y libcurl4-openssl-dev      # Dependency of 'lazyeval', a R library
 
 # Check .tmp/rundir existence (its non-existence causes execution-time errors)
 if [ ! -d .tmp ]; then
@@ -57,5 +58,5 @@ then
     psql --host localhost --username=postgres --dbname=crcsas -W --quiet -f "./core/modules/data_updater/impute_script/Schema.sql"
     rm crc.backup.sql
 else
-    echo WARNING: the database was not restored
+    echo WARNING: the database was not restored!
 fi

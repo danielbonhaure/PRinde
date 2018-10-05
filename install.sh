@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+#
+# Download this file and execute it!
+# wget https://raw.githubusercontent.com/danielbonhaure/PRinde/master/install.sh
+#
 
 if [ ! -d /opt/psims ]; then
     echo ERROR: psims has not yet been installed!! See: https://github.com/danielbonhaure/psims
@@ -17,5 +21,13 @@ sudo chmod g+w /opt/prorindes
 
 git clone https://github.com/danielbonhaure/PRinde.git /opt/prorindes
 
+if [ -f crcsas.zip ]
+then
+    cp crcsas.zip /opt/prorindes/crcsas.zip
+else
+    echo WARNING: databse backup not found!!
+fi
+
 cd /opt/prorindes
+
 bash setup.sh
