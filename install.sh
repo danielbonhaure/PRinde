@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Download this file and execute it!
-# wget https://raw.githubusercontent.com/danielbonhaure/PRinde/master/install.sh
+# wget https://raw.githubusercontent.com/danielbonhaure/PRinde/master/install.sh --output-document=install-prinde.sh
 #
 
 if [ ! -d /opt/psims ]; then
