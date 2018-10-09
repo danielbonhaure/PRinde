@@ -46,7 +46,7 @@ if [ ! -d .tmp ]; then
     mkdir .tmp
     mkdir .tmp/rundir
 elif [ ! -d .tmp/rundir ]; then
-    mkdir .tmo/rundir
+    mkdir .tmp/rundir
 fi
 
 # Restore DB
