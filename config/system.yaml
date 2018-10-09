@@ -18,7 +18,6 @@ paths:
     wth_csv_read: "/opt/prorindes/.tmp/wth"
 
 weather_update_api:
-#    url: 'http://crcssa.srsoft.com.ar/dbdump.php'
     url: 'http://qc.crc-sas.org/dbdump.php'
     user: 'crcssa_db_admin'
     # password: ''  # Uncomment to specify here, otherwise, it'll be looked up in the config/pwd directory.

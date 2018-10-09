@@ -9,9 +9,9 @@ import os, glob, getpass
 def read_connection_parameters():
     conn = collection_utils.namedtuple('Connection', ['db_name', 'user'])
 
-    conn.db_name = input("Ingrese el nombre de la Base de Datos [crcssa]: ")
+    conn.db_name = input("Ingrese el nombre de la Base de Datos [crcsas]: ")
     if not conn.db_name:
-        conn.db_name = "crcssa"
+        conn.db_name = "crcsas"
 
     conn.user = input("Ingrese el usuario de la Base de Datos [postgres.pwd]: ")
     if not conn.user:

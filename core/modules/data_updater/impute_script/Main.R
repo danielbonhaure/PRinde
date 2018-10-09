@@ -41,7 +41,7 @@ opt = optparse::parse_args(optparse::OptionParser(option_list=option_list))
 # opt$stations <- '9987001'
 # opt$host <- '127.0.0.1'
 # opt$port <- 5433
-# opt$database <- 'crcssa'
+# opt$database <- 'crcsas'
 # opt$user <- 'postgres'
 # opt$password <- 'rinde'
 # opt$parallelism <- 4
