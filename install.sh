@@ -29,5 +29,7 @@ else
 fi
 
 cd /opt/prorindes
+bash -x setup.sh
 
-bash setup.sh
+cd /opt/prorindes/core/modules/data_updater/impute_script
+Rscript --verbose Install.R
