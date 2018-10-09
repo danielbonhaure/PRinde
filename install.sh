@@ -31,5 +31,6 @@ fi
 cd /opt/prorindes
 bash -x setup.sh
 
+clear; echo "Instalando paquetes R"
 cd /opt/prorindes/core/modules/data_updater/impute_script
 Rscript --verbose Install.R
