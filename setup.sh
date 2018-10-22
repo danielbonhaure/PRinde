@@ -16,7 +16,7 @@ declare -r crcsas_pass=''
 # Check if passwords are set
 if [ -z ${pguser_pass} ] || [ -z ${crcsas_pass} ]; then
     clear; echo "ERROR: passwords not set in "$(readlink -f $0)
-    exit -1
+    exit 1
 fi
 
 # Install Mongo
