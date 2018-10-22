@@ -7,17 +7,17 @@ fi
 
 clear; echo "Starting ProRindeS setup"
 
+sudo apt update
+
 # Set required passwords
 declare -r pguser_pass=''
 declare -r crcsas_pass=''
 
 # Check if passwords are set
 if [ -z ${pguser_pass} ] || [ -z ${crcsas_pass} ]; then
-    echo "ERROR: passwords not set in "$(readlink -f $0)
+    clear; echo "ERROR: passwords not set in "$(readlink -f $0)
     exit -1
 fi
-
-sudo apt update
 
 # Install Mongo
 sudo apt install -y mongodb
