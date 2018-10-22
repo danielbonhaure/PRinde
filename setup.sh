@@ -7,6 +7,16 @@ fi
 
 clear; echo "Starting ProRindeS setup"
 
+# Set required passwords
+declare -r pguser_pass=''
+declare -r crcsas_pass=''
+
+# Check if passwords are set
+if [ -z ${pguser_pass} ] || [ -z ${crcsas_pass} ]; then
+    echo "ERROR: passwords not set in "$(readlink -f $0)
+    exit -1
+fi
+
 sudo apt update
 
 # Install Mongo
@@ -16,7 +26,7 @@ echo "db.createCollection('forecasts')" | mongo Rinde
 # Install Postgres
 sudo apt install -y postgresql postgresql-contrib
 sudo -u postgres -H -- psql -c "create database crcsas"
-sudo -u postgres -H -- psql -c "alter user postgres password 'prorindes'"
+sudo -u postgres -H -- psql -c "alter user postgres password '${pguser_pass}'"
 
 # Setup
 sudo apt install -y python3 python3-dev python3-software-properties
@@ -53,10 +63,17 @@ fi
 if [ -f crcsas.zip ]
 then
     unzip crcsas.zip
-    psql --host localhost --username=postgres --dbname=crcsas -W --quiet -f "./crc.backup.sql"
-    psql --host localhost --username=postgres --dbname=crcsas -W --quiet -f "./core/lib/SQL/Base Functions.sql"
-    psql --host localhost --username=postgres --dbname=crcsas -W --quiet -f "./core/modules/data_updater/impute_script/Schema.sql"
+    export PGPASSWORD="${pguser_pass}"
+    psql --host localhost --username=postgres --dbname=crcsas --no-password --quiet -f "./crc.backup.sql"
+    psql --host localhost --username=postgres --dbname=crcsas --no-password --quiet -f "./core/lib/SQL/Base Functions.sql"
+    psql --host localhost --username=postgres --dbname=crcsas --no-password --quiet -f "./core/modules/data_updater/impute_script/Schema.sql"
     rm crc.backup.sql crcsas.zip
 else
     echo WARNING: the database was not restored!
 fi
+
+printf "${crcsas_pass}" > ./config/pwd/crcssa_db_admin.pwd
+printf "${pguser_pass}" > ./config/pwd/postgres.pwd
+printf "${crcsas_pass}" > ./core/modules/data_updater/impute_script/db/PostgreSQL/crcssa_db_admin.pwd
+printf "${pguser_pass}" > ./core/modules/data_updater/impute_script/db/PostgreSQL/postgres.pwd
+
