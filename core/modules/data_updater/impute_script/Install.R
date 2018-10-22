@@ -1,4 +1,4 @@
-options(repos=c(CRAN="http://cran.stat.ucla.edu/"))
+options(repos=c(CRAN="http://cran.r-project.org/"))
 
 suppressPackageStartupMessages(if(!require('lazyeval')) { install.packages("lazyeval", dependencies=TRUE, quiet=TRUE); require('lazyeval') })  # sudo apt install libssl-dev
 suppressPackageStartupMessages(if(!require('sirad')) { install.packages("sirad", dependencies=TRUE, quiet=TRUE); require('sirad') })
