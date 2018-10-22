@@ -10,12 +10,12 @@ clear; echo "Starting ProRindeS setup"
 sudo apt update
 
 # Set required passwords
-declare -r pguser_pass=''
-declare -r crcsas_pass=''
+clear; read -p 'Password for postgres db user: ' pguser_pass
+clear; read -p 'Password for the crc api user: ' crcsas_pass
 
-# Check if passwords are set
+# Check if passwords aren't blank
 if [ -z ${pguser_pass} ] || [ -z ${crcsas_pass} ]; then
-    clear; echo "ERROR: passwords not set in "$(readlink -f $0)
+    clear; echo "ERROR: passwords can't be blank" 
     exit 1
 fi
 
