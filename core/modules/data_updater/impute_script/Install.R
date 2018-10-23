@@ -4,7 +4,7 @@ suppressPackageStartupMessages(if(!require('lazyeval')) { install.packages("lazy
 suppressPackageStartupMessages(if(!require('sirad')) { install.packages("sirad", dependencies=TRUE, quiet=TRUE); require('sirad') })
 suppressPackageStartupMessages(if(!require('missForest')) { install.packages("missForest", dependencies=TRUE, quiet=TRUE); require('missForest') })
 suppressPackageStartupMessages(if(!require('doMC')) { install.packages("doMC", dependencies=TRUE, quiet=TRUE); require('doMC') })
-suppressPackageStartupMessages(if(!require('gstat')) { install.packages("gstat", dependencies=TRUE, quiet=TRUE); require('gstat') })
+suppressPackageStartupMessages(if(!require('gstat')) { install.packages("gstat", dependencies=TRUE, quiet=TRUE); require('gstat') })  # dep rgeos installation fails, that's don't matter, see the gstat doc
 suppressPackageStartupMessages(if(!require('geosphere')) { install.packages("geosphere", dependencies=TRUE, quiet=TRUE); require('geosphere') })
 suppressPackageStartupMessages(if(!require('rgdal')) { install.packages("rgdal", dependencies=TRUE, quiet=TRUE); require('rgdal') });  # sudo apt install libgdal-dev
 suppressPackageStartupMessages(if(!require('optparse')) { install.packages("optparse", dependencies=TRUE, quiet=TRUE); require('optparse') });
