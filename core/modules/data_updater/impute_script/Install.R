@@ -4,7 +4,7 @@ suppressPackageStartupMessages(if(!require('lazyeval')) { install.packages("lazy
 suppressPackageStartupMessages(if(!require('sirad')) { install.packages("sirad", dependencies=TRUE, quiet=TRUE); require('sirad') })
 suppressPackageStartupMessages(if(!require('missForest')) { install.packages("missForest", dependencies=TRUE, quiet=TRUE); require('missForest') })
 suppressPackageStartupMessages(if(!require('doMC')) { install.packages("doMC", dependencies=TRUE, quiet=TRUE); require('doMC') })
-suppressPackageStartupMessages(if(!require('gstat')) { install.packages("rgeos", quiet=TRUE); require('rgeos') })  # sudo apt install libgeos++-dev
+suppressPackageStartupMessages(if(!require('rgeos')) { install.packages("rgeos", quiet=TRUE); require('rgeos') })  # sudo apt install libgeos++-dev
 suppressPackageStartupMessages(if(!require('gstat')) { install.packages("gstat", quiet=TRUE); require('gstat') })
 suppressPackageStartupMessages(if(!require('geosphere')) { install.packages("geosphere", quiet=TRUE); require('geosphere') })
 suppressPackageStartupMessages(if(!require('rgdal')) { install.packages("rgdal", quiet=TRUE); require('rgdal') });  # sudo apt install libgdal-dev
