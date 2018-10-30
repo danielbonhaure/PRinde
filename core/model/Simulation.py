@@ -14,8 +14,8 @@ class Simulation(DotDict):
         self.init_from_yaml(simulation_yaml)
         self.crop_type = crop_type
         self.reference_id = xxh64('%s,%s,%s,%s,%s' % (self.soil.id, self.location.id,
-                                                      self.management['mgmt_name'].encode('utf-8'),
-                                                      self.crop_type, self.water_content.encode('utf-8'))).hexdigest()
+                                                      self.management['mgmt_name'],
+                                                      self.crop_type, self.water_content)).hexdigest()
 
     @property
     def id(self):

@@ -75,5 +75,5 @@ class ForecastLoader:
             return True
         except Exception:
             logging.getLogger().error("Skipping forecast file '%s'. Reason: %s." %
-                                      (forecast_file.encode('utf-8'), log_format_exception().encode('utf-8')))
+                                      (forecast_file, log_format_exception()))
             return False
