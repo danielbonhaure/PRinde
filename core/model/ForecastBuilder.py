@@ -156,10 +156,11 @@ class ForecastBuilder:
 
         return forecast_list
 
-    def __replace_keys__(self, forecast_dict, alias_dict):
-        for key, value in forecast_dict.items():
+    def __replace_keys__(self, forecast_dict, alias_dict, iter_copy=None):
+        if not iter_copy:
+            iter_copy = copy.deepcopy(forecast_dict)
+        for key, value in iter_copy.items():
             if isinstance(value, DotDict):
-                self.__replace_keys__(value, alias_dict)
+                self.__replace_keys__(forecast_dict[key], alias_dict, iter_copy[key])
             if key in alias_dict:
-                forecast_dict[alias_dict[key]] = value
-                del forecast_dict[key]
+                forecast_dict[alias_dict[key]] = forecast_dict.pop(key)
