@@ -2,6 +2,7 @@ from core.lib.jobs.base import BaseJob
 from core.lib.jobs.monitor import ProgressMonitor, JOB_STATUS_WAITING, JOB_STATUS_RUNNING
 from core.modules.config.priority import UPDATE_DB_DATA
 from core.modules.simulations_manager.soil.SoilDAO import SoilDAO, load_soils, soils_dict
+import logging
 
 __author__ = 'Daniel Bonhaure'
 
@@ -14,6 +15,8 @@ class SoilsUpdater(BaseJob):
         self.db = system_config.database['yield_db']
 
     def run(self):
+        logging.info('Running soils update.')
+
         # Reload Soils
         soils_dict.clear()
         load_soils()
@@ -36,6 +39,9 @@ class SoilsUpdater(BaseJob):
                 self.db['soils'].update_one({'_id':soil_id}, {'$set':{'metrics': soil_metrics}}, upsert=True)
                 # Update progress information.
                 self.progress_monitor.update_progress(new_value=pm_actual_value)
+
+        logging.info('Updated (or Inserted) %s soils.' % len(soils_dict))
+
 
     @staticmethod
     def calculate_metrics(soil_layers):

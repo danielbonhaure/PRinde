@@ -12,7 +12,7 @@ os.chdir(root_path)
 import sys
 import signal
 import threading
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
 from apscheduler.executors.pool import ThreadPoolExecutor
 from core.modules.data_updater.WeatherUpdater import WeatherUpdater
@@ -26,6 +26,7 @@ from core.lib.logging.stream import WebStream
 from core.modules.statistics.StatsCenter import StatsCenter
 from frontend.web import WebServer
 from core.modules.data_updater.SoilsUpdater import SoilsUpdater
+
 
 __author__ = 'Federico Schmidt'
 
@@ -117,14 +118,16 @@ class Main:
         self.scheduler.add_job(self.weather_updater.update_max_dates, name='Update weather data max dates',
                                trigger='interval', days=1, next_run_time=datetime.now())
         # Schedule the update of rainfall quantiles every 120 days.
-        self.scheduler.add_job(self.weather_updater.update_rainfall_quantiles, trigger='interval', days=120,
-                               name='Update rainfall quantiles')
+        self.scheduler.add_job(self.weather_updater.update_rainfall_quantiles, name='Update rainfall quantiles',
+                               trigger='interval', days=120, next_run_time=datetime.now())
         # Schedule the synchronization of yield databases (between backend and frontend).
         # This is actually performed only if such database is defined inside the config/database.yaml file.
-        self.scheduler.add_job(self.db_sync, trigger='interval', days=1, name='Synchronize yield databases')
+        self.scheduler.add_job(self.db_sync, name='Synchronize yield databases',
+                               trigger='interval', days=1)
 
         # Schedule the update of soils every 120 days.
-        self.scheduler.add_job(self.soils_updater, trigger='interval', days=120, name='Update soils metrics')
+        self.scheduler.add_job(self.soils_updater, name='Update soils metrics',
+                               trigger='interval', days=120, next_run_time=datetime.now())
 
         self.forecast_manager.start()
         self.system_config.logger.info("Forecast manager started.")

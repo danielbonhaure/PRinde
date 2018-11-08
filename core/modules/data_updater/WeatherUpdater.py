@@ -3,7 +3,7 @@ import numpy as np
 from core.lib.utils.log import log_format_exception
 from core.lib.jobs.monitor import NullMonitor, ProgressMonitor
 import requests
-from core.modules.config.priority import UPDATE_DB_DATA, UPDATE_MAX_WEATHER_DATES
+from core.modules.config.priority import UPDATE_DB_DATA, UPDATE_MAX_WEATHER_DATES, UPDATE_RAINFALL_QUANTILES
 from core.lib.jobs.monitor import JOB_STATUS_WAITING, JOB_STATUS_RUNNING
 from core.lib.utils.database import DatabaseUtils
 from datetime import datetime, timedelta
@@ -30,6 +30,8 @@ class WeatherUpdater:
         self.weather_stations_ids.add(omm_id)
 
     def update_weather_db(self, progress_monitor=None):
+        logging.info('Running weather db update.')
+
         if not progress_monitor:
             progress_monitor = NullMonitor
 
@@ -161,6 +163,8 @@ class WeatherUpdater:
         return 1
 
     def update_max_dates(self, progress_monitor=None, run_blocking=True):
+        logging.getLogger().info('Running weather series max date update.')
+
         if len(self.weather_stations_ids) == 0:
             return
 
@@ -269,6 +273,8 @@ class WeatherUpdater:
         progress_monitor.job_ended()
 
     def update_rainfall_quantiles(self, omm_ids=None, progress_monitor=None):
+        logging.getLogger().info('Running rainfall quantiles update.')
+
         if not omm_ids:
             omm_ids = self.weather_stations_ids
 
@@ -282,28 +288,36 @@ class WeatherUpdater:
             progress_monitor.start_value = 0
             progress_monitor.end_value = len(omm_ids)
 
-            for index, omm_id in enumerate(omm_ids):
-                wth_db = self.system_config.database['weather_db']
-                cursor = wth_db.cursor()
-                cursor.execute('SELECT campaign, sum FROM pr_campaigns_acum_rainfall(%s,%s)', (omm_id,self.system_config.campaign_first_month))
+            progress_monitor.update_progress(job_status=JOB_STATUS_WAITING)
+            # Acquire a blocking job lock with the update weather dates priority.
+            with self.system_config.jobs_lock.blocking_job(priority=UPDATE_RAINFALL_QUANTILES):
+                # Lock acquired, notify observers.
+                progress_monitor.update_progress(job_status=JOB_STATUS_RUNNING)
 
-                np_prcp_sums = WeatherUpdater.parse_rainfalls(cursor)
+                for index, omm_id in enumerate(omm_ids):
+                    wth_db = self.system_config.database['weather_db']
+                    cursor = wth_db.cursor()
+                    cursor.execute('SELECT campaign, sum FROM pr_campaigns_acum_rainfall(%s,%s)', (omm_id,self.system_config.campaign_first_month))
 
-                # daily_cursor = wth_db.cursor()
-                # daily_cursor.execute('SELECT campaign, sum FROM pr_campaigns_rainfall(%s)', (omm_id,))
-                #
-                # np_prcp_values = WeatherUpdater.parse_rainfalls(daily_cursor)
+                    np_prcp_sums = WeatherUpdater.parse_rainfalls(cursor)
 
-                # Update (or insert) weather quantiles.
-                db = self.system_config.database['yield_db']
-                db.reference_rainfall.update_one(
-                    {"omm_id": omm_id},
-                    {"$set": {
-                        "quantiles": WeatherUpdater.get_quantiles(np_prcp_sums, quantiles=[5, 25, 50, 75, 95])
-                    }}, upsert=True)
-                # Update progress information.
-                progress_monitor.update_progress(index)
+                    # daily_cursor = wth_db.cursor()
+                    # daily_cursor.execute('SELECT campaign, sum FROM pr_campaigns_rainfall(%s)', (omm_id,))
+                    #
+                    # np_prcp_values = WeatherUpdater.parse_rainfalls(daily_cursor)
+
+                    # Update (or insert) weather quantiles.
+                    db = self.system_config.database['yield_db']
+                    db.reference_rainfall.update_one(
+                        {"omm_id": omm_id},
+                        {"$set": {
+                            "quantiles": WeatherUpdater.get_quantiles(np_prcp_sums, quantiles=[5, 25, 50, 75, 95])
+                        }}, upsert=True)
+                    # Update progress information.
+                    progress_monitor.update_progress(index)
+
             logging.getLogger().info('Updated rainfall quantiles for stations %s.' % list(omm_ids))
+
         except Exception:
             logging.getLogger().error('Failed to update rainfall quantiles. Reason: %s.',
                                       log_format_exception())

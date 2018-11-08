@@ -25,7 +25,6 @@ def load_soils():
             continue
         soils_dict[key] = f
 
-    print('Found %d soils.' % len(soils_dict))
 
 if not soils_dict:
     soils_dict = {}
