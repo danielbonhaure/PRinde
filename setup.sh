@@ -91,10 +91,14 @@ if [ -f crcsas.zip ] && [ ! ${crcsas_exist} ]; then
     psql --host localhost --username=postgres --dbname=crcsas --no-password --quiet -f "./core/modules/data_updater/impute_script/Schema.sql"
     rm crc.backup.sql crcsas.zip
 else
+    if [ -f crcsas.zip ]; then
+        rm crcsas.zip
+    fi
     if [ ! ${crcsas_exist} ]; then
         echo WARNING: the database was not restored!
     else
         echo WARNING: the database already existed and it was not modified!
     fi
 fi
+
 
