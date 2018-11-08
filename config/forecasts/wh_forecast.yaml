@@ -972,7 +972,7 @@ agronomic_management:
         soil_1:
             mgmt_1: {
                 mgmt_name: "Intermedio-Largo - 1 Jul - 140N",
-                cultivar_ir: "IN0007"           # Id of cultivar as it appears in the DSSAT genotype file (INGENO)
+                cultivar_id: "IN0007",          # Id of cultivar as it appears in the DSSAT genotype file (INGENO)
                 planting_date: "yyyy0701",      # Planting date (PDATE)
                 plant_population: 250,          # Planting population at emergence(PPOE). Hay otras 3 variables pero no creo que convega incluirlas acá porque no varian casi nunca (PLDP, PLME y PLDS)
                 irrig_date: "yyyy0702",
