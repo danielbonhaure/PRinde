@@ -1,6 +1,7 @@
 from pymongo.errors import BulkWriteError
 from core.lib.jobs.base import BaseJob
 from core.lib.jobs.monitor import ProgressMonitor, JOB_STATUS_WAITING, JOB_STATUS_RUNNING
+import logging
 
 __author__ = 'Federico Schmidt'
 
@@ -12,6 +13,7 @@ class YieldDatabaseSync(BaseJob):
         self.system_config = system_config
 
     def run(self):
+        logging.info('Running yield database synchronization.')
         self.progress_monitor.update_progress(job_status=JOB_STATUS_WAITING)
 
         # Acquire a read lock (parallel job).
@@ -81,6 +83,9 @@ class YieldDatabaseSync(BaseJob):
                 self.__insert_missing_documents__(collection_name='soils',
                                                   source_db=source_db,
                                                   target_db=target_db)
+
+        logging.info('Yield database synchronization finished.')
+
 
     def __insert_missing_documents__(self, collection_name, source_db, target_db, id_field='_id'):
         """
