@@ -15,3 +15,18 @@ modals.controller('ConfirmModalController', function ($scope, $modalInstance, ac
         $modalInstance.dismiss('cancel');
     };
 });
+
+
+modals.controller('AddDateModalController', function ($scope, $modalInstance, action) {
+    $scope.action = action;
+
+    $scope.ok = function () {
+        if(!$scope.date.$valid) {
+            $modalInstance.close($scope.date);
+        }
+    };
+
+    $scope.cancel = function () {
+        $modalInstance.dismiss('cancel');
+    };
+});

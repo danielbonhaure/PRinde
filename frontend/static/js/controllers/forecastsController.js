@@ -42,6 +42,26 @@ forecasts.controller('forecastsController', function ($scope, $http, $modal, $lo
         });
     };
 
+    $scope.showAddDateModal = function (forecast_file) {
+
+        var modalInstance = $modal.open({
+            templateUrl: 'static/partials/modals/add_date.html',
+            controller: 'AddDateModalController',
+            resolve: {
+                action: function() {
+                    return 'add a date to "' + forecast_file + '" and reload it!'
+                }
+            }
+        });
+
+        modalInstance.result.then(function (new_date) {
+            //console.log('Date: ' + new_date);
+            $http.get('/api/forecasts/add_date/' + forecast_file + '/' + new_date).success(function () {
+                $location.path('/');
+            });
+        });
+    };
+
     $scope.$on('$destroy', function () {
         // clean up stuff
     })

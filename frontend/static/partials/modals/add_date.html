@@ -1,0 +1,15 @@
+<div class="modal-header">
+    <h3 class="modal-title">Add Date</h3>
+</div>
+<div class="modal-body">
+    Are you sure you wan't to {{ action }}?
+    <br>
+    Date to add:
+    <input type="text" ng-model="date" placeholder="YYYY-MM-DD" title="Enter a date in this format YYYY-MM-DD" required
+           pattern="(?:19|20)[0-9]{2}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1[0-9]|2[0-9])|(?:(?!02)(?:0[1-9]|1[0-2])-(?:30))|(?:(?:0[13578]|1[02])-31))" />
+
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
+    <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
+</div>

@@ -5,6 +5,8 @@ from flask_socketio import SocketIO, emit, join_room
 from datetime import datetime
 from core.lib.jobs.monitor import ProgressObserver, SUBJOB_UPDATED, JOB_ENDED
 from core.modules.statistics.StatsCenter import StatEventListener
+import re
+from fileinput import FileInput
 
 __author__ = 'Federico Schmidt'
 
@@ -28,6 +30,7 @@ class WebServer(StatEventListener, ProgressObserver):
         self.app.add_url_rule('/api/config/reload', 'reload_config', self.reload_config, methods=['GET'])
         self.app.add_url_rule('/api/forecasts', 'forecasts', self.get_forecasts, methods=['GET'])
         self.app.add_url_rule('/api/forecasts/reload/<file_name>', 'forecasts_reload', self.reload_forecast, methods=['GET'])
+        self.app.add_url_rule('/api/forecasts/add_date/<file_name>/<new_date>', 'add_date', self.add_date, methods=['GET'])
         self.app.add_url_rule('/api/weather_data', 'weather_data', self.get_weather_data, methods=['GET'])
         self.app.add_url_rule('/api/job/run_now/<job_id>', 'run_job', self.run_job_now, methods=['GET'])
         self.app.add_url_rule('/api/job/cancel/<job_id>', 'cancel_job', self.cancel_job, methods=['GET'])
@@ -121,6 +124,39 @@ class WebServer(StatEventListener, ProgressObserver):
 
         if forecast_file not in self.system_config.forecasts:
             return Response(status=404)
+
+        job = self.scheduler.add_job(self.system_config.forecasts_loader.reload_file,
+                                     args=[forecast_file, self.scheduler, self.forecast_manager],
+                                     name='Reload forecast file "%s"' % file_name)
+
+        return Response(response=job.id,
+                        status=200,
+                        mimetype="text/plain")
+
+    def add_date(self, file_name=None, new_date=None):
+        """
+        Creates a job that reloads a given forecast file.
+        :param file_name:
+        :param new_date:
+        """
+        if not file_name:
+            return Response(status=404)
+
+        if not self.forecast_manager:
+            return Response(status=500)
+
+        forecast_file = os.path.join(self.system_config.forecasts_path, file_name)
+
+        if forecast_file not in self.system_config.forecasts:
+            return Response(status=404)
+
+        if new_date:
+            if re.match(r'^\d{4}-\d{2}-\d{2}$', new_date) and len(new_date) == 10:
+                with FileInput(files=forecast_file, inplace=True) as input_file:
+                    for line in input_file:
+                        if re.match(r"^forecast_date:\s\['.*'\]$", line) and new_date not in line:
+                            line = re.sub(r"^(forecast_date:\s\[.*)(\])$", r"\1, '{d}'\2".format(d=new_date), line)
+                        print(line, end='')
 
         job = self.scheduler.add_job(self.system_config.forecasts_loader.reload_file,
                                      args=[forecast_file, self.scheduler, self.forecast_manager],
