@@ -324,7 +324,8 @@ class ForecastManager:
                 # Ejecutar simulaciones.
                 weather_series_monitor = ProgressMonitor()
                 progress_monitor.add_subjob(weather_series_monitor, job_name='Run pSIMS')
-                psims_exit_code = self.psims_runner.run(forecast, progress_monitor=weather_series_monitor, verbose=True)
+                psims_exit_code = self.psims_runner.run(forecast, progress_monitor=weather_series_monitor,
+                                                        verbose=self.system_config.system_config_yaml.get('verbose_execution', False))
 
                 # Check results
                 if psims_exit_code == 0:

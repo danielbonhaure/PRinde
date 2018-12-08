@@ -26,7 +26,7 @@ class RunpSIMS:
         self.stage_in = re.compile('Stage in:(\d+)')
         self.failed = re.compile('Failed:(\d+)')
 
-    def run(self, forecast, progress_monitor=None, verbose=True):
+    def run(self, forecast, progress_monitor=None, verbose=False):
         if not progress_monitor:
             progress_monitor = NullMonitor()
 

@@ -21,3 +21,5 @@ weather_update_api:
     url: 'http://qc.crc-sas.org/dbdump.php'
     user: 'crcssa_db_admin'
     # password: ''  # Uncomment to specify here, otherwise, it'll be looked up in the config/pwd directory.
+
+verbose_execution: !!bool "false"

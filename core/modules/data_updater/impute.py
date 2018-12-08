@@ -24,8 +24,11 @@ class RunImputation(BaseJob):
             parent_task_monitor = NullMonitor()
         self.parent_monitor = parent_task_monitor
 
-    def run(self, weather_stations, verbose=True):
+    def run(self, weather_stations, verbose=None):
         logging.info('Running imputation job for stations: %s.' % weather_stations)
+
+        if verbose is None:
+            verbose = self.system_config.system_config_yaml.get('verbose_execution', False)
 
         self.progress_monitor.end_value = len(weather_stations)
 
