@@ -127,7 +127,11 @@ class RunpSIMS:
                             raise RuntimeError("Program ended.")
 
         except RuntimeError as err:
-            print(str(err).strip())
+            # en realidad no reporta un error
+            # sino solo la finalización del pSIMS
+            # por eso no siempre se imprime
+            if verbose:
+                print(str(err).strip())
         finally:
             epoll.unregister(p.stdout.fileno())
 
