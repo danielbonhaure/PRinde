@@ -100,7 +100,7 @@ class StatsCenter(ProgressObserver):
             self.init_jobs()
         elif event.code & EVENT_SCHEDULER_SHUTDOWN:
             pass
-            logging.warn('Scheduler shutdown.')
+            logging.warning('Scheduler shutdown.')
             # TODO:propagate system shutdown (or try to restart the scheduler if it was caused by an error?).
 
     def init_jobs(self):

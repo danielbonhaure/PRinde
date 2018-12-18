@@ -19,9 +19,9 @@ def load_soils():
         key = filename_without_ext(f)
 
         if key in soils_dict:
-            logging.warn('Duplicated soil name "%s". Found at two different paths: "%s" and "%s".' % (key,
-                                                                                                      soils_dict[key],
-                                                                                                      f))
+            logging.warning('Duplicated soil name "%s". Found at two different paths: "%s" and "%s".' % (key,
+                                                                                                         soils_dict[key],
+                                                                                                         f))
             continue
         soils_dict[key] = f
 
@@ -48,5 +48,5 @@ class SoilDAO:
                 print('@ soil file: "%s.json"' % soil_id)
                 raise ex
         else:
-            logging.warn('Soil "%s" not found in soils directory (%s).' % (soil_id, soils_path))
+            logging.warning('Soil "%s" not found in soils directory (%s).' % (soil_id, soils_path))
             return None
