@@ -1,0 +1,108 @@
+name: 'Rinde de Soja Tardía en Argentina'
+
+forecast_date: ['2019-01-31']
+
+crop_type: 'SB'
+crop_template: 'SB.json'
+
+configuration:
+    campaign_first_month: 12
+    weather_series: 'combined'  # Weather series type: combined, historic or artificial.
+    dssat_executable: 'DSCSM461'  # The DSSAT executable file name (optional).
+
+
+locations:
+
+    loc_6: {
+        name: "Marcos Juárez",
+        coord_x: '-62.15',
+        coord_y: '-32.7',
+        weather_station: 87467
+    }
+
+site_characteristics:
+
+    loc_6:
+        soil_1: {
+            id: "SU87467001",
+            series: "Monte Buey",
+            scs_family: "Argiudol típico",
+            prop: 0.3,
+            n_horizons: 12
+        }
+        soil_2: {
+            id: "SU87467002",
+            series: "Marcos Juárez",
+            scs_family: "Argiudol típico",
+            prop: 0.33,
+            n_horizons: 12
+        }
+        soil_3: {
+            id: "SU87467003",
+            series: "San Marcos",
+            scs_family: "Hapludol éntico",
+            prop: 0.34,
+            n_horizons: 11
+        }
+
+initial_conditions:
+    loc_6:
+        soil_1:
+            frac_soil_water_hrzn:
+                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+            nh4_ppm_hrzn:
+            no3_ppm_hrzn:
+        soil_2:
+            frac_soil_water_hrzn:
+                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+            nh4_ppm_hrzn:
+            no3_ppm_hrzn:
+        soil_3:
+            frac_soil_water_hrzn:
+                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+            nh4_ppm_hrzn:
+            no3_ppm_hrzn:
+
+
+agronomic_management:
+
+# Marcos Juárez
+    loc_6:
+        soil_1:
+            mgmt_1: {
+                mgmt_name: "IV Medio - 5 Dic",
+                cultivar_id: "UA4L01",
+                planting_date: "yyyy1205",
+                plant_population: 40,
+                irrig_date: "yyyy1206"
+            }
+
+        soil_2:
+            mgmt_1: {
+                mgmt_name: "IV Medio - 5 Dic",
+                cultivar_id: "UA4L01",
+                planting_date: "yyyy1205",
+                plant_population: 40,
+                irrig_date: "yyyy1206"
+            }
+
+        soil_3:
+            mgmt_1: {
+                mgmt_name: "IV Medio - 5 Dic",
+                cultivar_id: "UA4L01",
+                planting_date: "yyyy1205",
+                plant_population: 40,
+                irrig_date: "yyyy1206"
+            }
+
+
+results:
+    cycle: ["HWAM","MDAT","ADAT","PDAT"]
+    daily: ["WSGD", "SWTD", "SWXD", "ETAC", "EOAC"]
+

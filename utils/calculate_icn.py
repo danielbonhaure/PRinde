@@ -8,11 +8,44 @@ __author__ = 'Federico Schmidt'
 import json
 import numpy as np
 
+"""
+OBS:
+
+Solo calcula nh4_ppm_hrzn y no3_ppm_hrz, por lo tanto, cada suelo en cada localidad debe tener las condiciones
+iniciales de agua antes de correr este script. Además deben aparecer nh4_ppm_hrzn y no3_ppm_hrz.
+Este sería un ejemplo para la localidad 6:
+
+initial_conditions:
+    loc_6:
+        soil_1:
+            frac_soil_water_hrzn:
+                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+            nh4_ppm_hrzn:
+            no3_ppm_hrzn:
+        soil_2:
+            frac_soil_water_hrzn:
+                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+            nh4_ppm_hrzn:
+            no3_ppm_hrzn:
+        soil_3:
+            frac_soil_water_hrzn:
+                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+            nh4_ppm_hrzn:
+            no3_ppm_hrzn:
+"""
+
 n_kg = {
     'default': 50  # N inicial
 }
 horizon_limit = 60  # Profundidad máxima en la cual distribuir el N inicial.
-forecast_file = '../config/forecasts/sb_forecast_PY.yaml'
+forecast_file = 'example_forecast.yaml'
+# forecast_file = '../config/forecasts/sb-t_forecast.yaml'
 
 n_err_margin = 0.5
 nh4_ppm_first_half = 0.5
@@ -88,7 +121,7 @@ def calculate_nitrogen(soil_file, n_kg_nitrogen, error_margin):
 soils_initial_values = {}
 
 # for file_name in listdir_fullpath('./salado_soils'):
-for file_name in listdir_fullpath('../data/soils/py_soils'):
+for file_name in listdir_fullpath('../data/soils/summer_soils'):
     if 'json' not in file_name:
         continue
     with open(file_name, mode='r') as f:
