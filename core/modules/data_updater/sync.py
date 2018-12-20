@@ -1,6 +1,9 @@
 from pymongo.errors import BulkWriteError
 from core.lib.jobs.base import BaseJob
 from core.lib.jobs.monitor import ProgressMonitor, JOB_STATUS_WAITING, JOB_STATUS_RUNNING
+from paramiko.ssh_exception import NoValidConnectionsError, AuthenticationException, BadAuthenticationType
+from invoke.exceptions import UnexpectedExit
+from fabric import Connection
 import logging
 
 __author__ = 'Federico Schmidt'
@@ -86,6 +89,32 @@ class YieldDatabaseSync(BaseJob):
 
         logging.info('Yield database synchronization finished.')
 
+        logging.info('Restarting shiny-server in front-end.')
+
+        paramiko_logger = logging.getLogger("paramiko.transport")
+        paramiko_logger.setLevel(logging.ERROR)
+        invoke_logger = logging.getLogger("invoke")
+        invoke_logger.setLevel(logging.ERROR)
+        fabric_logger = logging.getLogger("fabric")
+        fabric_logger.setLevel(logging.ERROR)
+
+        try:
+            conn = Connection(host=target_db.client.address[0], user='root')
+            result = conn.run('service shiny-server restart', hide=True)
+            if result.ok:
+                logging.info('Shiny-server restarted successfully')
+            else:
+                logging.warning('Shiny-server restart failed: return code {}, error {}'.format(result.exited, result.stderr))
+        except NoValidConnectionsError as ex:
+            logging.warning('Shiny-server restart failed, conection error: {}'.format(ex.strerror))
+        except BadAuthenticationType as ex:
+            logging.warning('Shiny-server restart failed, bad authentication type: {}'.format(ex))
+        except AuthenticationException as ex:
+            logging.warning('Shiny-server restart failed, authentication error: {}'.format(ex))
+        except UnexpectedExit as ex:
+            logging.warning('Shiny-server restart failed, unexpected error: {}'.format(ex.result.stderr.rstrip()))
+        except Exception as inst:
+            logging.warning('Shiny-server restart failed, do it manually!!')
 
     def __insert_missing_documents__(self, collection_name, source_db, target_db, id_field='_id'):
         """

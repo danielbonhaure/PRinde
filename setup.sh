@@ -47,6 +47,7 @@ sudo -H pip3 install Flask
 sudo -H pip3 install gevent
 sudo -H pip3 install Flask-SocketIO
 sudo -H pip3 install xxhash
+sudo -H pip3 install fabric
 
 # Install RScript
 clear; echo "Install RScript"
