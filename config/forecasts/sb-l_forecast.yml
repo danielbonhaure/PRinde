@@ -1,14 +1,13 @@
 name: 'Rinde de Soja Tardía en Argentina'
 
-forecast_date: ['2019-01-31']
+forecast_date: ['2018-12-10']
 
-crop_type: 'SB'
+crop_type: 'SB-L'
 crop_template: 'SB.json'
 
 configuration:
     campaign_first_month: 12
     weather_series: 'combined'  # Weather series type: combined, historic or artificial.
-    dssat_executable: 'DSCSM461'  # The DSSAT executable file name (optional).
 
 # Locations to be simulated, coordinates and OMM ID of the associated weather station
 locations:
