@@ -7,6 +7,7 @@ from core.lib.jobs.monitor import ProgressObserver, SUBJOB_UPDATED, JOB_ENDED
 from core.modules.statistics.StatsCenter import StatEventListener
 import re
 from fileinput import FileInput
+from core.lib.utils.date import validate_date_string
 
 __author__ = 'Federico Schmidt'
 
@@ -150,13 +151,12 @@ class WebServer(StatEventListener, ProgressObserver):
         if forecast_file not in self.system_config.forecasts:
             return Response(status=404)
 
-        if new_date:
-            if re.match(r'^\d{4}-\d{2}-\d{2}$', new_date) and len(new_date) == 10:
-                with FileInput(files=forecast_file, inplace=True) as input_file:
-                    for line in input_file:
-                        if re.match(r"^forecast_date:\s\['.*'\]$", line) and new_date not in line:
-                            line = re.sub(r"^(forecast_date:\s\[.*)(\])$", r"\1, '{d}'\2".format(d=new_date), line)
-                        print(line, end='')
+        if validate_date_string(new_date):
+            with FileInput(files=forecast_file, inplace=True) as input_file:
+                for line in input_file:
+                    if re.match(r"^forecast_date:\s\['.*'\]$", line) and new_date not in line:
+                        line = re.sub(r"^(forecast_date:\s\[.*)(\])$", r"\1, '{d}'\2".format(d=new_date), line)
+                    print(line, end='')
 
         job = self.scheduler.add_job(self.system_config.forecasts_loader.reload_file,
                                      args=[forecast_file, self.scheduler, self.forecast_manager],
