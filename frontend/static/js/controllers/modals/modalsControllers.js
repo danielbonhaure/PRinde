@@ -21,7 +21,7 @@ modals.controller('AddDateModalController', function ($scope, $modalInstance, ac
     $scope.action = action;
 
     $scope.ok = function () {
-        if(!$scope.date.$valid) {
+        if($scope.control.date.$valid) {
             $modalInstance.close($scope.date);
         }
     };
