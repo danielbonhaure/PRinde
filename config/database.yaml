@@ -18,6 +18,6 @@ yield_db:
 
 yield_sync_db:
     type: 'mongodb'
-    host: '192.168.1.80'
+    host: '10.0.2.80'
     db_name: 'Rinde'
     port: 27017
