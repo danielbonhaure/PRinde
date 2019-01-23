@@ -9,6 +9,7 @@ from core.model.Location import Location
 from core.modules.simulations_manager.weather.CombinedSeriesMaker import CombinedSeriesMaker
 from core.modules.simulations_manager.weather.HistoricalSeriesMaker import HistoricalSeriesMaker
 from core.modules.simulations_manager.weather.NetCDFSeriesMaker import NetCDFSeriesMaker
+from core.lib.jobs.monitor import NullMonitor, JOB_STATUS_WAITING, JOB_STATUS_RUNNING
 
 __author__ = 'Federico Schmidt'
 
@@ -29,8 +30,16 @@ class ForecastLoader:
         with self.jobs_lock.parallel_job():
             self.__load_file__(forecast_file)
 
-    def reload_file(self, forecast_file, scheduler, forecast_manager):
+    def reload_file(self, forecast_file, scheduler, forecast_manager, progress_monitor=None):
+        if not progress_monitor:
+            progress_monitor = NullMonitor()
+
+        progress_monitor.job_started()
+        progress_monitor.update_progress(job_status=JOB_STATUS_WAITING)
+
         with self.jobs_lock.blocking_job(priority=priority.LOAD_FORECAST):
+            progress_monitor.update_progress(job_status=JOB_STATUS_RUNNING)
+
             file_forecasts = self.system_config.forecasts[forecast_file]
 
             for f in file_forecasts:
