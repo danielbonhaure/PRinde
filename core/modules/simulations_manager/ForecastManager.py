@@ -14,7 +14,8 @@ from core.modules.config.loaders import ForecastLoader
 from core.modules.simulations_manager.CampaignWriter import CampaignWriter
 from core.modules.simulations_manager.weather.DatabaseWeatherSeries import DatabaseWeatherSeries
 from core.modules.simulations_manager.RunpSIMS import RunpSIMS
-from core.lib.jobs.monitor import NullMonitor, JOB_STATUS_WAITING, JOB_STATUS_RUNNING, ProgressMonitor
+from core.lib.jobs.monitor import NullMonitor, ProgressMonitor
+from core.lib.jobs.monitor import JOB_STATUS_WAITING, JOB_STATUS_RUNNING, JOB_STATUS_RESCHEDULED
 from core.modules.config.priority import RUN_FORECAST, RUN_REFERENCE_FORECAST
 from core.modules.simulations_manager.weather.HistoricalSeriesMaker import HistoricalSeriesMaker
 
@@ -208,9 +209,12 @@ class ForecastManager:
 
                 if len(stations_not_updated) > 0:
                     # Forecast can't continue, must be rescheduled.
+                    progress_monitor.update_progress(new_value=progress_monitor.end_value-1)
                     logging.warning("Couldn't run forecast \"%s\" because the following weather stations don't have "
                                     "updated data: %s." % (forecast_full_name, list(stations_not_updated)))
                     self.reschedule_forecast(forecast)
+                    progress_monitor.update_progress(new_value=progress_monitor.end_value)
+                    progress_monitor.update_progress(job_status=JOB_STATUS_RESCHEDULED)
                     return 0
 
                 progress_monitor.update_progress(new_value=1)

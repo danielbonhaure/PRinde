@@ -33,7 +33,8 @@ prindeApp.constant('jobsConstants', {
         JOB_STATUS_WAITING: 2,
         JOB_STATUS_FINISHED: 3,
         JOB_STATUS_ERROR: 4,
-        JOB_STATUS_INACTIVE: 5
+        JOB_STATUS_INACTIVE: 5,
+        JOB_STATUS_RESCHEDULED: 6
     },
     status_description: {
         1: { css: 'label-info', text: 'Running'},
@@ -41,6 +42,7 @@ prindeApp.constant('jobsConstants', {
         3: { css: 'label-success', text: 'Finished'},
         4: { css: 'label-danger', text: 'Error'},
         5: { css: 'label-default', text: 'Inactive'},
+        6: { css: 'label-warning', text: 'Rescheduled'},
         unknown: { css: 'label-default', text: 'Unknown'}
     }
 });

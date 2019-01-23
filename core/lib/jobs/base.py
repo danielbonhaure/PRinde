@@ -51,7 +51,7 @@ class MonitoredFunctionJob(BaseJob):
         self.callable = function
 
     def run(self, *args, **kwargs):
-        arg_names = inspect.getargspec(self.callable)[0]
+        arg_names = inspect.getfullargspec(self.callable)[0]
         if 'progress_monitor' in arg_names:
             # Replace progress monitor reference so the function can report progress.
             self.callable(progress_monitor=self.progress_monitor, *args, **kwargs)

@@ -19,6 +19,7 @@ JOB_STATUS_WAITING = 2
 JOB_STATUS_FINISHED = 3
 JOB_STATUS_ERROR = 4
 JOB_STATUS_INACTIVE = 5
+JOB_STATUS_RESCHEDULED = 6
 
 
 class ProgressObserver(object):
@@ -94,8 +95,8 @@ class ProgressMonitor(ProgressObserver):
         self._set_progress(new_value, JOB_UPDATED)
 
     def job_ended(self, end_status=None):
-        # It should either end in error or in success.
-        if end_status != JOB_STATUS_ERROR:
+        end_status = self.job_status if not end_status else end_status
+        if end_status != JOB_STATUS_ERROR and end_status != JOB_STATUS_RESCHEDULED:
             end_status = JOB_STATUS_FINISHED
         self.job_status = end_status
         self._set_progress(self.end_value, JOB_ENDED)
