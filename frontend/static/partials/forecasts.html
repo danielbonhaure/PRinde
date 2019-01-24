@@ -48,7 +48,10 @@
                                 <i class="fa fa-refresh"></i>Reload File
                             </span>
                             <span class="pull-right reload-button" ng-click="showAddDateModal(file_forecasts.$key)">
-                                <i class="fa fa-plus"></i>Add Forecast Date
+                                <i class="fa fa-plus"></i>Add "Forecast Date"
+                            </span>
+                            <span class="pull-right false-button" >
+                                [ {{ file_forecasts[0].name }} ]
                             </span>
                 </div>
                 <div class="panel-body">
@@ -66,6 +69,16 @@
                             <td class="col-sm-2 text-center">{{ forecast.campaign_name }}</td>
                             <td class="col-sm-3 text-center">{{ forecast.forecast_date }}</td>
                             <td class="col-sm-1 text-center">{{ forecast.crop_type }}</td>
+                            <td class="col-sm-1"></td>
+                        </tr>
+
+                        <tr>
+                            <td class="col-sm-5"><a href="/job/">{{ file_forecasts[0].name }}</a></td>
+                            <td class="col-sm-2 text-center"> &ndash;&ndash;&ndash;&ndash;/&ndash;&ndash;&ndash;&ndash; </td>
+                            <td class="col-sm-3 text-center" ng-click="showAddDateModal(file_forecasts.$key)">
+                                <span class="add-button" ><i class="fa fa-plus"></i> Add Date</span>
+                            </td>
+                            <td class="col-sm-1 text-center">{{ file_forecasts[0].crop_type }}</td>
                             <td class="col-sm-1"></td>
                         </tr>
                     </table>
