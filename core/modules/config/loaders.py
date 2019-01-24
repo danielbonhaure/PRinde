@@ -35,6 +35,8 @@ class ForecastLoader:
             progress_monitor = NullMonitor()
 
         progress_monitor.job_started()
+        progress_monitor.start_value = 0
+        progress_monitor.end_value = 100
         progress_monitor.update_progress(job_status=JOB_STATUS_WAITING)
 
         with self.jobs_lock.blocking_job(priority=priority.LOAD_FORECAST):
@@ -49,9 +51,13 @@ class ForecastLoader:
                     except JobLookupError:
                         pass
 
+            progress_monitor.update_progress(new_value=50)
+
             if self.__load_file__(forecast_file):
                 for f in self.system_config.forecasts[forecast_file]:
                     forecast_manager.schedule_forecast(f)
+
+            progress_monitor.update_progress(new_value=90)
 
     def __load_file__(self, forecast_file):
         forecasts = []

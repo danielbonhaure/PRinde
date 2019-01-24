@@ -1,4 +1,5 @@
 from apscheduler.schedulers.background import BackgroundScheduler
+from xxhash import xxh64
 
 from core.lib.jobs.base import MonitoredFunctionJob, BaseJob
 from core.lib.jobs.monitor import ProgressMonitor, EVENT_ALL
@@ -25,7 +26,9 @@ class MonitoringScheduler(BackgroundScheduler):
         else:
             job = func
         # Add the wrapped job to the real scheduler.
-        j = BackgroundScheduler.add_job(self, job.start, name=(name or job.name), *args, **kwargs)
+        nm = name or job.name
+        id = xxh64(name or job.name).hexdigest()
+        j = BackgroundScheduler.add_job(self, func=job.start, id=id, name=nm, replace_existing=True, *args, **kwargs)
         job.id = j.id
         job.name = j.name
 
