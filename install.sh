@@ -4,11 +4,8 @@
 # wget https://raw.githubusercontent.com/danielbonhaure/PRinde/master/install.sh --output-document=install-prinde.sh
 #
 
-if [[ ! -f gutils.sh ]]; then
-    echo "Downloading gutils.sh, this script is indispensable!!"
-    wget --quiet https://raw.githubusercontent.com/danielbonhaure/PRinde/master/gutils.sh
-fi
-
+sudo echo ""; if [[ $? -ne 0 ]] ; then exit 1; fi
+wget --quiet https://raw.githubusercontent.com/danielbonhaure/PRinde/master/gutils.sh --output-document=gutils.sh
 source gutils.sh; if [[ $? -ne 0 ]] ; then exit 1; fi
 
 #
@@ -18,10 +15,10 @@ source gutils.sh; if [[ $? -ne 0 ]] ; then exit 1; fi
 new_script "Install ProRindeS"
 
 
-new_section "1- Check if psims is already instaled!"
+new_section "1- Check if pSIMS has already been installed!"
 
 if [[ ! -d /opt/psims ]]; then
-    report_error "ERROR: psims has not yet been installed!! See: https://github.com/danielbonhaure/psims"
+    report_error "ERROR: pSIMS has not yet been installed!! See: https://github.com/danielbonhaure/psims"
     exit 1
 fi
 
@@ -49,5 +46,6 @@ else
     report_warning "WARNING: database backup not found!!"
 fi
 
+rm gutils.sh
 cd /opt/prorindes
 bash setup.sh
