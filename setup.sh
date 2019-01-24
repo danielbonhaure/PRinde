@@ -103,11 +103,15 @@ fi
 
 # Set frontend ip
 read -p "FrontEnd ip: " frontend_ip
-sed -i "s/'10.0.2.80'/'${frontend_ip}'/" ./config/database.yaml
+if [[ -n ${frontend_ip} ]]; then
+    sed -i "s/'10.0.2.80'/'${frontend_ip}'/" ./config/database.yaml
+fi
 
 # Set campaign first month
 read -p "Campain first month (AR=5, PY=9): " first_month
-sed -i "s/campaign_first_month: 9/campaign_first_month: ${first_month}/" ./config/system.yaml
+if [[ -n ${first_month} ]]; then
+    sed -i "s/campaign_first_month: 5/campaign_first_month: ${first_month}/" ./config/system.yaml
+fi
 
 # Set passwords
 printf "${crcsas_pass}" > ./config/pwd/crcssa_db_admin.pwd
