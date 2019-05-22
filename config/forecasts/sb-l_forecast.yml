@@ -6,8 +6,8 @@ crop_type: 'SB-L'
 crop_template: 'SB.json'
 
 configuration:
-    campaign_first_month: 12
-    weather_series: 'combined'  # Weather series type: combined, historic or artificial.
+    # Weather series type: combined, historic or artificial.
+    weather_series: 'combined'
 
 # Locations to be simulated, coordinates and OMM ID of the associated weather station
 locations:
