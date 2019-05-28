@@ -103,12 +103,19 @@ AS $$
             SELECT erd.fecha AS fecha_original, erd.tmax, erd.tmin, erd.prcp, erd.rad, 2 AS orden
             FROM estacion_registro_diario_completo erd
             WHERE erd.omm_id = id_estacion AND (erd.fecha BETWEEN fecha_inicio_inflexion AND fecha_fin_inflexion)
+        ), datos_corregidos AS (
+            SELECT dc.fecha_original,
+                   case when dc.tmin > dc.tmax then dc.tmin else dc.tmax end as tmax,
+                   case when dc.tmin > dc.tmax then dc.tmax else dc.tmin end as tmin,
+                   dc.prcp, dc.rad, dc.orden
+            FROM datos_raw dc
         ), datos_ordenados AS (
             SELECT row_number() OVER (ORDER BY dc.orden, dc.fecha_original ASC) AS row_number, dc.fecha_original,
                    dc.tmax, dc.tmin, dc.prcp, dc.rad
-            FROM datos_raw dc
+            FROM datos_corregidos dc
         ), fechas_ordenadas AS (
-            SELECT row_number() OVER (ORDER BY fechas_generadas ASC) AS row_number, fechas_generadas::date
+            SELECT row_number() OVER (ORDER BY fechas_generadas ASC) AS row_number,
+                   fechas_generadas::date as fechas_generadas
             FROM generate_series( fecha_inicio, fecha_fin, '1 day'::interval) fechas_generadas
         )
         SELECT fo.fechas_generadas, datos.fecha_original, datos.tmax, datos.tmin, datos.prcp, datos.rad
