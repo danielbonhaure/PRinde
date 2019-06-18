@@ -84,7 +84,11 @@ class Forecast(DotDict):
             return None
         f_date = datetime.strptime(f_date, '%Y-%m-%d')
 
-        if f_date.month < self.campaign_first_month:
+        # Se resta 3 al menor mes porque solo se agregan 90 días de datos climaticos antes del
+        # primer día del mes de inicio de campanha y 90 días despues del último día del mes de
+        # fin de campanha, entonces, restando 3 meses, más o menos se cubre el periodo sin cultivo
+        # ya que al restar 3 meses, se retrocede entre 60 y 90 días (dependiendo del día de siembra)
+        if f_date.month < min(self.planting_dates()).month - 3:  # self.campaign_first_month:
             return f_date.replace(day=1, month=self.campaign_first_month, year=f_date.year - 1)
         return f_date.replace(day=1, month=self.campaign_first_month)
 
@@ -99,7 +103,11 @@ class Forecast(DotDict):
             return None
         f_date = datetime.strptime(self.forecast_date, '%Y-%m-%d')
 
-        if f_date.month < self.campaign_first_month:
+        # Se resta 3 al menor mes porque solo se agregan 90 días de datos climaticos antes del
+        # primer día del mes de inicio de campanha y 90 días despues del último día del mes de
+        # fin de campanha, entonces, restando 3 meses, más o menos se cubre el periodo sin cultivo
+        # ya que al restar 3 meses, se retrocede entre 60 y 90 días (dependiendo del día de siembra)
+        if f_date.month < min(self.planting_dates()).month - 3:  # self.campaign_first_month:
             return f_date.replace(day=1, month=self.campaign_first_month) - timedelta(days=1)
         return f_date.replace(day=1, month=self.campaign_first_month, year=f_date.year + 1) - timedelta(days=1)
 
@@ -152,8 +160,8 @@ class Forecast(DotDict):
         view['simulations'] = []
         view['forecast_date'] = self.forecast_date
         view['rainfall'] = {
-            'start_date': self.campaign_start_date,
-            'end_date': self.campaign_end_date,
+            'start_date': self.campaign_start_date - timedelta(days=90),  # mantener esto sincronizado con CombinedSeriesMaker
+            'end_date': self.campaign_end_date + timedelta(days=90),  # mantener esto sincronizado con CombinedSeriesMaker
             'ref_date': WeatherNetCDFWriter.reference_date,
             'data': self.rainfall
         }
