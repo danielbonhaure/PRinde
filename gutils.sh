@@ -45,4 +45,13 @@ report_error () {
     fi
 }
 
+report_finish () {
+    if [[ $# -eq 0 ]]; then
+        echo ${blue}"SCRIPT FINISHED!!"${reset}
+    else
+        local message=$1
+        echo ${blue}${message}${reset}
+    fi
+}
+
 trap report_error ERR

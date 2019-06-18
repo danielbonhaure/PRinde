@@ -20,7 +20,7 @@ sudo apt update
 
 
 # Set required passwords
-new_section "1- Set requires passwords"
+new_section "S(1)- Set requires passwords"
 
 read -p 'Password for postgres db user: ' pguser_pass
 read -p 'Password for the crc api user: ' crcsas_pass
@@ -33,7 +33,7 @@ fi
 
 
 # Install Mongo
-new_section "2- Install Mongo"
+new_section "S(2)- Install Mongo"
 
 sudo apt install -y mongodb
 
@@ -45,7 +45,7 @@ fi
 
 
 # Install Postgres
-new_section "3- Install PostgreSQL"
+new_section "S(3)- Install PostgreSQL"
 
 sudo apt install -y postgresql postgresql-contrib
 
@@ -58,7 +58,7 @@ fi
 
 
 # Install Python3
-new_section "4- Install Python3"
+new_section "S(4)- Install Python3"
 
 sudo apt install -y python3 python3-dev python3-software-properties
 sudo apt install -y build-essential python3-pip python3-psycopg2
@@ -79,7 +79,7 @@ sudo -H pip3 install fabric
 
 
 # Install RScript
-new_section "5- Install RScript"
+new_section "S(5)- Install RScript"
 
 sudo apt install -y r-base
 sudo chmod o+w /usr/local/lib/R/site-library  # To be able to install R libraries from a R script
@@ -91,7 +91,7 @@ if [[ $? -ne 0 ]] ; then exit 1; fi
 
 
 # Setup ProRindeS
-new_section "6- Setup ProRindeS"
+new_section "S(6)- Setup ProRindeS"
 
 # Check .tmp/rundir existence (its non-existence causes execution-time errors)
 if [[ ! -d .tmp ]]; then
@@ -121,7 +121,7 @@ printf "${pguser_pass}" > ./core/modules/data_updater/impute_script/db/PostgreSQ
 
 
 # Restore DB
-new_section "7- Restore crcsas DB"
+new_section "S(7)- Restore crcsas DB"
 if [[ -f crcsas.zip && ${crcsas_exist} -eq FALSE ]]; then
     unzip crcsas.zip
     export PGPASSWORD="${pguser_pass}"
@@ -141,4 +141,5 @@ else
     fi
 fi
 
+report_finish "S(8)- ProRindeS SETUP finished sussectully"
 
