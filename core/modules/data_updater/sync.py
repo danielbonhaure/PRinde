@@ -98,6 +98,9 @@ class YieldDatabaseSync(BaseJob):
         fabric_logger = logging.getLogger("fabric")
         fabric_logger.setLevel(logging.ERROR)
 
+        # ssh-keygen -f "/home/${USER}/.ssh/known_hosts" -R "${frontend_ip}"
+        # ssh-copy-id root@${frontend_ip}
+
         try:
             conn = Connection(host=target_db.client.address[0], user='root')
             result = conn.run('service shiny-server restart', hide=True)
@@ -112,8 +115,9 @@ class YieldDatabaseSync(BaseJob):
         except AuthenticationException as ex:
             logging.warning('Shiny-server restart failed, authentication error: {}'.format(ex))
         except UnexpectedExit as ex:
-            logging.warning('Shiny-server restart failed, unexpected error: {}'.format(ex.result.stderr.rstrip()))
-        except Exception as inst:
+            logging.warning('Shiny-server restart failed, unexpected exit error: {}'.format(ex.result.stderr.rstrip()))
+        except Exception as ex:
+            logging.warning('Shiny-server restart failed, error: {}'.format(ex))
             logging.warning('Shiny-server restart failed, do it manually!!')
 
     def __insert_missing_documents__(self, collection_name, source_db, target_db, id_field='_id'):

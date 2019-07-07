@@ -14,6 +14,16 @@ source gutils.sh; if [[ $? -ne 0 ]] ; then exit 1; fi
 
 new_script "Install ProRindeS"
 
+echo "Caution!!"
+echo "This script must be executed by the user who will run \
+prorindes (note that this user must be capable to initiate a password-less SSH session in the frontend!)"
+echo "Do you want to continue?"
+select yn in "Yes" "No"; do
+   case ${yn} in
+        Yes ) break;;
+        No ) exit;;
+    esac
+done
 
 new_section "I(1)- Check if pSIMS has already been installed!"
 
@@ -72,6 +82,7 @@ After=network-online.target
 Requires=network-online.target
 
 [Service]
+User=${USER}
 Type=simple
 ExecStart=/usr/bin/python3 /opt/prorindes/main.py
 
