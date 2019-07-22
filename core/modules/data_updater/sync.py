@@ -102,12 +102,13 @@ class YieldDatabaseSync(BaseJob):
         # ssh-copy-id root@${frontend_ip}
 
         try:
-            conn = Connection(host=target_db.client.address[0], user='root')
-            result = conn.run('service shiny-server restart', hide=True)
-            if result.ok:
-                logging.info('Shiny-server restarted successfully')
-            else:
-                logging.warning('Shiny-server restart failed: return code {}, error {}'.format(result.exited, result.stderr))
+            with Connection(host=target_db.client.address[0], user='root') as conn:
+                result = conn.run('service shiny-server restart', hide=True)
+                if result.ok:
+                    logging.info('Shiny-server restarted successfully')
+                else:
+                    logging.warning('Shiny-server restart failed: return code {}, error {}'.format(result.exited,
+                                                                                                   result.stderr))
         except NoValidConnectionsError as ex:
             logging.warning('Shiny-server restart failed, conection error: {}'.format(ex.strerror))
         except BadAuthenticationType as ex:
