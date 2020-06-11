@@ -318,9 +318,11 @@ class WeatherUpdater:
 
             logging.getLogger().info('Updated rainfall quantiles for stations %s.' % list(omm_ids))
 
+        except InvalidRainfallValue as e:
+            logging.getLogger().error('Failed to update rainfall quantiles. Reason: %s.', e.message)
+
         except Exception:
-            logging.getLogger().error('Failed to update rainfall quantiles. Reason: %s.',
-                                      log_format_exception())
+            logging.getLogger().error('Failed to update rainfall quantiles. Reason: %s.', log_format_exception())
 
     @staticmethod
     def parse_rainfalls(cursor):
@@ -331,10 +333,14 @@ class WeatherUpdater:
             if record[0] != last_id:
                 prcp_values.append([])
                 last_id = record[0]
+            # Check if record[1] (the current rainfall value) isn't None.
+            # If it is, the imputation process has failed at some point.
+            if record[1] is None:
+                raise InvalidRainfallValue()
             # Append values to the last campaign (the one we're processing).
             prcp_values[-1].append(float(record[1]))
 
-            # Convert to numpy array.
+        # Convert to numpy array.
         np_prcp_values = np.empty(shape=(len(prcp_values), 365))
         for idx, prcps in enumerate(prcp_values):
             np_prcp_values[idx] = prcps[0:365]  # Exclude leap years.
@@ -349,3 +355,15 @@ class WeatherUpdater:
         for quantile in quantiles:
             q[str(quantile)] = np.percentile(np_arr, q=quantile, axis=axis).tolist()
         return q
+
+
+class InvalidRainfallValue(Exception):
+    """Exception raised when an invalid rainfall value was detected.
+
+    Attributes:
+        message -- explanation of the error
+    """
+    default_message = "There are missing rainfall values in the Weather DB."
+
+    def __init__(self, message = default_message):
+        self.message = message

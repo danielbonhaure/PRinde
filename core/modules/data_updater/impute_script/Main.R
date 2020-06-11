@@ -134,7 +134,7 @@ tryCatch({
             if(is.null(registrosVecinos)) {
                 registrosVecinos <- RPostgreSQL::fetch(RPostgreSQL::dbSendQuery(conexion, vecinos.query), n=-1, stringsAsFactors=FALSE)
                 registrosVecinos$fecha <- as.Date(registrosVecinos$fecha)
-                registrosVecinos <- dplyr::as.tbl(registrosVecinos) %>% dplyr::left_join(vecinos.data, by='omm_id')
+                registrosVecinos <- tibble::as_tibble(registrosVecinos) %>% dplyr::left_join(vecinos.data, by='omm_id')
             }
 
             if (variable == 'prcp') {
@@ -221,8 +221,8 @@ tryCatch({
 }, finally =  {
     if (length(errors) > 0 | exit_status != 0) {
         exit_status <<- 1
-        writeLines('> Errors arised, see log for details.')
         writeLines(paste(errors, collapse = '\n\n'))
+        writeLines('> Errors arised, see log for details.')
     } else {
         writeLines('> Success.')
     }

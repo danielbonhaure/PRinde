@@ -8,7 +8,6 @@ crop_template: 'WH.json'
 configuration:
     # Weather series type: combined, historic or netcdf.
     weather_series: 'combined'
-    dssat_executable: 'DSCSM461'  # The DSSAT executable file name (optional).
 
 # Locations to be simulated, coordinates and OMM ID of the associated weather station
 locations:

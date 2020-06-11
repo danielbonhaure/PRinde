@@ -1,4 +1,6 @@
-root                 "%s"
+root                 %s
+dssat_files          %s
+dssat_model          %s
 variables            %s
 daily_variables      %s
 ref_year             %d
@@ -10,10 +12,10 @@ postprocess          "OUT2Mongo.py -i Summary.OUT --connection %s --database %s 
 postprocess_daily    "DailyOUT2Mongo.py --connection %s --database %s --collection %s --field daily_results --simulation_data $sim_data --omitted_value 0"
 soils                $root/campaigns/run/soils
 weather              $root/campaigns/run/wth
-refdata              $root/data/dssat_files
+refdata              $dssat_files
 tappcamp             "camp2json.py -c campaign.nc4 -e exp_template.json -o experiment.json"
 tappinp              "jsons2dssat.py -e experiment.json -s soil.json -x X1234567.EXP -S SOIL.SOL"
-executable           "%s A X1234567.EXP"
+executable           "$dssat_files/%s $dssat_model A X1234567.EXP"
 tappwth              "cp" # cp = copy already created weather files (requires knowing the pSIMS weather structure beforehand)
 outtypes             .WTH,.WTH,.EXP,.SOL,.OUT,.json
 PATH                 $PATH:"$root/tapps/pdssat/":"$root/tapps/common/":"$root/tapps/pdssat/daily"

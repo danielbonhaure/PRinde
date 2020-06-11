@@ -138,7 +138,7 @@ class SystemConfiguration(DotDict):
 
         config_object.alias_dict = None
         if config_object.alias_keys_path:
-            config_object.alias_dict = yaml.load(open(config_object.alias_keys_path, 'r'))
+            config_object.alias_dict = yaml.load(open(config_object.alias_keys_path, 'r'), Loader=yaml.FullLoader)
 
         # Load forecasts.
         if not config_object.forecasts:

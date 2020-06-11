@@ -6,6 +6,7 @@ import subprocess
 import select
 import sys
 import os
+import signal
 import logging
 from core.lib.jobs.monitor import NullMonitor, ProgressMonitor
 
@@ -106,6 +107,13 @@ class RunImputation(BaseJob):
                             if 'Success' in read:
                                 self.progress_monitor.update_progress(new_value=self.progress_monitor.end_value)
                                 return 0
+                            if 'Errors arised, see log for details.' in read:
+                                err_file_name = "ERR [%s] - %s.txt" % (datetime.now().isoformat(), "Imputation - Main.R")
+                                with open(err_file_name, mode='w') as err_file:
+                                    err_file.write(''.join(stdout_lines))
+                                # Kill processes.
+                                os.killpg(os.getpgid(p.pid), signal.SIGKILL)
+                                return 1
 
                     elif event & select.EPOLLHUP:
                         if fileno == p.stdout.fileno():

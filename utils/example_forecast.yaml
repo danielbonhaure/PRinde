@@ -8,7 +8,9 @@ crop_template: 'SB.json'
 configuration:
     campaign_first_month: 12
     weather_series: 'combined'  # Weather series type: combined, historic or artificial.
-    dssat_executable: 'DSCSM461'  # The DSSAT executable file name (optional).
+    dssat_executable: 'dscsm047'    # The DSSAT executable file name (optional).
+    dssat_exec_model: 'SBCER047'    # The DSSAT model to be used (optional).
+    dssat_exec_files: '/opt/dssat'  # The DSSAT files folder absolute path (optional). Must contain the executable!!)
 
 
 locations:

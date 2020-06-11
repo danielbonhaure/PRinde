@@ -1,8 +1,8 @@
 
 impute_mf <- function(datosEstacion, variable, estaciones, missingIndexes, registrosVecinos, vecinos.data, max_parallelism=1) {
-    impData <- dplyr::as.tbl(datosEstacion[-missingIndexes,]) %>%
+    impData <- tibble::as_tibble(datosEstacion[-missingIndexes,]) %>%
         dplyr::sample_n(0.5 * nrow(datosEstacion)) %>%
-        dplyr::bind_rows(dplyr::as.tbl(datosEstacion[missingIndexes,])) %>%
+        dplyr::bind_rows(tibble::as_tibble(datosEstacion[missingIndexes,])) %>%
         dplyr::arrange(fecha)
     impData <- impData %>% dplyr::select(dplyr::one_of('omm_id', 'fecha', 'tmax', 'tmin', 'prcp', 'helio', 'nub'))
     missingIndexesSubset <- which(is.na(impData[, variable]))
@@ -23,7 +23,7 @@ impute_mf <- function(datosEstacion, variable, estaciones, missingIndexes, regis
         impData <- impData %>% dplyr::left_join(
             datosVecino %>%
                 dplyr::select(dplyr::one_of(c(variable, "fecha"))) %>%
-                dplyr::rename_(.dots=setNames(c(variable), paste0(vecino, '.', variable))),
+                dplyr::rename(!!paste0(vecino, '.', variable) := !!rlang::sym(variable)),
             by='fecha')
     }
     impData <- impData %>% dplyr::select(-dplyr::one_of('omm_id', 'fecha'))

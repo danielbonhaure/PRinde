@@ -71,9 +71,17 @@ class CampaignWriter:
         # scen_names = sorted(forecast.simulations.values()[0][0].weather_station['scen_names'][0:n_scens])
         # scen_names = str(scen_names).replace(' ', '')
 
-        dssat_executable = 'DSCSM046'
+        dssat_path = os.path.abspath(forecast.paths.dssat)
+        if 'dssat_exec_files' in forecast.configuration:
+            dssat_path = forecast.configuration.dssat_exec_files
+
+        dssat_executable = forecast.configuration.dssat_executable
         if 'dssat_executable' in forecast.configuration:
             dssat_executable = forecast.configuration.dssat_executable
+
+        dssat_exec_model = forecast.configuration.dssat_default_models.get(forecast.crop_type)
+        if 'dssat_exec_model' in forecast.configuration:
+            dssat_exec_model = forecast.configuration.dssat_exec_model
 
         params_file = os.path.join('.', 'data', 'templates', 'params_template')
 
@@ -83,6 +91,8 @@ class CampaignWriter:
             with open(params_file_path, 'w') as rundir_params:
                 rundir_params.write(params % (
                     psims_path,
+                    dssat_path,
+                    dssat_exec_model,
                     cycle_variables,
                     daily_variables,
                     ref_year,

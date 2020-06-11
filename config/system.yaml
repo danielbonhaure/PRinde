@@ -2,8 +2,16 @@ grid_resolution: 30 # Lat/lon grid resolution in arcminutes.
 max_parallelism: 4
 campaign_first_month: 5 # it must be 5 for Argentina and 9 for Paraguay
 
+dssat_executable: 'dscsm0XX'
+
+dssat_default_models:
+    SB: 'SBGRO0XX'
+    WH: 'WHCER0XX'
+    MZ: 'MZCER0XX'
+
 paths:
-    psims: '/opt/psims'
+    psims: '/path/to/psims'  # Absolute path to the pSIMS installation folder
+    dssat: '/path/to/dssat'  # Absolute path to the DSSAT installation folder (Must contain the DSSAT executable!)
     # System general configuration file.
     temp_folder : ".tmp" # Should be a relative path, it'll be placed inside the root path.
 
@@ -13,9 +21,9 @@ paths:
     # Directory for the weather DB to write CSV files with climate data.
     # If the database is running on the same node as the system, wth_csv_export == wth_csv_read.
     # Allows database to be at a remote server.
-    wth_csv_export: "/opt/prorindes/series_combinadas"
+    wth_csv_export: "/path/to/prorindes/series_combinadas"
     # Mount point where database weather files can be read.
-    wth_csv_read: "/opt/prorindes/.tmp/wth"
+    wth_csv_read: "/path/to/prorindes/.tmp/wth"
 
 weather_update_api:
     url: 'http://qc.crc-sas.org/dbdump.php'
