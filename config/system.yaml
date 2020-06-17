@@ -8,6 +8,7 @@ dssat_default_models:
     SB: 'SBGRO0XX'
     WH: 'WHCER0XX'
     MZ: 'MZCER0XX'
+    BA: 'BACER0XX'
 
 paths:
     psims: '/path/to/psims'  # Absolute path to the pSIMS installation folder
@@ -31,3 +32,4 @@ weather_update_api:
     # password: ''  # Uncomment to specify here, otherwise, it'll be looked up in the config/pwd directory.
 
 verbose_execution: !!bool "false"
+delete_psims_folders: !!bool "true"

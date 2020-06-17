@@ -386,12 +386,14 @@ class ForecastManager:
                             db.forecasts.delete_one({"_id": forecast_id})
                     return -1
 
-                if not psims_exit_code or psims_exit_code == 0:
+                delete_folders = self.system_config.system_config_yaml.get('delete_psims_folders', False)
+
+                if (not psims_exit_code or psims_exit_code == 0) and delete_folders:
                     # Clean the rundir.
                     if os.path.exists(forecast.paths.rundir):
                         shutil.rmtree(forecast.paths.rundir)
 
-                if psims_exit_code == 0:
+                if psims_exit_code == 0 and delete_folders:
                     # Clean pSIMS run folder.
                     rundir_regex = re.compile('.+/run(\d){3}$')
                     files_filter = lambda file_name: rundir_regex.match(file_name) is not None

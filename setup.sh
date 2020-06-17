@@ -154,7 +154,7 @@ elif [[ ! -d .tmp/rundir ]]; then
 fi
 
 # Set frontend ip
-read -p "FrontEnd ip (leave blank to use default): " frontend_ip
+read -p "FrontEnd ip [10.0.2.80]: " frontend_ip
 if [[ -n ${frontend_ip} ]]; then
     sed -i "s/'10.0.2.80'/'${frontend_ip}'/g" ./config/database.yaml
 fi
@@ -212,6 +212,20 @@ fi
 if [[ ! `grep -w UA6M03 $DSSAT_FOLDER/Genotype/SBGRO0${DSSAT_VERSION}.CUL` ]]; then
   sudo sh -c 'echo "UA6M03 A  6445              . SB0602 12.45 0.305  23.5   6.0  12.0 41.50 19.00 0.850  375. 180.0  1.00  0.16  27.5  2.05   9.0  78.0  .400  .200" >> '$DSSAT_FOLDER'/Genotype/SBGRO0'$DSSAT_VERSION'.CUL'
 fi
+# BA Argentina
+if [[ ! `grep -w ProRindeS $DSSAT_FOLDER/Genotype/BACER0${DSSAT_VERSION}.CUL` ]]; then
+  sudo sh -c 'printf "\n! Added for run ProRindeS\n" >> '$DSSAT_FOLDER'/Genotype/BACER0'$DSSAT_VERSION'.CUL'
+fi
+if [[ ! `grep -w IB0105 $DSSAT_FOLDER/Genotype/BACER0${DSSAT_VERSION}.CUL` ]]; then
+  sudo sh -c 'echo "IB0105 ANDREIA            1,2 SY0003     5   100   400    18    45   2.3    89" >> '$DSSAT_FOLDER'/Genotype/BACER0'$DSSAT_VERSION'.CUL'
+fi
+if [[ ! `grep -w ProRindeS $DSSAT_FOLDER/Genotype/BACER0${DSSAT_VERSION}.ECO` ]]; then
+  sudo sh -c 'printf "\n! Added for run ProRindeS\n" >> '$DSSAT_FOLDER'/Genotype/BACER0'$DSSAT_VERSION'.ECO'
+fi
+if [[ ! `grep -w SY0003 $DSSAT_FOLDER/Genotype/BACER0${DSSAT_VERSION}.ECO` ]]; then
+  sudo sh -c 'echo "SY0003   275   .25   175   150   .25   .10   240   0.5   2.6   2.6    13   1.0   2.5  0.30  0.60   400   5.7   6.5   5.0   2.5   1.0   2.6   6.0   7.0   3.0   100   5.0   .85    30   3.0   0.0   -10" >> '$DSSAT_FOLDER'/Genotype/BACER0'$DSSAT_VERSION'.ECO'
+fi
+
 
 # Set passwords
 printf "${crcsas_pass}" > ./config/pwd/crcssa_db_admin.pwd
