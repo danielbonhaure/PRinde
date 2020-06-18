@@ -108,8 +108,9 @@ class WeatherUpdater:
 
                     progress_monitor.update_progress(new_value=n_stations_updated)
 
-                    # descomentar para forzar la ejecución de la imputación
-                    # stations_updated |= self.weather_stations_ids
+                    # Check if the imputation should be forced.
+                    if self.system_config.system_config_yaml.get('force_imputation', False):
+                        stations_updated |= self.weather_stations_ids
 
                     if len(update_data) < 2:
                         continue
@@ -143,7 +144,7 @@ class WeatherUpdater:
                         logging.info('Updated weather data for station(s): %s.' % stations_updated)
                         return 0
                     else:
-                        logging.error('Imputation ended with a non zero exit status (%d).' % ret_val)
+                        logging.error('Imputation ended with a non zero exit status (%s).' % ret_val)
                         return 2
                 else:
                     # No new data, end transaction to avoid holding a lock on tables.

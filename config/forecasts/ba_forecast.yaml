@@ -109,33 +109,33 @@ locations:
          weather_station: 87688
     }
 
-#    loc_15: {
-#         name: "Trenque Lauquen",
-#         coord_x: '-62.77',
-#         coord_y: '-35.97',
-#         weather_station: 87540
-#    }
-#
-#    loc_16: {
-#         name: "Santa Rosa",
-#         coord_x: '-64.28',
-#         coord_y: '-36.59',
-#         weather_station: 87623
-#    }
-#
-#    loc_17: {
-#         name: "Rosario",
-#         coord_x: '-60.61',
-#         coord_y: '-33.05',
-#         weather_station: 87480
-#    }
-#
-#    loc_18: {
-#         name: "Coronel Pringles",
-#         coord_x: '-61.33',
-#         coord_y: '-38.00',
-#         weather_station: 87683
-#    }
+    loc_15: {
+         name: "Trenque Lauquen",
+         coord_x: '-62.77',
+         coord_y: '-35.97',
+         weather_station: 87540
+    }
+
+    loc_16: {
+         name: "Santa Rosa",
+         coord_x: '-64.28',
+         coord_y: '-36.59',
+         weather_station: 87623
+    }
+
+    loc_17: {
+         name: "Rosario",
+         coord_x: '-60.61',
+         coord_y: '-33.05',
+         weather_station: 87480
+    }
+
+    loc_18: {
+         name: "Coronel Pringles",
+         coord_x: '-61.33',
+         coord_y: '-38.00',
+         weather_station: 87683
+    }
 
 
 # -----------------------------------------------------------------------------------------------------------------------------------------
@@ -562,82 +562,82 @@ site_characteristics:
         }
 
 
-#    loc_15:
-#        soil_1: {
-#            id: "BA87540001",
-#            series: "Quemuna",
-#            scs_family: "Hapludol éntico",
-#            prop: 0.5,
-#            n_horizons: 9
-#        }
-#        soil_2: {
-#            id: "BA87540002",
-#            series: "Pelegrini",
-#            scs_family: "Hapludol típico",
-#            prop: 0.5,
-#            n_horizons: 9
-#        }
-# 
-#
-#
-#    loc_16:
-#        soil_1: {
-#            id: "BA87623001",
-#            series: "Catrilo",
-#            scs_family: "Ustipsament típico",
-#            prop: 0.4,
-#            n_horizons: 10
-#        }
-#        soil_2: {
-#            id: "BA87623002",
-#            series: "Quemu Quemu somero",
-#            scs_family: "Haplustol éntico",
-#            prop: 0.3,
-#            n_horizons: 5
-#        }
-#        soil_3: {
-#            id: "BA87623003",
-#            series: "Miguel Cane",
-#            scs_family: "Haplustol éntico",
-#            prop: 0.3,
-#            n_horizons: 10
-#        }
-#
-#
-#
-#    loc_17:
-#        soil_1: {
-#            id: "BA87480001",
-#            series: "Maciel -10% C",
-#            scs_family: "Argiudol tipico",
-#            prop: 0.5,
-#            n_horizons: 12
-#        }
-#        soil_2: {
-#            id: "BA87480002",
-#            series: "Peyrano",
-#            scs_family: "Argiudol vértico",
-#            prop: 0.5,
-#            n_horizons: 10
-#        }
-#
-#
-#
-#    loc_18:
-#        soil_1: {
-#            id: "BA87683001",
-#            series: "La Loma",
-#            scs_family: "Argiudol típico",
-#            prop: 0.5,
-#            n_horizons: 3
-#        }
-#        soil_2: {
-#            id: "BA87683002",
-#            series: "Laprida",
-#            scs_family: "Argiudol típico",
-#            prop: 0.5,
-#            n_horizons: 6
-#        }
+    loc_15:
+        soil_1: {
+            id: "BA87540001",
+            series: "Quemuna",
+            scs_family: "Hapludol éntico",
+            prop: 0.5,
+            n_horizons: 9
+        }
+        soil_2: {
+            id: "BA87540002",
+            series: "Pelegrini",
+            scs_family: "Hapludol típico",
+            prop: 0.5,
+            n_horizons: 9
+        }
+ 
+
+
+    loc_16:
+        soil_1: {
+            id: "BA87623001",
+            series: "Catrilo",
+            scs_family: "Ustipsament típico",
+            prop: 0.4,
+            n_horizons: 10
+        }
+        soil_2: {
+            id: "BA87623002",
+            series: "Quemu Quemu somero",
+            scs_family: "Haplustol éntico",
+            prop: 0.3,
+            n_horizons: 5
+        }
+        soil_3: {
+            id: "BA87623003",
+            series: "Miguel Cane",
+            scs_family: "Haplustol éntico",
+            prop: 0.3,
+            n_horizons: 10
+        }
+
+
+
+    loc_17:
+        soil_1: {
+            id: "BA87480001",
+            series: "Maciel -10% C",
+            scs_family: "Argiudol tipico",
+            prop: 0.5,
+            n_horizons: 12
+        }
+        soil_2: {
+            id: "BA87480002",
+            series: "Peyrano",
+            scs_family: "Argiudol vértico",
+            prop: 0.5,
+            n_horizons: 10
+        }
+
+
+
+    loc_18:
+        soil_1: {
+            id: "BA87683001",
+            series: "La Loma",
+            scs_family: "Argiudol típico",
+            prop: 0.5,
+            n_horizons: 3
+        }
+        soil_2: {
+            id: "BA87683002",
+            series: "Laprida",
+            scs_family: "Argiudol típico",
+            prop: 0.5,
+            n_horizons: 6
+        }
 
 
 # -----------------------------------------------------------------------------------------------------------------------------------------
@@ -1070,82 +1070,83 @@ initial_conditions:
 
 
 
-#    loc_15:
-#        soil_1:
-#            frac_soil_water_hrzn:
-#                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
-#                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
-#                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-#            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
-#            no3_ppm_hrzn: [10.0, 4.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-#        soil_2:
-#            frac_soil_water_hrzn:
-#                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
-#                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
-#                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-#            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3]
-#            no3_ppm_hrzn: [13.0, 7.0, 3.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-#
-#
-#
-#    loc_16:
-#        soil_1:
-#            frac_soil_water_hrzn:
-#                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
-#                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
-#                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-#            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
-#            no3_ppm_hrzn: [9.5, 5.0, 3.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-#        soil_2:
-#            frac_soil_water_hrzn:
-#                low:  [0.2, 0.2, 0.2, 0.2, 0.2]
-#                mid:  [0.5, 0.5, 0.5, 0.5, 0.5]
-#                high: [1.0, 1.0, 1.0, 1.0, 1.0]
-#            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3]
-#            no3_ppm_hrzn: [13.0, 6.0, 3.0, 2.0, 1.0]
-#        soil_3:
-#            frac_soil_water_hrzn:
-#                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
-#                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
-#                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-#            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
-#            no3_ppm_hrzn: [14.0, 7.0, 4.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-#
-#
-#
-#    loc_17:
-#        soil_1:
-#            frac_soil_water_hrzn:
-#                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
-#                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
-#                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-#            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
-#            no3_ppm_hrzn: [15.0, 7.0, 4.0, 3.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-#        soil_2:
-#            frac_soil_water_hrzn:
-#                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
-#                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
-#                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-#            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
-#            no3_ppm_hrzn: [18.0, 9.0, 4.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-#
-#
-#
-#    loc_18:
-#        soil_1:
-#            frac_soil_water_hrzn:
-#                low:  [0.2, 0.2, 0.2]
-#                mid:  [0.5, 0.5, 0.5]
-#                high: [1.0, 1.0, 1.0]
-#            nh4_ppm_hrzn: [0.5, 0.5, 0.5]
-#            no3_ppm_hrzn: [12.0, 6.0, 3.0]
-#        soil_2:
-#            frac_soil_water_hrzn:
-#                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
-#                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
-#                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-#            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3]
-#            no3_ppm_hrzn: [15.0, 8.0, 4.0, 2.0, 1.0, 1.0]
+    loc_15:
+        soil_1:
+            frac_soil_water_hrzn:
+                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [10.0, 4.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+        soil_2:
+            frac_soil_water_hrzn:
+                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [13.0, 7.0, 3.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+
+
+
+    loc_16:
+        soil_1:
+            frac_soil_water_hrzn:
+                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [9.5, 5.0, 3.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+        soil_2:
+            frac_soil_water_hrzn:
+                low:  [0.2, 0.2, 0.2, 0.2, 0.2]
+                mid:  [0.5, 0.5, 0.5, 0.5, 0.5]
+                high: [1.0, 1.0, 1.0, 1.0, 1.0]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3]
+            no3_ppm_hrzn: [13.0, 6.0, 3.0, 2.0, 1.0]
+        soil_3:
+            frac_soil_water_hrzn:
+                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [14.0, 7.0, 4.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+
+
+
+    loc_17:
+        soil_1:
+            frac_soil_water_hrzn:
+                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [15.0, 7.0, 4.0, 3.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+        soil_2:
+            frac_soil_water_hrzn:
+                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [18.0, 9.0, 4.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+
+
+
+    loc_18:
+        soil_1:
+            frac_soil_water_hrzn:
+                low:  [0.2, 0.2, 0.2]
+                mid:  [0.5, 0.5, 0.5]
+                high: [1.0, 1.0, 1.0]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5]
+            no3_ppm_hrzn: [12.0, 6.0, 3.0]
+        soil_2:
+            frac_soil_water_hrzn:
+                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [15.0, 8.0, 4.0, 2.0, 1.0, 1.0]
+
 
 # -----------------------------------------------------------------------------------------------------------------------------------------
 
@@ -1843,127 +1844,127 @@ agronomic_management:
 
 
 
-## Trenque Lauquen
-#    loc_15:
-#        soil_1:
-#            mgmt_1: {
-#                mgmt_name: "Ciclo Intermedio de Alto Potencial - 20 Jun - 130N",
-#                cultivar_id: "IB0105",
-#                planting_date: "yyyy0620",
-#                plant_population: 240,
-#                irrig_date: "yyyy0621",
-#                n_fert_date: "1",
-#                n_fert_code: "FE005",
-#                n_fert_dose: 80
-#            }
-#
-#        soil_2:
-#            mgmt_1: {
-#                mgmt_name: "Ciclo Intermedio de Alto Potencial - 20 Jun - 130N",
-#                cultivar_id: "IB0105",
-#                planting_date: "yyyy0620",
-#                plant_population: 240,
-#                irrig_date: "yyyy0621",
-#                n_fert_date: "1",
-#                n_fert_code: "FE005",
-#                n_fert_dose: 80
-#            }
-#
-#
-#
-## Santa Rosa
-#    loc_16:
-#        soil_1:
-#            mgmt_1: {
-#                mgmt_name: "Ciclo Intermedio de Alto Potencial - 20 Jun - 105N",
-#                cultivar_id: "IB0105",
-#                planting_date: "yyyy0620",
-#                plant_population: 200,
-#                irrig_date: "yyyy0621",
-#                n_fert_date: "1",
-#                n_fert_code: "FE005",
-#                n_fert_dose: 55
-#            }
-#
-#        soil_2:
-#            mgmt_1: {
-#                mgmt_name: "Ciclo Intermedio de Alto Potencial - 20 Jun - 105N",
-#                cultivar_id: "IB0105",
-#                planting_date: "yyyy0620",
-#                plant_population: 200,
-#                irrig_date: "yyyy0621",
-#                n_fert_date: "1",
-#                n_fert_code: "FE005",
-#                n_fert_dose: 55
-#            }
-#
-#        soil_3:
-#            mgmt_1: {
-#                mgmt_name: "Ciclo Intermedio de Alto Potencial - 20 Jun - 105N",
-#                cultivar_id: "IB0105",
-#                planting_date: "yyyy0620",
-#                plant_population: 200,
-#                irrig_date: "yyyy0621",
-#                n_fert_date: "1",
-#                n_fert_code: "FE005",
-#                n_fert_dose: 55
-#            }
-#
-#
-#
-## Rosario
-#    loc_17:
-#        soil_1:
-#            mgmt_1: {
-#                mgmt_name: "Ciclo Intermedio de Alto Potencial - 1 Jun - 145N",
-#                cultivar_id: "IB0105",
-#                planting_date: "yyyy0601",
-#                plant_population: 245,
-#                irrig_date: "yyyy0602",
-#                n_fert_date: "1",
-#                n_fert_code: "FE005",
-#                n_fert_dose: 95
-#            }
-#
-#        soil_2:
-#            mgmt_1: {
-#                mgmt_name: "Ciclo Intermedio de Alto Potencial - 1 Jun - 145N",
-#                cultivar_id: "IB0105",
-#                planting_date: "yyyy0601",
-#                plant_population: 245,
-#                irrig_date: "yyyy0602",
-#                n_fert_date: "1",
-#                n_fert_code: "FE005",
-#                n_fert_dose: 95
-#            }
-#
-#
-#
-## Coronel Pringles
-#    loc_18:
-#        soil_1:
-#            mgmt_1: {
-#                mgmt_name: "Ciclo Intermedio de Alto Potencial - 20 Jun - 120N",
-#                cultivar_id: "IB0105",
-#                planting_date: "yyyy0620",
-#                plant_population: 200,
-#                irrig_date: "yyyy0621",
-#                n_fert_date: "1",
-#                n_fert_code: "FE005",
-#                n_fert_dose: 70
-#            }
-#
-#        soil_2:
-#            mgmt_1: {
-#                mgmt_name: "Ciclo Intermedio de Alto Potencial - 20 Jun - 120N",
-#                cultivar_id: "IB0105",
-#                planting_date: "yyyy0620",
-#                plant_population: 200,
-#                irrig_date: "yyyy0621",
-#                n_fert_date: "1",
-#                n_fert_code: "FE005",
-#                n_fert_dose: 70
-#            }
+# Trenque Lauquen
+    loc_15:
+        soil_1:
+            mgmt_1: {
+                mgmt_name: "Ciclo Intermedio de Alto Potencial - 20 Jun - 130N",
+                cultivar_id: "IB0105",
+                planting_date: "yyyy0620",
+                plant_population: 240,
+                irrig_date: "yyyy0621",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 80
+            }
+
+        soil_2:
+            mgmt_1: {
+                mgmt_name: "Ciclo Intermedio de Alto Potencial - 20 Jun - 130N",
+                cultivar_id: "IB0105",
+                planting_date: "yyyy0620",
+                plant_population: 240,
+                irrig_date: "yyyy0621",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 80
+            }
+
+
+
+# Santa Rosa
+    loc_16:
+        soil_1:
+            mgmt_1: {
+                mgmt_name: "Ciclo Intermedio de Alto Potencial - 20 Jun - 105N",
+                cultivar_id: "IB0105",
+                planting_date: "yyyy0620",
+                plant_population: 200,
+                irrig_date: "yyyy0621",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 55
+            }
+
+        soil_2:
+            mgmt_1: {
+                mgmt_name: "Ciclo Intermedio de Alto Potencial - 20 Jun - 105N",
+                cultivar_id: "IB0105",
+                planting_date: "yyyy0620",
+                plant_population: 200,
+                irrig_date: "yyyy0621",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 55
+            }
+
+        soil_3:
+            mgmt_1: {
+                mgmt_name: "Ciclo Intermedio de Alto Potencial - 20 Jun - 105N",
+                cultivar_id: "IB0105",
+                planting_date: "yyyy0620",
+                plant_population: 200,
+                irrig_date: "yyyy0621",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 55
+            }
+
+
+
+# Rosario
+    loc_17:
+        soil_1:
+            mgmt_1: {
+                mgmt_name: "Ciclo Intermedio de Alto Potencial - 1 Jun - 145N",
+                cultivar_id: "IB0105",
+                planting_date: "yyyy0601",
+                plant_population: 245,
+                irrig_date: "yyyy0602",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 95
+            }
+
+        soil_2:
+            mgmt_1: {
+                mgmt_name: "Ciclo Intermedio de Alto Potencial - 1 Jun - 145N",
+                cultivar_id: "IB0105",
+                planting_date: "yyyy0601",
+                plant_population: 245,
+                irrig_date: "yyyy0602",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 95
+            }
+
+
+
+# Coronel Pringles
+    loc_18:
+        soil_1:
+            mgmt_1: {
+                mgmt_name: "Ciclo Intermedio de Alto Potencial - 20 Jun - 120N",
+                cultivar_id: "IB0105",
+                planting_date: "yyyy0620",
+                plant_population: 200,
+                irrig_date: "yyyy0621",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 70
+            }
+
+        soil_2:
+            mgmt_1: {
+                mgmt_name: "Ciclo Intermedio de Alto Potencial - 20 Jun - 120N",
+                cultivar_id: "IB0105",
+                planting_date: "yyyy0620",
+                plant_population: 200,
+                irrig_date: "yyyy0621",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 70
+            }
 
 #Ciclo Intermedio de Alto Potencial            "IB0105"
 
