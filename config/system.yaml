@@ -33,3 +33,4 @@ weather_update_api:
 
 verbose_execution: !!bool "false"
 delete_psims_folders: !!bool "true"
+force_imputation: !!bool "false"
