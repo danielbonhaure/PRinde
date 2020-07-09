@@ -109,6 +109,34 @@ locations:
          weather_station: 87688
     }
 
+    loc_15: {
+         name: "Trenque Lauquen",
+         coord_x: '-62.77',
+         coord_y: '-35.97',
+         weather_station: 87540
+    }
+
+    loc_16: {
+         name: "Santa Rosa",
+         coord_x: '-64.28',
+         coord_y: '-36.59',
+         weather_station: 87623
+    }
+
+    loc_17: {
+         name: "Rosario",
+         coord_x: '-60.61',
+         coord_y: '-33.05',
+         weather_station: 87480
+    }
+
+    loc_18: {
+         name: "Coronel Pringles",
+         coord_x: '-61.33',
+         coord_y: '-38.00',
+         weather_station: 87683
+    }
+
 
 # -----------------------------------------------------------------------------------------------------------------------------------------
 
@@ -961,6 +989,85 @@ initial_conditions:
                 high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
             nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3]
             no3_ppm_hrzn: [12.0, 6.0, 3.0, 1.5, 0.7, 0.2, 0.2]
+
+
+
+    loc_15:
+        soil_1:
+            frac_soil_water_hrzn:
+                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [10.0, 4.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+        soil_2:
+            frac_soil_water_hrzn:
+                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [13.0, 7.0, 3.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+
+
+
+    loc_16:
+        soil_1:
+            frac_soil_water_hrzn:
+                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [9.5, 5.0, 3.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+        soil_2:
+            frac_soil_water_hrzn:
+                low:  [0.2, 0.2, 0.2, 0.2, 0.2]
+                mid:  [0.5, 0.5, 0.5, 0.5, 0.5]
+                high: [1.0, 1.0, 1.0, 1.0, 1.0]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3]
+            no3_ppm_hrzn: [13.0, 6.0, 3.0, 2.0, 1.0]
+        soil_3:
+            frac_soil_water_hrzn:
+                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [14.0, 7.0, 4.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+
+
+
+    loc_17:
+        soil_1:
+            frac_soil_water_hrzn:
+                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [15.0, 7.0, 4.0, 3.0, 2.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+        soil_2:
+            frac_soil_water_hrzn:
+                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3]
+            no3_ppm_hrzn: [18.0, 9.0, 4.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+
+
+
+    loc_18:
+        soil_1:
+            frac_soil_water_hrzn:
+                low:  [0.2, 0.2, 0.2]
+                mid:  [0.5, 0.5, 0.5]
+                high: [1.0, 1.0, 1.0]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5]
+            no3_ppm_hrzn: [12.0, 6.0, 3.0]
+        soil_2:
+            frac_soil_water_hrzn:
+                low:  [0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
+                mid:  [0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+                high: [1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+            nh4_ppm_hrzn: [0.5, 0.5, 0.5, 0.5, 0.3, 0.3]
+            no3_ppm_hrzn: [15.0, 8.0, 4.0, 2.0, 1.0, 1.0]
 
 # -----------------------------------------------------------------------------------------------------------------------------------------
 
@@ -2187,6 +2294,218 @@ agronomic_management:
             }
 
 
+
+# Trenque Lauquen
+    loc_15:
+        soil_1:
+            mgmt_1: {
+                mgmt_name: "Intermedio-Largo - 15 Jun - 140N",
+                cultivar_id: "IN0007",
+                planting_date: "yyyy0615",
+                plant_population: 250,
+                irrig_date: "yyyy0616",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 90
+            }
+            mgmt_2: {
+                mgmt_name: "Intermedio-Corto - 10 Jul - 140N",
+                cultivar_id: "IN0006",
+                planting_date: "yyyy0710",
+                plant_population: 300,
+                irrig_date: "yyyy0711",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 90
+            }
+
+        soil_2:
+            mgmt_1: {
+                mgmt_name: "Intermedio-Largo - 15 Jun - 140N",
+                cultivar_id: "IN0007",
+                planting_date: "yyyy0615",
+                plant_population: 250,
+                irrig_date: "yyyy0616",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 90
+            }
+            mgmt_2: {
+                mgmt_name: "Intermedio-Corto - 10 Jul - 140N",
+                cultivar_id: "IN0006",
+                planting_date: "yyyy0710",
+                plant_population: 300,
+                irrig_date: "yyyy0711",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 90
+            }
+
+
+# Santa Rosa
+    loc_16:
+        soil_1:
+            mgmt_1: {
+                mgmt_name: "Intermedio-Largo - 20 Jun - 120N",
+                cultivar_id: "IN0007",
+                planting_date: "yyyy0620",
+                plant_population: 200,
+                irrig_date: "yyyy0621",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 70
+            }
+            mgmt_2: {
+                mgmt_name: "Intermedio-Corto - 10 Jul - 120N",
+                cultivar_id: "IN0006",
+                planting_date: "yyyy0710",
+                plant_population: 250,
+                irrig_date: "yyyy0711",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 70
+            }
+
+        soil_2:
+            mgmt_1: {
+                mgmt_name: "Intermedio-Largo - 20 Jun - 120N",
+                cultivar_id: "IN0007",
+                planting_date: "yyyy0620",
+                plant_population: 200,
+                irrig_date: "yyyy0621",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 70
+            }
+            mgmt_2: {
+                mgmt_name: "Intermedio-Corto - 10 Jul - 120N",
+                cultivar_id: "IN0006",
+                planting_date: "yyyy0710",
+                plant_population: 250,
+                irrig_date: "yyyy0711",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 70
+            }
+
+        soil_3:
+            mgmt_1: {
+                mgmt_name: "Intermedio-Largo - 20 Jun - 120N",
+                cultivar_id: "IN0007",
+                planting_date: "yyyy0620",
+                plant_population: 200,
+                irrig_date: "yyyy0621",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 70
+            }
+            mgmt_2: {
+                mgmt_name: "Intermedio-Corto - 10 Jul - 120N",
+                cultivar_id: "IN0006",
+                planting_date: "yyyy0710",
+                plant_population: 250,
+                irrig_date: "yyyy0711",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 70
+            }
+
+
+
+# Rosario
+    loc_17:
+        soil_1:
+            mgmt_1: {
+                mgmt_name: "Intermedio-Largo - 01 Jun - 145N",
+                cultivar_id: "IN0007",
+                planting_date: "yyyy0601",
+                plant_population: 250,
+                irrig_date: "yyyy0602",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 95
+            }
+            mgmt_2: {
+                mgmt_name: "Intermedio-Corto - 01 Jul - 145N",
+                cultivar_id: "IN0006",
+                planting_date: "yyyy0701",
+                plant_population: 300,
+                irrig_date: "yyyy0702",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 95
+            }
+
+        soil_2:
+            mgmt_1: {
+                mgmt_name: "Intermedio-Largo - 01 Jun - 145N",
+                cultivar_id: "IN0007",
+                planting_date: "yyyy0601",
+                plant_population: 250,
+                irrig_date: "yyyy0602",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 95
+            }
+            mgmt_2: {
+                mgmt_name: "Intermedio-Corto - 01 Jul - 145N",
+                cultivar_id: "IN0006",
+                planting_date: "yyyy0701",
+                plant_population: 300,
+                irrig_date: "yyyy0702",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 95
+            }
+
+
+# Coronel Pringles
+    loc_18:
+        soil_1:
+            mgmt_1: {
+                mgmt_name: "Intermedio-Largo - 20 Jun - 120N",
+                cultivar_id: "IN0007",
+                planting_date: "yyyy0620",
+                plant_population: 200,
+                irrig_date: "yyyy0621",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 70
+            }
+            mgmt_2: {
+                mgmt_name: "Intermedio-Corto - 10 Jul - 120N",
+                cultivar_id: "IN0006",
+                planting_date: "yyyy0710",
+                plant_population: 250,
+                irrig_date: "yyyy0711",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 70
+            }
+
+        soil_2:
+            mgmt_1: {
+                mgmt_name: "Intermedio-Largo - 20 Jun - 120N",
+                cultivar_id: "IN0007",
+                planting_date: "yyyy0620",
+                plant_population: 200,
+                irrig_date: "yyyy0621",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 70
+            }
+            mgmt_2: {
+                mgmt_name: "Intermedio-Corto - 10 Jul - 120N",
+                cultivar_id: "IN0006",
+                planting_date: "yyyy0710",
+                plant_population: 250,
+                irrig_date: "yyyy0711",
+                n_fert_date: "1",
+                n_fert_code: "FE005",
+                n_fert_dose: 70
+            }
+
+
 #III Medio: DM3700   UA3L54
 #III Largo: A3901    UA3L03
 #IV Medio: DM4800    UA4L01
@@ -2203,3 +2522,4 @@ results:
     cycle: ["HWAM", "PDAT", "ADAT", "MDAT"]
     # daily: ["WSGD", "SWTD", "SWXD", "ETAC", "EOAC"]
     daily: ["WFGD", "SWTD", "SWXD", "ETAC", "EOAC"]
+
