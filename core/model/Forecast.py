@@ -182,6 +182,7 @@ class Forecast(DotDict):
 
         view['campaign_name'] = self.campaign_name
         view['forecast_date'] = self.forecast_date
+        view['forecast_id'] = self.id
 
         if 'rainfall' in view:
             del view['rainfall']

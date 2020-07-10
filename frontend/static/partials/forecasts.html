@@ -26,7 +26,12 @@
                             <td class="col-sm-2 text-center">{{ forecast.campaign_name }}</td>
                             <td class="col-sm-3 text-center">{{ forecast.forecast_date }}</td>
                             <td class="col-sm-1 text-center">{{ forecast.crop_type }}</td>
-                            <td class="col-sm-1"></td>
+                            <td class="col-sm-1 text-center">
+                                <a download="raw_data.csv" target="_self"
+                                   href="/api/forecasts/raw_data/{{ forecast.forecast_id }}">
+                                    <i class="fa fa-download"></i>
+                                </a>
+                            </td>
                         </tr>
                     </table>
                 </div>

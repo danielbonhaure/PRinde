@@ -1,13 +1,14 @@
 import os
 from apscheduler.triggers.interval import IntervalTrigger
-from flask import Flask, Response
+from flask import Flask, Response, make_response
 from flask_socketio import SocketIO, emit, join_room
 from datetime import datetime
 from core.lib.jobs.monitor import ProgressObserver, SUBJOB_UPDATED, JOB_ENDED
 from core.modules.statistics.StatsCenter import StatEventListener
-import re
+import re, io, csv
 from fileinput import FileInput
 from core.lib.utils.date import validate_date_string
+from pymongo import MongoClient
 
 __author__ = 'Federico Schmidt'
 
@@ -32,6 +33,7 @@ class WebServer(StatEventListener, ProgressObserver):
         self.app.add_url_rule('/api/forecasts', 'forecasts', self.get_forecasts, methods=['GET'])
         self.app.add_url_rule('/api/forecasts/reload/<file_name>', 'forecasts_reload', self.reload_forecast, methods=['GET'])
         self.app.add_url_rule('/api/forecasts/add_date/<file_name>/<new_date>', 'add_date', self.add_date, methods=['GET'])
+        self.app.add_url_rule('/api/forecasts/raw_data/<forecast_id>', 'raw_data', self.download_raw_data, methods=['GET'])
         self.app.add_url_rule('/api/weather_data', 'weather_data', self.get_weather_data, methods=['GET'])
         self.app.add_url_rule('/api/job/run_now/<job_id>', 'run_job', self.run_job_now, methods=['GET'])
         self.app.add_url_rule('/api/job/cancel/<job_id>', 'cancel_job', self.cancel_job, methods=['GET'])
@@ -165,6 +167,34 @@ class WebServer(StatEventListener, ProgressObserver):
         return Response(response=job.id,
                         status=200,
                         mimetype="text/plain")
+
+    def download_raw_data(self, forecast_id):
+        source_db = self.system_config.database['yield_db']
+        query = [
+            {'$match': {'forecast_id': f'{forecast_id}'}},
+            {'$unwind': {'path': '$cycle_results.HWAM.scenarios',
+                         'preserveNullAndEmptyArrays': False}},
+            {'$project': {'_id': 0,
+                          'forecast_id': '$forecast_id',
+                          'cultivo': '$crop_type',
+                          'localidad': '$location_name',
+                          'suelo': '$soil_id',
+                          'agua': '$water_content',
+                          'manejo': '$management_name',
+                          'fecha': '$forecast_date',
+                          'var_name': '$HWAM',
+                          'zafra': '$cycle_results.HWAM.scenarios.scenario_name',
+                          'valor': '$cycle_results.HWAM.scenarios.value'}}
+        ]
+        fileio = io.StringIO()
+        writer = csv.writer(fileio, quoting=csv.QUOTE_NONNUMERIC)
+        writer.writerow(['forecast_id', 'cultivo', 'localidad', 'suelo', 'agua', 'manejo', 'fecha', 'zafra', 'valor'])
+        for r in source_db.simulations.aggregate(query):
+            writer.writerow(r.values())
+        output = make_response(fileio.getvalue())
+        output.headers["Content-Disposition"] = "attachment; filename=export.csv"
+        output.headers["Content-type"] = "text/csv"
+        return output
 
     def get_weather_data(self):
         """
