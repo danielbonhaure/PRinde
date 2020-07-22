@@ -167,7 +167,7 @@ fi
 
 # Conf DSSAT and pSIMS
 sed -i "s/dscsm0XX/"$DSSAT_EXECUTABLE"/g" ./config/system.yaml
-sed -i "s/SBCER0XX/"$DSSAT_SB_MODEL"/g" ./config/system.yaml
+sed -i "s/SBGRO0XX/"$DSSAT_SB_MODEL"/g" ./config/system.yaml
 sed -i "s/WHCER0XX/"$DSSAT_WH_MODEL"/g" ./config/system.yaml
 sed -i "s/MZCER0XX/"$DSSAT_MZ_MODEL"/g" ./config/system.yaml
 sed -i "s/BACER0XX/"$DSSAT_BA_MODEL"/g" ./config/system.yaml
