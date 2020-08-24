@@ -105,9 +105,17 @@ class RunImputation(BaseJob):
                                         self.progress_monitor.update_progress(new_value=n_processed_stations)
 
                             if 'Success' in read:
+                                logging.getLogger().info("Imputation job finished with success.")
                                 self.progress_monitor.update_progress(new_value=self.progress_monitor.end_value)
                                 return 0
-                            if 'Errors arised, see log for details.' in read:
+                            if 'Warnings' in read:
+                                logging.getLogger().info("Imputation job finished with warnings.")
+                                warn_file_name = "WARN [%s] - %s.txt" % (datetime.now().isoformat(), "Imputation - Main.R")
+                                with open(warn_file_name, mode='w') as warn_file:
+                                    warn_file.write(''.join(stdout_lines))
+                                return 0
+                            if 'Errors' in read:
+                                logging.getLogger().info("Imputation job finished with errors.")
                                 err_file_name = "ERR [%s] - %s.txt" % (datetime.now().isoformat(), "Imputation - Main.R")
                                 with open(err_file_name, mode='w') as err_file:
                                     err_file.write(''.join(stdout_lines))

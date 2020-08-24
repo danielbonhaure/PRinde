@@ -23,6 +23,7 @@ source('Impute.R')
 
 exit_status <- 0
 errors <- c()
+warns <- c()
 
 option_list = list(
     optparse::make_option(c("-s", "--stations"), action="store", default="", type='character', help="Comma separated list of weather stations ids that should be imputed."),
@@ -215,7 +216,7 @@ tryCatch({
         RPostgreSQL::dbCommit(conexion)
     }
 }, warning = function(warn){
-    errors <<- c(errors, warn)
+    warns <<- c(warns, warn)
 }, error = function(error_detail) {
     errors <<- c(errors, error_detail)
 }, finally =  {
@@ -223,6 +224,9 @@ tryCatch({
         exit_status <<- 1
         writeLines(paste(errors, collapse = '\n\n'))
         writeLines('> Errors arised, see log for details.')
+    } else if (length(warns) > 0) {
+        writeLines(paste(warns, collapse = '\n\n'))
+        writeLines('> Warnings arised, see log for details.')
     } else {
         writeLines('> Success.')
     }
