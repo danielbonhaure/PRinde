@@ -25,6 +25,9 @@ usage() {
   echo -e " -mBA, --ba-model <arg>        \t DSSAT BA model. Default: BACER047"
   echo -e " -ras, --run-at-startup        \t Setup a daemon to run ProRindeS at startup."
   echo -e " -nit, --non-interactive-mode  \t Non-interactive mode."
+  echo -e " -nPG, --dont-install-postgres \t Don't install PostgreSQL database."
+  echo -e " -nRP, --dont-restore-postgres \t Don't restore PostgreSQL database."
+  echo -e " -nMG, --dont-install-mongo    \t Don't install MongoDB database."
   echo -e " -h, --help                    \t Display a help message and quit."
 }
 
@@ -42,6 +45,9 @@ while [[ $# -gt 0 ]]; do
     -mBA|--ba-model) DSSAT_BA_MODEL=$2; shift 2;;
     -ras|--run-at-startup) RUN_AT_STARTUP=true; shift 1;;
     -nit|--non-interactive-mode) NON_IT_MODE=true; shift 1;;
+    -nPG|--dont-install-postgres) DONT_INSTALL_POSTGRES=true; shift 1;;
+    -nRP|--dont-restore-postgres) DONT_RESTORE_POSTGRES=true; shift 1;;
+    -nMG|--dont-install-mongo) DONT_INSTALL_MONGO=true; shift 1;;
     -h|--help|*) usage; exit;;
   esac
 done
