@@ -21,6 +21,9 @@ usage() {
   echo -e " -mMZ, --mz-model <arg>        \t DSSAT MZ model. Default: MZCER047"
   echo -e " -mBA, --ba-model <arg>        \t DSSAT BA model. Default: BACER047"
   echo -e " -nit, --non-interactive-mode  \t Non-interactive mode."
+  echo -e " -nPG, --dont-install-postgres \t Don't install PostgreSQL database."
+  echo -e " -nRP, --dont-restore-postgres \t Don't restore PostgreSQL database."
+  echo -e " -nMG, --dont-install-mongo    \t Don't install MongoDB database."
   echo -e " -h, --help                    \t Display a help message and quit."
 }
 
@@ -37,6 +40,9 @@ while [[ $# -gt 0 ]]; do
     -mMZ|--mz-model) DSSAT_MZ_MODEL=$2; shift 2;;
     -mBA|--ba-model) DSSAT_BA_MODEL=$2; shift 2;;
     -nit|--non-interactive-mode) NON_IT_MODE=true; shift 1;;
+    -nPG|--dont-install-postgres) DONT_INSTALL_POSTGRES=true; shift 1;;
+    -nRP|--dont-restore-postgres) DONT_RESTORE_POSTGRES=true; shift 1;;
+    -nMG|--dont-install-mongo) DONT_INSTALL_MONGO=true; shift 1;;
     -h|--help|*) usage; exit;;
   esac
 done
@@ -132,12 +138,28 @@ elif [[ ! -d .tmp/rundir ]]; then
     mkdir .tmp/rundir
 fi
 
-# Set frontend ip
+# Set backend PostgreSQL database address
 if [[ ! ${NON_IT_MODE} ]]; then
-    read -p "FrontEnd ip [10.0.2.80]: " FRONTEND_ADDRESS
+    read -p "Back-end PostgreSQL database address [localhost]: " POSTGRES_DB_ADDRESS
 fi
-if [[ -n ${FRONTEND_ADDRESS} ]]; then
-    sed -i "s/'10.0.2.80'/'${FRONTEND_ADDRESS}'/g" ./config/database.yaml
+if [[ -n ${POSTGRES_DB_ADDRESS} ]]; then
+    sed -i "/weather_db/,/yield_db/s/'localhost'/'${POSTGRES_DB_ADDRESS}'/g" ./config/database.yaml
+fi
+
+# Set backend MongoDB database address
+if [[ ! ${NON_IT_MODE} ]]; then
+    read -p "Back-end MongoDB database address [localhost]: " BACK_MONGO_DB_ADDRESS
+fi
+if [[ -n ${BACK_MONGO_DB_ADDRESS} ]]; then
+    sed -i "/yield_db/,/yield_sync_db/s/'localhost'/'${BACK_MONGO_DB_ADDRESS}'/g" ./config/database.yaml
+fi
+
+# Set frontend MongoDB database address
+if [[ ! ${NON_IT_MODE} ]]; then
+    read -p "Front-end MongoDB database address[10.0.2.80]: " FRONT_MONGO_DB_ADDRESS
+fi
+if [[ -n ${FRONT_MONGO_DB_ADDRESS} ]]; then
+    sed -i "/yield_sync_db/,/EOF/s/'10.0.2.80'/'${FRONT_MONGO_DB_ADDRESS}'/g" ./config/database.yaml
 fi
 
 # Set campaign first month
@@ -219,57 +241,59 @@ printf "${PGUSER_PASS}" > ./core/modules/data_updater/impute_script/db/PostgreSQ
 
 
 # Install Postgres
-new_section "S(5)- Install PostgreSQL"
+if [[ ! ${DONT_INSTALL_POSTGRES} ]]; then
 
-sudo apt install -y postgresql postgresql-contrib
+    new_section "S(5)- Install PostgreSQL"
 
-crcsas_exist=$(sudo -u postgres -H -- psql -l | grep -w crcsas | wc -l)
+    sudo apt install -y postgresql postgresql-contrib
 
-if [[ ${crcsas_exist} -eq FALSE ]]; then
-    sudo -u postgres -H -- psql -c "create database crcsas"
-    sudo -u postgres -H -- psql -c "alter user postgres password '${PGUSER_PASS}'"
+    crcsas_exist=$(sudo -u postgres -H -- psql -l | grep -w crcsas | wc -l)
+
+    if [[ ${crcsas_exist} -eq FALSE ]]; then
+        sudo -u postgres -H -- psql -c "create database crcsas"
+        sudo -u postgres -H -- psql -c "alter user postgres password '${PGUSER_PASS}'"
+    fi
 fi
 
 
-# Restore DB
-new_section "S(6)- Restore crcsas DB"
-if [[ -f crcsas.zip && ${crcsas_exist} -eq FALSE ]]; then
-    unzip crcsas.zip
-    export PGPASSWORD="${pguser_pass}"
-    pg_restore --host=localhost --username=postgres --dbname=crcsas --no-password --jobs=2 "./crcsas.dump"
-    psql --host localhost --username=postgres --dbname=crcsas --no-password --quiet -f "./core/lib/SQL/Base Functions.sql"
-    psql --host localhost --username=postgres --dbname=crcsas --no-password --quiet -f "./core/modules/data_updater/impute_script/Schema.sql"
-    rm crcsas.dump crcsas.zip
-else
-    if [[ -f crcsas.zip ]]; then
-        rm crcsas.zip
-    fi
-    if [[ ! -f crcsas.zip && ${crcsas_exist} -eq FALSE ]]; then
-        report_warning "WARNING: the database was not restored! Backup not found!!"
-    fi
-    if [[ ${crcsas_exist} -eq TRUE ]]; then
-        report_warning "WARNING: the database already existed and it was not modified!"
+# Restore Postgres 
+if [[ ! ${DONT_RESTORE_POSTGRES} ]]; then
+    # Restore DB
+    new_section "S(6)- Restore crcsas DB"
+    if [[ -f crcsas.zip && ${crcsas_exist} -eq FALSE ]]; then
+        unzip crcsas.zip
+        export PGPASSWORD="${pguser_pass}"
+        pg_restore --host=localhost --username=postgres --dbname=crcsas --no-password --jobs=2 "./crcsas.dump"
+        psql --host localhost --username=postgres --dbname=crcsas --no-password --quiet -f "./core/lib/SQL/Base Functions.sql"
+        psql --host localhost --username=postgres --dbname=crcsas --no-password --quiet -f "./core/modules/data_updater/impute_script/Schema.sql"
+        rm crcsas.dump crcsas.zip
+    else
+        if [[ -f crcsas.zip ]]; then
+            rm crcsas.zip
+        fi
+        if [[ ! -f crcsas.zip && ${crcsas_exist} -eq FALSE ]]; then
+            report_warning "WARNING: the database was not restored! Backup not found!!"
+        fi
+        if [[ ${crcsas_exist} -eq TRUE ]]; then
+            report_warning "WARNING: the database already existed and it was not modified!"
+        fi
     fi
 fi
 
 
 # Install Mongo
-new_section "S(5)- Install Mongo"
+if [[ ! ${DONT_INSTALL_MONGO} ]]; then
+    new_section "S(5)- Install Mongo"
 
-sudo apt install -y mongodb
+    sudo apt install -y mongodb
 
-rinde_exist=$(echo "show collections" | mongo Rinde | grep -w forecasts | wc -l)
+    rinde_exist=$(echo "show collections" | mongo Rinde | grep -w forecasts | wc -l)
 
-if [[ ${rinde_exist} -eq FALSE ]]; then
-    echo "db.createCollection('forecasts')" | mongo Rinde
+    if [[ ${rinde_exist} -eq FALSE ]]; then
+        echo "db.createCollection('forecasts')" | mongo Rinde
+    fi
 fi
 
 # 
-#
-#
-
-report_finish "S(8)- ProRindeS SETUP finished sussectully"
-
-#
 #
 #
