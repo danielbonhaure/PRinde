@@ -5,8 +5,9 @@
 #
 
 # import gutils.sh
-wget --quiet https://raw.githubusercontent.com/danielbonhaure/PRinde/master/gutils.sh --output-document=gutils.sh
-source gutils.sh; test $? -ne 0 && exit 1
+gutils=$(dirname $(readlink -f $0))/gutils.sh
+wget --quiet https://raw.githubusercontent.com/danielbonhaure/PRinde/master/gutils.sh --output-document=${gutils}
+source ${gutils}; test $? -ne 0 && exit 1
 
 # print usage help message
 usage() {
