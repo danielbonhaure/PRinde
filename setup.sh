@@ -20,6 +20,7 @@ usage() {
   echo -e " -mWH, --wh-model <arg>        \t DSSAT WH model. Default: WHCER047"
   echo -e " -mMZ, --mz-model <arg>        \t DSSAT MZ model. Default: MZCER047"
   echo -e " -mBA, --ba-model <arg>        \t DSSAT BA model. Default: BACER047"
+  echo -e " -nit, --non-interactive-mode  \t Non-interactive mode."
   echo -e " -h, --help                    \t Display a help message and quit."
 }
 
@@ -35,6 +36,7 @@ while [[ $# -gt 0 ]]; do
     -mWH|--wh-model) DSSAT_WH_MODEL=$2; shift 2;;
     -mMZ|--mz-model) DSSAT_MZ_MODEL=$2; shift 2;;
     -mBA|--ba-model) DSSAT_BA_MODEL=$2; shift 2;;
+    -nit|--non-interactive-mode) NON_IT_MODE=true; shift 1;;
     -h|--help|*) usage; exit;;
   esac
 done
@@ -73,43 +75,20 @@ sudo apt update
 # Set required passwords
 new_section "S(1)- Set requires passwords"
 
-read -p 'Password for postgres db user: ' pguser_pass
-read -p 'Password for the crc api user: ' crcsas_pass
+if [[ ! ${NON_IT_MODE} ]]; then
+    read -p 'Password for postgres db user: ' PGUSER_PASS
+    read -p 'Password for the crc api user: ' CRCSAS_PASS
+fi
 
 # Check if passwords aren't blank
-if [[ -z ${pguser_pass} || -z ${crcsas_pass} ]]; then
+if [[ -z ${PGUSER_PASS} || -z ${CRCSAS_PASS} ]]; then
     report_error "ERROR: passwords can't be blank"
     exit 1
 fi
 
 
-# Install Mongo
-new_section "S(2)- Install Mongo"
-
-sudo apt install -y mongodb
-
-rinde_exist=$(echo "show collections" | mongo Rinde | grep -w forecasts | wc -l)
-
-if [[ ${rinde_exist} -eq FALSE ]]; then
-    echo "db.createCollection('forecasts')" | mongo Rinde
-fi
-
-
-# Install Postgres
-new_section "S(3)- Install PostgreSQL"
-
-sudo apt install -y postgresql postgresql-contrib
-
-crcsas_exist=$(sudo -u postgres -H -- psql -l | grep -w crcsas | wc -l)
-
-if [[ ${crcsas_exist} -eq FALSE ]]; then
-    sudo -u postgres -H -- psql -c "create database crcsas"
-    sudo -u postgres -H -- psql -c "alter user postgres password '${pguser_pass}'"
-fi
-
-
 # Install Python3
-new_section "S(4)- Install Python3"
+new_section "S(2)- Install Python3"
 
 sudo apt install -y python3 python3-dev python3-software-properties
 sudo apt install -y build-essential python3-psycopg2
@@ -131,7 +110,7 @@ sudo -H python3 -m pip install fabric
 
 
 # Install RScript
-new_section "S(5)- Install RScript"
+new_section "S(3)- Install RScript"
 
 sudo apt install -y r-base
 sudo chmod o+w /usr/local/lib/R/site-library  # To be able to install R libraries from a R script
@@ -143,7 +122,7 @@ if [[ $? -ne 0 ]] ; then exit 1; fi
 
 
 # Setup ProRindeS
-new_section "S(6)- Setup ProRindeS"
+new_section "S(4)- Setup ProRindeS"
 
 # Check .tmp/rundir existence (its non-existence causes execution-time errors)
 if [[ ! -d .tmp ]]; then
@@ -154,15 +133,19 @@ elif [[ ! -d .tmp/rundir ]]; then
 fi
 
 # Set frontend ip
-read -p "FrontEnd ip [10.0.2.80]: " frontend_ip
-if [[ -n ${frontend_ip} ]]; then
-    sed -i "s/'10.0.2.80'/'${frontend_ip}'/g" ./config/database.yaml
+if [[ ! ${NON_IT_MODE} ]]; then
+    read -p "FrontEnd ip [10.0.2.80]: " FRONTEND_ADDRESS
+fi
+if [[ -n ${FRONTEND_ADDRESS} ]]; then
+    sed -i "s/'10.0.2.80'/'${FRONTEND_ADDRESS}'/g" ./config/database.yaml
 fi
 
 # Set campaign first month
-read -p "Campain first month (AR=5, PY=9): " first_month
-if [[ -n ${first_month} ]]; then
-    sed -i "s/campaign_first_month: 5/campaign_first_month: ${first_month}/g" ./config/system.yaml
+if [[ ! ${NON_IT_MODE} ]]; then
+    read -p "Campaign first month (AR=5, PY=9): " CAMPAING_FIRST_MONTH
+fi
+if [[ -n ${CAMPAING_FIRST_MONTH} ]]; then
+    sed -i "s/campaign_first_month: 5/campaign_first_month: ${CAMPAING_FIRST_MONTH}/g" ./config/system.yaml
 fi
 
 # Conf DSSAT and pSIMS
@@ -229,14 +212,27 @@ sed -i '/@RWUPM RWUMX/!b;n;n;c\ \ 2.02\ \ \ 2.03' 'BACER0'$DSSAT_VERSION'.SPE'
 sed -i '/@ NFPU  NFPL  NFGU  NFGL  NFTU  NFTL  NFSU  NFSF/!b;n;n;c\ \ 1.00\ \ 0.00\ \ \ 1.0\ \ \ 0.0\ \ \ 1.0\ \ \ 0.0\ \ \ 0.4\ \ \ 0.1' 'BACER0'$DSSAT_VERSION'.SPE'
 
 # Set passwords
-printf "${crcsas_pass}" > ./config/pwd/crcssa_db_admin.pwd
-printf "${pguser_pass}" > ./config/pwd/postgres.pwd
-printf "${crcsas_pass}" > ./core/modules/data_updater/impute_script/db/PostgreSQL/crcssa_db_admin.pwd
-printf "${pguser_pass}" > ./core/modules/data_updater/impute_script/db/PostgreSQL/postgres.pwd
+printf "${CRCSAS_PASS}" > ./config/pwd/crcssa_db_admin.pwd
+printf "${PGUSER_PASS}" > ./config/pwd/postgres.pwd
+printf "${CRCSAS_PASS}" > ./core/modules/data_updater/impute_script/db/PostgreSQL/crcssa_db_admin.pwd
+printf "${PGUSER_PASS}" > ./core/modules/data_updater/impute_script/db/PostgreSQL/postgres.pwd
+
+
+# Install Postgres
+new_section "S(5)- Install PostgreSQL"
+
+sudo apt install -y postgresql postgresql-contrib
+
+crcsas_exist=$(sudo -u postgres -H -- psql -l | grep -w crcsas | wc -l)
+
+if [[ ${crcsas_exist} -eq FALSE ]]; then
+    sudo -u postgres -H -- psql -c "create database crcsas"
+    sudo -u postgres -H -- psql -c "alter user postgres password '${PGUSER_PASS}'"
+fi
 
 
 # Restore DB
-new_section "S(7)- Restore crcsas DB"
+new_section "S(6)- Restore crcsas DB"
 if [[ -f crcsas.zip && ${crcsas_exist} -eq FALSE ]]; then
     unzip crcsas.zip
     export PGPASSWORD="${pguser_pass}"
@@ -255,6 +251,22 @@ else
         report_warning "WARNING: the database already existed and it was not modified!"
     fi
 fi
+
+
+# Install Mongo
+new_section "S(5)- Install Mongo"
+
+sudo apt install -y mongodb
+
+rinde_exist=$(echo "show collections" | mongo Rinde | grep -w forecasts | wc -l)
+
+if [[ ${rinde_exist} -eq FALSE ]]; then
+    echo "db.createCollection('forecasts')" | mongo Rinde
+fi
+
+# 
+#
+#
 
 report_finish "S(8)- ProRindeS SETUP finished sussectully"
 
