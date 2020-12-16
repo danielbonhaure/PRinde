@@ -164,10 +164,10 @@ fi
 
 # Set campaign first month
 if [[ ! ${NON_IT_MODE} ]]; then
-    read -p "Campaign first month (AR=5, PY=9): " CAMPAING_FIRST_MONTH
+    read -p "Campaign first month (AR=5, PY=9): " CAMPAIGN_FIRST_MONTH
 fi
-if [[ -n ${CAMPAING_FIRST_MONTH} ]]; then
-    sed -i "s/campaign_first_month: 5/campaign_first_month: ${CAMPAING_FIRST_MONTH}/g" ./config/system.yaml
+if [[ -n ${CAMPAIGN_FIRST_MONTH} ]]; then
+    sed -i "s/campaign_first_month: 5/campaign_first_month: ${CAMPAIGN_FIRST_MONTH}/g" ./config/system.yaml
 fi
 
 # Conf DSSAT and pSIMS
