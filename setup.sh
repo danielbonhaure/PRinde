@@ -113,6 +113,9 @@ sudo -H python3 -m pip install gevent-websocket
 sudo -H python3 -m pip install Flask-SocketIO
 sudo -H python3 -m pip install xxhash
 sudo -H python3 -m pip install fabric
+sudo -H python3 -m pip install numpy
+sudo -H python3 -m pip install psycopg2
+sudo -H python3 -m pip install netCDF4
 
 
 # Install RScript
