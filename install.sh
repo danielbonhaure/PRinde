@@ -139,13 +139,13 @@ setup_extra_params=()
 if [[ $NON_IT_MODE ]]; then
     setup_extra_params+=(--non-interactive-mode)
 fi
-if [[ DONT_INSTALL_POSTGRES ]]; then
+if [[ $DONT_INSTALL_POSTGRES ]]; then
     setup_extra_params+=(--dont-install-postgres)
 fi
-if [[ DONT_RESTORE_POSTGRES ]]; then
+if [[ $DONT_RESTORE_POSTGRES ]]; then
     setup_extra_params+=(--dont-restore-postgres)
 fi
-if [[ DONT_INSTALL_MONGO ]]; then
+if [[ $DONT_INSTALL_MONGO ]]; then
     setup_extra_params+=(--dont-install-mongo)
 fi
 bash setup.sh -f $PRINDE_FOLDER -P $PSIMS_FOLDER -D $DSSAT_FOLDER -X $DSSAT_EXECUTABLE -V $DSSAT_VERSION \
