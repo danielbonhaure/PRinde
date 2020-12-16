@@ -23,7 +23,8 @@ usage() {
   echo -e " -mWH, --wh-model <arg>        \t DSSAT WH model. Default: WHCER047"
   echo -e " -mMZ, --mz-model <arg>        \t DSSAT MZ model. Default: MZCER047"
   echo -e " -mBA, --ba-model <arg>        \t DSSAT BA model. Default: BACER047"
-  echo -e " -s, --run-at-startup          \t Setup a daemon to run ProRindeS at startup."
+  echo -e " -ras, --run-at-startup        \t Setup a daemon to run ProRindeS at startup."
+  echo -e " -nit, --non-interactive-mode  \t Non-interactive mode."
   echo -e " -h, --help                    \t Display a help message and quit."
 }
 
@@ -34,12 +35,13 @@ while [[ $# -gt 0 ]]; do
     -P|--psims-folder) PSIMS_FOLDER=$2; shift 2;;
     -D|--dssat-folder) DSSAT_FOLDER=$2; shift 2;;
     -X|--dssat-executable) DSSAT_EXECUTABLE=$2; shift 2;;
+    -V|--dssat-version) DSSAT_VERSION=$2; shift 2;;
     -mSB|--sb-model) DSSAT_SB_MODEL=$2; shift 2;;
     -mWH|--wh-model) DSSAT_WH_MODEL=$2; shift 2;;
     -mMZ|--mz-model) DSSAT_MZ_MODEL=$2; shift 2;;
     -mBA|--ba-model) DSSAT_BA_MODEL=$2; shift 2;;
-    -V|--dssat-version) DSSAT_VERSION=$2; shift 2;;
-    -s|--run-at-startup) RUN_AT_STARTUP=true; shift 1;;
+    -ras|--run-at-startup) RUN_AT_STARTUP=true; shift 1;;
+    -nit|--non-interactive-mode) NON_IT_MODE=true; shift 1;;
     -h|--help|*) usage; exit;;
   esac
 done
@@ -75,15 +77,17 @@ readonly DSSAT_BA_MODEL=${DSSAT_BA_MODEL:-BACER047}
 
 new_script "Install ProRindeS"
 
-report_warning "Caution!!"
-echo "This script must be executed by the user who will run prorindes (note that this user must be capable to initiate a password-less SSH session in the frontend!)"
-report_warning "Do you want to continue?"
-select yn in "Yes" "No"; do
-   case ${yn} in
-        Yes ) break;;
-        No ) exit;;
-    esac
-done
+if [[ ! $NON_IT_MODE ]]; then
+    report_warning "Caution!!"
+    echo "This script must be executed by the user who will run prorindes (note that this user must be capable to initiate a password-less SSH session in the frontend!)"
+    report_warning "Do you want to continue?"
+    select yn in "Yes" "No"; do
+       case ${yn} in
+            Yes ) break;;
+            No ) exit;;
+       esac
+    done
+fi
 
 new_section "I(1)- Check if pSIMS has already been installed!"
 
@@ -115,17 +119,18 @@ new_section "I(3)- Clone ProRindeS github repository"
 git clone https://github.com/danielbonhaure/PRinde.git $PRINDE_FOLDER
 if [[ $? -ne 0 ]] ; then exit 1; fi
 
-if [[ -f crcsas.zip ]]
-then
-    cp crcsas.zip $PRINDE_FOLDER/crcsas.zip
-else
-    report_warning "WARNING: database backup not found!!"
+if [[ ! $NON_IT_MODE ]]; then
+    if [[ -f crcsas.zip ]]; then
+        cp crcsas.zip $PRINDE_FOLDER/crcsas.zip
+    else
+        report_warning "WARNING: database backup not found!!"
+    fi
 fi
-
 
 new_section "I(4)- Setup ProRindeS"
 cd $PRINDE_FOLDER
-bash setup.sh -f $PRINDE_FOLDER -P $PSIMS_FOLDER -D $DSSAT_FOLDER -X $DSSAT_EXECUTABLE -V $DSSAT_VERSION -mSB $DSSAT_SB_MODEL -mWH $DSSAT_WH_MODEL -mMZ $DSSAT_MZ_MODEL -mBA $DSSAT_BA_MODEL
+bash setup.sh -f $PRINDE_FOLDER -P $PSIMS_FOLDER -D $DSSAT_FOLDER -X $DSSAT_EXECUTABLE -V $DSSAT_VERSION \
+     -mSB $DSSAT_SB_MODEL -mWH $DSSAT_WH_MODEL -mMZ $DSSAT_MZ_MODEL -mBA $DSSAT_BA_MODEL
 if [[ $? -ne 0 ]] ; then exit 1; fi
 
 
