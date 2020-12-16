@@ -230,8 +230,8 @@ fi
 if [[ ! `grep -w SY0003 $DSSAT_FOLDER/Genotype/BACER0${DSSAT_VERSION}.ECO` ]]; then
   sudo sh -c 'echo "SY0003   275   .25   175   150   .25   .10   240   0.5   2.6   2.6    13   1.0   2.5  0.30  0.60   400   5.7   6.5   5.0   2.5   1.0   2.6   6.0   7.0   3.0   100   5.0   .85    30   3.0   0.0   -10" >> '$DSSAT_FOLDER'/Genotype/BACER0'$DSSAT_VERSION'.ECO'
 fi
-sed -i '/@RWUPM RWUMX/!b;n;n;c\ \ 2.02\ \ \ 2.03' 'BACER0'$DSSAT_VERSION'.SPE'
-sed -i '/@ NFPU  NFPL  NFGU  NFGL  NFTU  NFTL  NFSU  NFSF/!b;n;n;c\ \ 1.00\ \ 0.00\ \ \ 1.0\ \ \ 0.0\ \ \ 1.0\ \ \ 0.0\ \ \ 0.4\ \ \ 0.1' 'BACER0'$DSSAT_VERSION'.SPE'
+sed -i '/@RWUPM RWUMX/!b;n;n;c\ \ 2.02\ \ \ 2.03' $DSSAT_FOLDER'/Genotype/BACER0'$DSSAT_VERSION'.SPE'
+sed -i '/@ NFPU  NFPL  NFGU  NFGL  NFTU  NFTL  NFSU  NFSF/!b;n;n;c\ \ 1.00\ \ 0.00\ \ \ 1.0\ \ \ 0.0\ \ \ 1.0\ \ \ 0.0\ \ \ 0.4\ \ \ 0.1' $DSSAT_FOLDER'/Genotype/BACER0'$DSSAT_VERSION'.SPE'
 
 # Set passwords
 printf "${CRCSAS_PASS}" > ./config/pwd/crcssa_db_admin.pwd
