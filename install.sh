@@ -23,6 +23,7 @@ usage() {
   echo -e " -mWH, --wh-model <arg>        \t DSSAT WH model. Default: WHCER047"
   echo -e " -mMZ, --mz-model <arg>        \t DSSAT MZ model. Default: MZCER047"
   echo -e " -mBA, --ba-model <arg>        \t DSSAT BA model. Default: BACER047"
+  echo -e " -s, --run-at-startup          \t Setup a daemon to run ProRindeS at startup."
   echo -e " -h, --help                    \t Display a help message and quit."
 }
 
@@ -38,6 +39,7 @@ while [[ $# -gt 0 ]]; do
     -mMZ|--mz-model) DSSAT_MZ_MODEL=$2; shift 2;;
     -mBA|--ba-model) DSSAT_BA_MODEL=$2; shift 2;;
     -V|--dssat-version) DSSAT_VERSION=$2; shift 2;;
+    -s|--run-at-startup) RUN_AT_STARTUP=true; shift 1;;
     -h|--help|*) usage; exit;;
   esac
 done
@@ -120,14 +122,16 @@ else
     report_warning "WARNING: database backup not found!!"
 fi
 
-rm gutils.sh
+
+new_section "I(4)- Setup ProRindeS"
 cd $PRINDE_FOLDER
 bash setup.sh -f $PRINDE_FOLDER -P $PSIMS_FOLDER -D $DSSAT_FOLDER -X $DSSAT_EXECUTABLE -V $DSSAT_VERSION -mSB $DSSAT_SB_MODEL -mWH $DSSAT_WH_MODEL -mMZ $DSSAT_MZ_MODEL -mBA $DSSAT_BA_MODEL
 if [[ $? -ne 0 ]] ; then exit 1; fi
 
-new_section "I(4)- Conf ProRindeS to run at startup"
 
-cat <<EOF | sudo tee /lib/systemd/system/prorindes.service >/dev/null
+if [[ $RUN_AT_STARTUP ]]; then
+    new_section "I(5)- Conf ProRindeS to run at startup"    
+    cat <<EOF | sudo tee /lib/systemd/system/prorindes.service >/dev/null
 # ver:
 # 1- https://www.digitalocean.com/community/tutorials/understanding-systemd-units-and-unit-files
 # 2- https://fedoramagazine.org/systemd-unit-dependencies-and-order/
@@ -148,8 +152,18 @@ WantedBy=multi-user.target
 
 EOF
 
-sudo systemctl daemon-reload
-sudo systemctl enable prorindes.service
-sudo systemctl start prorindes.service
+    sudo systemctl daemon-reload
+    sudo systemctl enable prorindes.service
+    sudo systemctl start prorindes.service
 
-report_finish "I(5)- ProRindeS INSTALLATION finished sussectully"
+fi
+
+#
+#
+#
+
+rm ${gutils}
+
+#
+#
+#
