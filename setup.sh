@@ -165,6 +165,14 @@ if [[ -n ${FRONT_MONGO_DB_ADDRESS} ]]; then
     sed -i "/yield_sync_db/,/EOF/s/'10.0.2.80'/'${FRONT_MONGO_DB_ADDRESS}'/g" ./config/database.yaml
 fi
 
+# Set max parallelism (the number of available cores) 
+if [[ ! ${NON_IT_MODE} ]]; then
+    read -p "Max parallelism (available cores): " MAX_PARALLELISM
+fi
+if [[ -n ${MAX_PARALLELISM} ]]; then
+    sed -i "s/max_parallelism: 4/max_parallelism: ${MAX_PARALLELISM}/g" ./config/system.yaml
+fi
+
 # Set campaign first month
 if [[ ! ${NON_IT_MODE} ]]; then
     read -p "Campaign first month (AR=5, PY=9): " CAMPAIGN_FIRST_MONTH
