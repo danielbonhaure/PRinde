@@ -11,3 +11,5 @@ suppressPackageStartupMessages(if(!require('rgdal')) { install.packages("rgdal",
 suppressPackageStartupMessages(if(!require('optparse')) { install.packages("optparse", quiet=TRUE); require('optparse') });
 suppressPackageStartupMessages(if(!require('xts')) { install.packages("xts", quiet=TRUE); require('xts'); })
 suppressPackageStartupMessages(if(!require('dplyr')) { install.packages("dplyr", quiet=TRUE); require('dplyr') });
+suppressPackageStartupMessages(if(!require('DBI')) { install.packages("DBI", quiet=TRUE); require('DBI') });
+suppressPackageStartupMessages(if(!require('RPostgreSQL')) { install.packages("RPostgreSQL", quiet=TRUE); require('RPostgreSQL') });
