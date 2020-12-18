@@ -139,9 +139,17 @@ tryCatch({
             }
 
             if (variable == 'prcp') {
-                datosEstacion <- impute_mf(datosEstacion, variable, estaciones, missingIndexes, registrosVecinos, vecinos.data, opt$parallelism)
+                tryCatch({
+                    datosEstacion <- impute_mf(datosEstacion, variable, estaciones, missingIndexes, registrosVecinos, vecinos.data, opt$parallelism)
+                }, warning = function(warn){
+                    warns <<- c(warns, warn)
+                })
             } else {
-                datosEstacion <- impute_idw(datosEstacion, variable, estaciones, missingIndexes, registrosVecinos, vecinos.data, opt$parallelism)
+                tryCatch({
+                    datosEstacion <- impute_idw(datosEstacion, variable, estaciones, missingIndexes, registrosVecinos, vecinos.data, opt$parallelism)
+                }, warning = function(warn){
+                    warns <<- c(warns, warn)
+                })
             }
         }
 
@@ -181,11 +189,15 @@ tryCatch({
 
             records <- datosEstacion %>% filter(fecha %in% missing_dates)
 
-            estimado <- estimarRadiacion(estaciones=estaciones[estaciones$omm_id == estacion, ],
-                                         registrosDiarios=records,
-                                         ap.cal = srad_parameters[[codigo_pais]]$ap,
-                                         bc.cal = srad_parameters[[codigo_pais]]$bc,
-                                         svk.cal = srad_parameters[[codigo_pais]]$svk)
+            tryCatch({
+                estimado <- estimarRadiacion(estaciones=estaciones[estaciones$omm_id == estacion, ],
+                                             registrosDiarios=records,
+                                             ap.cal = srad_parameters[[codigo_pais]]$ap,
+                                             bc.cal = srad_parameters[[codigo_pais]]$bc,
+                                             svk.cal = srad_parameters[[codigo_pais]]$svk)
+            }, warning = function(warn){
+                warns <<- c(warns, warn)
+            })
 
             if(estimado$not_estimated > 0) {
                 error_details <- paste0("Failed to estimate ", estimado$not_estimated, " radiation values for station ", estacion, ". Rolling back it's data.")
