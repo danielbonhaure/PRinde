@@ -72,7 +72,8 @@ srad_parameters <- list(
     )
 )
 
-tryCatch({
+tryCatch(
+withCallingHandlers({
     # Obtenemos los datos de las estaciones.
     rs.estacion <- RPostgreSQL::dbSendQuery(conexion, paste0("SELECT * FROM estacion e LEFT JOIN institucion i ON e.institucion_id = i.id WHERE e.omm_id IN (", paste(estacionesID, collapse=','), ')'))
     estaciones <- RPostgreSQL::fetch(rs.estacion, n=-1)
@@ -139,17 +140,9 @@ tryCatch({
             }
 
             if (variable == 'prcp') {
-                tryCatch({
-                    datosEstacion <- impute_mf(datosEstacion, variable, estaciones, missingIndexes, registrosVecinos, vecinos.data, opt$parallelism)
-                }, warning = function(warn){
-                    warns <<- c(warns, warn)
-                })
+                datosEstacion <- impute_mf(datosEstacion, variable, estaciones, missingIndexes, registrosVecinos, vecinos.data, opt$parallelism)
             } else {
-                tryCatch({
-                    datosEstacion <- impute_idw(datosEstacion, variable, estaciones, missingIndexes, registrosVecinos, vecinos.data, opt$parallelism)
-                }, warning = function(warn){
-                    warns <<- c(warns, warn)
-                })
+                datosEstacion <- impute_idw(datosEstacion, variable, estaciones, missingIndexes, registrosVecinos, vecinos.data, opt$parallelism)
             }
         }
 
@@ -189,15 +182,11 @@ tryCatch({
 
             records <- datosEstacion %>% filter(fecha %in% missing_dates)
 
-            tryCatch({
-                estimado <- estimarRadiacion(estaciones=estaciones[estaciones$omm_id == estacion, ],
-                                             registrosDiarios=records,
-                                             ap.cal = srad_parameters[[codigo_pais]]$ap,
-                                             bc.cal = srad_parameters[[codigo_pais]]$bc,
-                                             svk.cal = srad_parameters[[codigo_pais]]$svk)
-            }, warning = function(warn){
-                warns <<- c(warns, warn)
-            })
+            estimado <- estimarRadiacion(estaciones=estaciones[estaciones$omm_id == estacion, ],
+                                         registrosDiarios=records,
+                                         ap.cal = srad_parameters[[codigo_pais]]$ap,
+                                         bc.cal = srad_parameters[[codigo_pais]]$bc,
+                                         svk.cal = srad_parameters[[codigo_pais]]$svk)
 
             if(estimado$not_estimated > 0) {
                 error_details <- paste0("Failed to estimate ", estimado$not_estimated, " radiation values for station ", estacion, ". Rolling back it's data.")
@@ -228,10 +217,11 @@ tryCatch({
         RPostgreSQL::dbCommit(conexion)
     }
 }, warning = function(warn){
-    warns <<- c(warns, warn)
+    warns <<- c(warns, list(warn))
 }, error = function(error_detail) {
-    errors <<- c(errors, error_detail)
-}, finally =  {
+    errors <<- c(errors, list(error_detail))
+}),
+finally = {
     if (length(errors) > 0 | exit_status != 0) {
         exit_status <<- 1
         writeLines(paste(errors, collapse = '\n\n'))
