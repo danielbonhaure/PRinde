@@ -102,6 +102,7 @@ sudo apt install -y build-essential python3-psycopg2
 sudo apt install -y libyaml-dev
 sudo -H python3 -m pip install PyYAML
 
+sudo -H python3 -m pip install Flask-SocketIO==4.3.2  # ver: https://flask-socketio.readthedocs.io/en/latest/
 sudo -H python3 -m pip install watchdog
 sudo -H python3 -m pip install requests
 sudo -H python3 -m pip install jsonschema
@@ -110,7 +111,6 @@ sudo -H python3 -m pip install apscheduler
 sudo -H python3 -m pip install Flask
 sudo -H python3 -m pip install gevent
 sudo -H python3 -m pip install gevent-websocket
-sudo -H python3 -m pip install Flask-SocketIO
 sudo -H python3 -m pip install xxhash
 sudo -H python3 -m pip install fabric
 sudo -H python3 -m pip install numpy
