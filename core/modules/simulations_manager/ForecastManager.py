@@ -108,12 +108,13 @@ class ForecastManager:
 
                 # Get MongoDB connection.
                 db = self.system_config.database['yield_db']
+                db_config = self.system_config.database_config['yield_db']
 
                 # Add database connection information to the forecast config to use it when writing pSIMS params file.
                 forecast.configuration.database = DotDict({
                     'name': db.name,
-                    'host': db.client.HOST,
-                    'port': db.client.PORT
+                    'host': db_config['host'],
+                    'port': db_config['port']
                 })
 
                 forecast.configuration.weather_maker_class = ForecastLoader.weather_series_makers[
