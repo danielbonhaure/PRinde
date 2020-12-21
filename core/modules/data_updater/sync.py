@@ -102,7 +102,7 @@ class YieldDatabaseSync(BaseJob):
         # ssh-copy-id root@${frontend_ip}
 
         try:
-            with Connection(host=target_db.client.address[0], user='root') as conn:
+            with Connection(host=self.system_config.frontend_address, user='root') as conn:
                 result = conn.run('service shiny-server restart', hide=True)
                 if result.ok:
                     logging.info('Shiny-server restarted successfully')

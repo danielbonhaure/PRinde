@@ -1,6 +1,7 @@
 grid_resolution: 30 # Lat/lon grid resolution in arcminutes.
 max_parallelism: 4
 campaign_first_month: 5 # it must be 5 for Argentina and 9 for Paraguay
+frontend_address: '10.0.2.80'
 
 dssat_executable: 'dscsm0XX'
 

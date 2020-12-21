@@ -157,6 +157,14 @@ if [[ -n ${BACK_MONGO_DB_ADDRESS} ]]; then
     sed -i "/yield_db/,/yield_sync_db/s/'localhost'/'${BACK_MONGO_DB_ADDRESS}'/g" ./config/database.yaml
 fi
 
+# Set frontend address
+if [[ ! ${NON_IT_MODE} ]]; then
+    read -p "Front-end address[10.0.2.80]: " FRONT_ADDRESS
+fi
+if [[ -n ${FRONT_ADDRESS} ]]; then
+    sed -i "s/frontend_address: '10.0.2.80'/frontend_address: '${FRONT_ADDRESS}'/g" ./config/system.yaml
+fi
+
 # Set frontend MongoDB database address
 if [[ ! ${NON_IT_MODE} ]]; then
     read -p "Front-end MongoDB database address[10.0.2.80]: " FRONT_MONGO_DB_ADDRESS
