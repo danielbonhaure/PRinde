@@ -562,6 +562,85 @@ site_characteristics:
         }
 
 
+
+    loc_15:
+        soil_1: {
+            id: "BA87540001",
+            series: "Quemuna",
+            scs_family: "Hapludol éntico",
+            prop: 0.5,
+            n_horizons: 9
+        }
+        soil_2: {
+            id: "BA87540002",
+            series: "Pelegrini",
+            scs_family: "Hapludol típico",
+            prop: 0.5,
+            n_horizons: 9
+        }
+
+
+
+    loc_16:
+        soil_1: {
+            id: "BA87623001",
+            series: "Catrilo",
+            scs_family: "Ustipsament típico",
+            prop: 0.4,
+            n_horizons: 10
+        }
+        soil_2: {
+            id: "BA87623002",
+            series: "Quemu Quemu somero",
+            scs_family: "Haplustol éntico",
+            prop: 0.3,
+            n_horizons: 5
+        }
+        soil_3: {
+            id: "BA87623003",
+            series: "Miguel Cane",
+            scs_family: "Haplustol éntico",
+            prop: 0.3,
+            n_horizons: 10
+        }
+
+
+
+    loc_17:
+        soil_1: {
+            id: "BA87480001",
+            series: "Maciel -10% C",
+            scs_family: "Argiudol tipico",
+            prop: 0.5,
+            n_horizons: 12
+        }
+        soil_2: {
+            id: "BA87480002",
+            series: "Peyrano",
+            scs_family: "Argiudol vértico",
+            prop: 0.5,
+            n_horizons: 10
+        }
+
+
+
+    loc_18:
+        soil_1: {
+            id: "BA87683001",
+            series: "La Loma",
+            scs_family: "Argiudol típico",
+            prop: 0.5,
+            n_horizons: 3
+        }
+        soil_2: {
+            id: "BA87683002",
+            series: "Laprida",
+            scs_family: "Argiudol típico",
+            prop: 0.5,
+            n_horizons: 6
+        }
+
+
 # -----------------------------------------------------------------------------------------------------------------------------------------
 
 initial_conditions:
